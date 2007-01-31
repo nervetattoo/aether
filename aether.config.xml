@@ -1,0 +1,16 @@
+<config>
+    <site name="aether.raymond.raw.no">
+        <options>
+            <option name="RequireAuth" />
+            <option name="RequirePermission">editor</option>
+        </option>
+        <urlRules>
+            <rule match="/foobar/">
+                <rule match="helloworld">
+                    <section>Foobar</section>
+                    <subsection>Hello</subsection>
+                </rule>
+            </rule>
+        <urlRules>
+    </site>
+</config>
