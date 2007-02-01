@@ -41,12 +41,7 @@ class Aether {
     public function __construct() {
         $this->sl = new AetherServiceLocator;
         $parsedUrl = new AetherUrlParser;
-        // Attach url parts to a complete url
-        $url = '';
-        if (preg_match('/http\//i', $_SERVER['SERVER_PROTOCOL']))
-            $url = 'http://';
-        $url .= $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-        $parsedUrl->parse($url);
+        $parsedUrl->parseServerArray($_SERVER);
         $this->sl->saveCustomObject('parsedUrl', $parsedUrl);
         //$config = new AetherConfig($this->sl)
         /*

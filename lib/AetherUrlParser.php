@@ -72,6 +72,30 @@ class AetherUrlParser {
     }
     
     /**
+     * Parse the $_SERVER array directly
+     *
+     * @access public
+     * @return void
+     * @param array $server
+     */
+    public function parseServerArray($server) {
+        // Scheme
+        switch ($server['SERVER_PROTOCOL']) {
+            case 'HTTP/1.1':
+                $this->scheme = 'http';
+                break;
+        }
+        // Host
+        $this->host = $server['HTTP_HOST'];
+        $this->port = $server['SERVER_PORT'];
+        $this->path = $server['PHP_SELF'];
+        if (!empty($server['PHP_AUTH_USER']))
+            $this->user = $server['PHP_AUTH_USER'];
+        if (!empty($server['PHP_AUTH_PW']))
+            $this->pass = $server['PHP_AUTH_PW'];
+    }
+    
+    /**
      * Fetch an url part
      *
      * @access public
