@@ -64,6 +64,13 @@ class Aether {
      * @return string
      */
     public function render() {
+        /* Because aether uses the 404 trick for routing all requests
+         * to a single entry point (FrontController), we need to send
+         * the http return code manualy to be sure its treated correctly
+         */
+        header("HTTP/1.1 200 OK");
+        header("Status: 200 OK");
+        print_r($this);
     }
 }
 ?>
