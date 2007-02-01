@@ -3,7 +3,7 @@
         <options>
             <option name="RequireAuth" disable="true" />
             <option name="RequirePermission" disable="true">editor</option>
-        </option>
+        </options>
 
         <urlRules>
             <!-- Set up a branch of rules for UrlResources residing at $site/foobar/* -->
@@ -30,7 +30,7 @@
                 <section>Error</section>
                 <subsection>PageNotFound</subsection>
             </rule>
-        <urlRules>
+        </urlRules>
     </site>
 
     <site name="foo.raw.no">

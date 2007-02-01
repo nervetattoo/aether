@@ -9,6 +9,8 @@ vim:set expandtab:
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
+require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
+
 /**
  * 
  * Main class for Aether.
@@ -24,6 +26,12 @@ require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 class Aether {
     
     /**
+     * Hold service locator
+     * @var AetherServiceLocator
+     */
+    private $sl = null;
+    
+    /**
      * Constructor. 
      * Parses url, prepares everything
      *
@@ -32,6 +40,23 @@ class Aether {
      */
     public function __construct() {
         $this->sl = new AetherServiceLocator;
+        $parsedUrl = new AetherUrlParser;
+        // Attach url parts to a complete url
+        $url = '';
+        if (preg_match('/http\//i', $_SERVER['SERVER_PROTOCOL']))
+            $url = 'http://';
+        $url .= $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+        $parsedUrl->parse($url);
+        $this->sl->saveCustomObject('parsedUrl', $parsedUrl);
+        //$config = new AetherConfig($this->sl)
+        /*
+        $doc = new DOMDocument;
+        $doc->preserveWhiteSPace = false;
+        $doc->Load('aether.config.xml');
+        $xpath = new DOMXPath($doc);
+        $foo = $xpath->query("//site[@name='aether.raymond.raw.no']/urlRules/rule");
+        */
+        // Read config and find matching 
     }
     
     /**
