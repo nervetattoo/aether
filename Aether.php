@@ -8,7 +8,7 @@ vim:set expandtab:
 */
 
 require_once('/home/lib/libDefines.lib.php');
-require_once(AETHER_PATH . 'AetherServiceLocator.php');
+require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 /**
  * 
  * Main class for Aether.

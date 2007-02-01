@@ -1,16 +1,38 @@
 <config>
     <site name="aether.raymond.raw.no">
         <options>
-            <option name="RequireAuth" />
-            <option name="RequirePermission">editor</option>
+            <option name="RequireAuth" disable="true" />
+            <option name="RequirePermission" disable="true">editor</option>
         </option>
+
         <urlRules>
+            <!-- Set up a branch of rules for UrlResources residing at $site/foobar/* -->
             <rule match="/foobar/">
                 <rule match="helloworld">
                     <section>Foobar</section>
                     <subsection>Hello</subsection>
                 </rule>
+
+                <rule match="goodbye">
+                    <section>Foobar</section>
+                    <subsection>Goodbye</subsection>
+                </rule>
+
+                <!-- Default rule for foobar -->
+                <rule default="true">
+                    <section>Foobar</section>
+                    <subsection>PageNotFound</subsection>
+                </rule>
+            </rule>
+
+            <!-- A default rule will be the fallback rule if no match is found -->
+            <rule default="true">
+                <section>Error</section>
+                <subsection>PageNotFound</subsection>
             </rule>
         <urlRules>
+    </site>
+
+    <site name="foo.raw.no">
     </site>
 </config>

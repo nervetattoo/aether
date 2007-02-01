@@ -9,7 +9,7 @@ vim:set expandtab:
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'simpletest.php');
-require_once(AETHER_PATH . 'AetherServiceLocator.php');
+require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 
 class testAetherServiceLocator extends UnitTestCase {
     public function testEnvironment() {
