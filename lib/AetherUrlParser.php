@@ -108,5 +108,23 @@ class AetherUrlParser {
         else
             throw new OutOfRangeException("[$part] is not a valid url part");
     }
+    
+    /**
+     * Get parsed url as a basic string
+     *
+     * @access public
+     * @return string
+     */
+    public function __toString() {
+        $url = $this->scheme.'://';
+        if (!empty($this->user)) {
+            $url .= $this->user;
+            if (!empty($this->pass))
+                $url .= ':' . $this->pass;
+            $url .= '@';
+        }
+        $url .= $this->host . $this->path;
+        return $url;
+    }
 }
 ?>

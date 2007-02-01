@@ -31,6 +31,8 @@ class testAetherUrlParser extends UnitTestCase {
         $this->assertEqual($parser->get('user'), 'foo');
         $this->assertEqual($parser->get('pass'), 'bar');
         $this->assertEqual($parser->get('path'), '/world');
+
+        $this->assertEqual($parser->__toString(), $url2);
     }
 
     public function testParseServerArray() {
@@ -50,13 +52,16 @@ class testAetherUrlParser extends UnitTestCase {
         $parser = new AetherUrlParser;
         $parser->parseServerArray($server);
         $this->assertEqual($parser->get('scheme'), 'http');
-        $this->assertEqual($parser->get('path'), '/deployer.php');
+        $this->assertEqual($parser->get('path'), '/');
 
         $server['PHP_AUTH_USER'] = 'foo';
         $server['PHP_AUTH_PW'] = 'bar';
         $parser->parseServerArray($server);
         $this->assertEqual($parser->get('user'), 'foo');
         $this->assertEqual($parser->get('pass'), 'bar');
+
+        // Get as string again
+        $this->assertEqual($parser->__toString(), 'http://foo:bar@aether.raymond.raw.no/');
     }
 }
 
