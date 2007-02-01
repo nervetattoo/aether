@@ -27,6 +27,16 @@ class testAetherServiceLocator extends UnitTestCase {
         $db = $asl->getTemplate(86);
         $this->assertIsA($db, 'Template');
     }
+    
+    public function testCustomObjectStorage() {
+        // Create a small class for testing
+        $obj = new stdClass;
+        $obj->foo = 'bar';
+        $asl = new AetherServiceLocator;
+        $asl->saveCustomObject('tester', $obj);
+        $tester = $asl->fetchCustomObject('tester');
+        $this->assertIdentical($tester, $obj);
+    }
 }
 
 if (testRunMode(__FILE__) == SINGLE) {

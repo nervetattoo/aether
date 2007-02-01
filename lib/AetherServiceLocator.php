@@ -35,6 +35,12 @@ class AetherServiceLocator {
     private $templates = array();
     
     /**
+     * Hold custom objects
+     * @var array
+     */
+    private $custom = array();
+    
+    /**
      * Get a database connection. If a connection to the desired database
      * allready exists, return it. Else create a new and store it
      *
@@ -64,6 +70,59 @@ class AetherServiceLocator {
             $this->templates[$setId] = new Template($setId);
         }
         return $this->templates[$setId];
+    }
+    
+    /**
+     * Save a custom object to the service locators storage
+     * This functionality is meant for sharing objects between
+     * components (Subsection and FooComponent)
+     * Only one unique object per name can be held
+     *
+     * @access public
+     * @return void
+     * @param string $name Name to use as lookup for object
+     * @param object $object The actual object
+     */
+    public function saveCustomObject($name, $object) {
+        if (!$this->hasCustomObject($name)) {
+            // Do not allow saving non objects
+            if (is_object($object)) {
+                $this->custom[$name] = $object;
+            }
+            else {
+                throw new InvalidArgumentException("[$object] is not a valid object");
+            }
+        }
+        else {
+            // Throw exception
+            throw new Exception('Object name is allready in use ['.$name.']');
+        }
+    }
+    
+    /**
+     * Fetch a custom object
+     *
+     * @access public
+     * @return object
+     * @param string $name
+     */
+    public function fetchCustomObject($name) {
+        if ($this->hasCustomObject($name))
+            return $this->custom[$name];
+    }
+    
+    /**
+     * Check if custom object exists
+     *
+     * @access public
+     * @return bool
+     * @param string $name
+     */
+    public function hasCustomObject($name) {
+        if (array_key_exists($name, $this->custom)) {
+            return (is_object($this->custom[$name]));
+        }
+        return false;
     }
 }
 ?>
