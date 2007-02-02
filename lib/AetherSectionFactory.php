@@ -37,6 +37,7 @@ class AetherSectionFactory {
             self::includeFile($section . '/' . $subsection);
             self::includeFile($section);
             $aetherSection = new $section(new $subsection);
+            return $aetherSection;
         }
         else {
             throw new Exception('Section and Subsection does not exists');
