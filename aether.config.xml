@@ -7,7 +7,7 @@
 
         <urlRules>
             <!-- Set up a branch of rules for UrlResources residing at $site/foobar/* -->
-            <rule match="/foobar/">
+            <rule match="foobar">
                 <rule match="helloworld">
                     <section>Foobar</section>
                     <subsection>Hello</subsection>

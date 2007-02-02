@@ -10,6 +10,7 @@ vim:set expandtab:
 require_once('/home/lib/libDefines.lib.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
+require_once(AETHER_PATH . 'lib/AetherConfig.php');
 
 /**
  * 
@@ -43,15 +44,8 @@ class Aether {
         $parsedUrl = new AetherUrlParser;
         $parsedUrl->parseServerArray($_SERVER);
         $this->sl->saveCustomObject('parsedUrl', $parsedUrl);
-        //$config = new AetherConfig($this->sl)
-        /*
-        $doc = new DOMDocument;
-        $doc->preserveWhiteSPace = false;
-        $doc->Load('aether.config.xml');
-        $xpath = new DOMXPath($doc);
-        $foo = $xpath->query("//site[@name='aether.raymond.raw.no']/urlRules/rule");
-        */
-        // Read config and find matching 
+        $config = new AetherConfig($parsedUrl, AETHER_PATH . 'aether.config.xml');
+        $this->sl->saveCustomObject('aetherConfig', $config);
     }
     
     /**
