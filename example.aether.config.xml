@@ -1,3 +1,6 @@
+<!--
+This is how you might lay out a config file for an aether instance
+-->
 <config>
     <site name="aether.raymond.raw.no">
         <options>
