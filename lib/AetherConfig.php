@@ -47,63 +47,6 @@ class AetherConfig {
             $nodelist, 
             explode('/',substr($url->get('path'),1))
         );
-
-        /*
-        $path = $url->get('path');
-        $parts = explode('/', $path);
-        $failedParts = array();
-        // Start itreation
-        $i = 0;
-        foreach ($parts as $key => $part) {
-            if (!empty($part)) {
-                $i++;
-                $query = $xquery . "/rule[@match='$part']";
-                // Extract the node with the path accumulated till now
-                $node = $xpath->query($query);
-                */
-                /* If this extract is a nodelist with nodes in it,
-                 * try next element in the list of parts aswell
-                 */
-        /*
-                if ($node instanceof DOMNodeList AND $node->length > 0) {
-                    $xquery = $query;
-                    $body = $node;
-                }
-                else {
-                    if ($i == 1) {
-                        // If failure happens on first run
-                    }
-                    // All failures will be recorded
-                    $failedParts[] = $part;
-                }
-            }
-        }
-        echo $xquery;
-        */
-
-        /* We now have a node list containing the closest matches
-         * for the xpath query we performed. There are two possible
-         * actions to take at this stage:
-         * 1. Our nodelist consists of <rule>-s, in which case we need
-         *    to find the default rule and apply that one.
-         * 2. The nodelist is the final rule, and have <section>
-         *    and <subsection> and possibly other config tags
-         *    in which case we simply read these out and consider it
-         *    done.
-         */
-        /*
-        $first = $body->item(0);
-        if ($first->childNodes->length > 1 AND $first->childNodes->item(0)->nodeName == 'rule') {
-            // Find the default rule
-            $xquery = "rule[@default]";
-            $node = $xpath->query($xquery, $first);
-            if ($node->length == 1)
-                $this->subtractNodeConfiguration($node->item(0));
-        }
-        else {
-            $this->subtractNodeConfiguration($body->item(0));
-        }
-        */
     }
     
     /**
