@@ -47,5 +47,15 @@ class AetherTextResponse extends AetherResponse {
     public function draw() {
         echo $this->out;
     }
+    
+    /**
+     * Return instead of echo
+     *
+     * @access public
+     * @return string
+     */
+    public function get() {
+        return $this->out;
+    }
 }
 ?>

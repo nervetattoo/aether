@@ -32,6 +32,13 @@ class AetherSectionPriceguide extends AetherSection {
         $response = $this->subsection->response();
         if (($response instanceof AetherTextResponse) == false)
             $response = new AetherTextResponse('foo');
+        else {
+            // We have a text response, good, now wrap it and have it processed
+            $tpl = $this->sl->getTemplate(96);
+            $tpl->selectTemplate('wrapper');
+            $tpl->setVar('content', $response->get());
+            $response = new AetherTextResponse($tpl->returnPage());
+        }
         return $response;
     }
 }
