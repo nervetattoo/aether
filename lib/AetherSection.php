@@ -36,6 +36,19 @@ abstract class AetherSection {
     }
     
     /**
+     * Render this section
+     * Returns a Response object which can contain a text response or
+     * a header redirect response
+     * The advantages to using response objects is to more cleanly
+     * supporting header() redirects. In other words; more response
+     * types
+     *
+     * @access public
+     * @return AetherResponse
+     */
+    abstract public function response() {}
+    
+    /**
      * Get contained subsection
      *
      * @access public
