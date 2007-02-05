@@ -9,6 +9,7 @@ vim:set expandtab:
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(AETHER_PATH . 'lib/AetherSection.php');
+require_once(AETHER_PATH . 'lib/AetherTextResponse.php');
 
 /**
  * 
@@ -20,5 +21,16 @@ require_once(AETHER_PATH . 'lib/AetherSection.php');
  */
 
 class AetherSectionPriceguide extends AetherSection {
+    
+    /**
+     * Return response
+     *
+     * @access public
+     * @return AetherResponse
+     */
+    public function response() {
+        $response = new AetherTextResponse('foo');
+        return $response;
+    }
 }
 ?>

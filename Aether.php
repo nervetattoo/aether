@@ -11,6 +11,7 @@ require_once('/home/lib/libDefines.lib.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
 require_once(AETHER_PATH . 'lib/AetherConfig.php');
+require_once(AETHER_PATH . 'lib/AetherSectionFactory.php');
 
 /**
  * 
@@ -33,6 +34,12 @@ class Aether {
     private $sl = null;
     
     /**
+     * Section
+     * @var AetherSection
+     */
+    private $section = null;
+    
+    /**
      * Constructor. 
      * Parses url, prepares everything
      *
@@ -40,12 +47,25 @@ class Aether {
      * @return Aether
      */
     public function __construct() {
+        // Initiate all required helper objects
         $this->sl = new AetherServiceLocator;
         $parsedUrl = new AetherUrlParser;
         $parsedUrl->parseServerArray($_SERVER);
         $this->sl->saveCustomObject('parsedUrl', $parsedUrl);
         $config = new AetherConfig($parsedUrl, AETHER_PATH . 'aether.config.xml');
         $this->sl->saveCustomObject('aetherConfig', $config);
+
+        // Initiate section/subsection
+        try {
+            $this->section = AetherSectionFactory::create(
+                $config->getSection(), 
+                $config->getSubSection()
+            );
+        }
+        catch (Exception $e) {
+            // Failed to load section/subsection, what to do?
+            exit('Failed horribly: ' . $e->getMessage());
+        }
     }
     
     /**
@@ -64,7 +84,8 @@ class Aether {
          */
         header("HTTP/1.1 200 OK");
         header("Status: 200 OK");
-        print_r($this);
+        $response = $this->section->response();
+        $response->draw();
     }
 }
 ?>

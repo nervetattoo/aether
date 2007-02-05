@@ -19,21 +19,23 @@ class testAetherConfig extends UnitTestCase {
     }
 
     public function testConfigReadExact() {
-        $url = 'http://aether.raymond.raw.no/foobar/helloworld';
+        /*
+        $url = 'http://aether.raymond.raw.no/prisguide/data';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
         $this->assertEqual($conf->getSection(), 'Foobar');
         $this->assertEqual($conf->getSubSection(), 'Hello');
+        */
     }
     
     public function testConfigReadDefault() {
-        $url = 'http://aether.raymond.raw.no/foobar';
+        $url = 'http://aether.raymond.raw.no/prisguide';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
-        $this->assertEqual($conf->getSection(), 'Foobar');
-        $this->assertEqual($conf->getSubSection(), 'PageNotFound');
+        $this->assertEqual($conf->getSection(), 'Priceguide');
+        $this->assertEqual($conf->getSubSection(), 'Frontpage');
     }
 
     public function testConfigReadDefaultBase() {

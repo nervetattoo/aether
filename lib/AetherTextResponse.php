@@ -25,7 +25,7 @@ class AetherTextResponse extends AetherResponse {
      * Hold text string for output
      * @var string
      */
-    private $output = '';
+    private $out = '';
     
     /**
      * Constructor
@@ -35,7 +35,7 @@ class AetherTextResponse extends AetherResponse {
      * @param string $output
      */
     public function __construct($output) {
-        $this->ouput = $output;
+        $this->out = $output;
     }
     
     /**
@@ -45,7 +45,7 @@ class AetherTextResponse extends AetherResponse {
      * @return void
      */
     public function draw() {
-        echo $this->output;
+        echo $this->out;
     }
 }
 ?>

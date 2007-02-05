@@ -24,6 +24,6 @@ abstract class AetherResponse {
      * @access public
      * @return void
      */
-    abstract public function draw() {}
+    abstract public function draw();
 }
 ?>

@@ -67,7 +67,7 @@ class AetherSectionFactory {
      */
     private static function includeFile($name) {
         $file = AETHER_PATH . 'sections/' . $name . '.php';
-        @include_once($file);
+        include_once($file);
     }
 }
 ?>

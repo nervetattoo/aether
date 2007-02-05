@@ -18,7 +18,7 @@ require_once(AETHER_PATH . 'lib/AetherSubSection.php');
  * @package aether.sections.priceguide
  */
 
-class AetherSectionPriceguideTest extends AetherSubSection {
+class AetherSectionPriceguideFrontpage extends AetherSubSection {
 }
 
 ?>

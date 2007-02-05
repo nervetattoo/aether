@@ -7,6 +7,9 @@ vim:set smarttab:
 vim:set expandtab:
 */
 
+require_once('/home/lib/libDefines.lib.php');
+require_once(AETHER_PATH . 'lib/AetherResponse.php');
+
 /**
  * 
  * Base class definition of aether sections
@@ -46,7 +49,7 @@ abstract class AetherSection {
      * @access public
      * @return AetherResponse
      */
-    abstract public function response() {}
+    abstract public function response();
     
     /**
      * Get contained subsection
