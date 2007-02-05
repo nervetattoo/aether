@@ -7,6 +7,9 @@ vim:set smarttab:
 vim:set expandtab:
 */
 
+require_once('/home/lib/libDefines.lib.php');
+require_once(AETHER_PATH . 'lib/AetherSection.php');
+
 /**
  * 
  * Entry point to all priceguide applicatino sections
@@ -16,16 +19,6 @@ vim:set expandtab:
  * @package aether.sections
  */
 
-class AetherSection {
-}
-
 class AetherSectionPriceguide extends AetherSection {
-    public function __construct($foo) {
-        $this->subsection = $foo;
-    }
-
-    public function getSubSection() {
-        return $this->subsection;
-    }
 }
 ?>
