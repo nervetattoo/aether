@@ -29,7 +29,9 @@ class AetherSectionPriceguide extends AetherSection {
      * @return AetherResponse
      */
     public function response() {
-        $response = new AetherTextResponse('foo');
+        $response = $this->subsection->response();
+        if (($response instanceof AetherTextResponse) == false)
+            $response = new AetherTextResponse('foo');
         return $response;
     }
 }

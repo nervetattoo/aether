@@ -29,14 +29,17 @@ class AetherSectionFactory {
      * @return AetherSection
      * @param string $section
      * @param string $subsection
+     * @param AetherServiceLocator $sl
      */
-    public static function create($section, $subsection) {
+    public static function create($section, $subsection, AetherServiceLocator $sl) {
         $section = 'AetherSection' . ucfirst($section);
         $subsection = $section . ucfirst($subsection);
         if (self::exists($section, $subsection)) {
             self::includeFile($section . '/' . $subsection);
             self::includeFile($section);
-            $aetherSection = new $section(new $subsection);
+            $aetherSection = new $section(
+                new $subsection($sl),
+                $sl);
             return $aetherSection;
         }
         else {

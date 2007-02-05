@@ -59,7 +59,8 @@ class Aether {
         try {
             $this->section = AetherSectionFactory::create(
                 $config->getSection(), 
-                $config->getSubSection()
+                $config->getSubSection(),
+                $this->sl
             );
         }
         catch (Exception $e) {

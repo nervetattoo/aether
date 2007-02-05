@@ -25,7 +25,13 @@ abstract class AetherSection {
      * Hold current active subsection
      * @var AetherSubSection
      */
-    private $subsection = null;
+    protected $subsection = null;
+    
+    /**
+     * Hold service locator
+     * @var AetherServiceLocator
+     */
+    protected $sl = null;
     
     /**
      * COnstructor. Accept subsection
@@ -33,9 +39,11 @@ abstract class AetherSection {
      * @access public
      * @return AetherSection
      * @param AetherSubSection $subsection
+     * @param AetherServiceLocator $subsection
      */
-    public function __construct(AetherSubSection $subsection) {
+    public function __construct(AetherSubSection $subsection, AetherServiceLocator $sl) {
         $this->subsection = $subsection;
+        $this->sl = $sl;
     }
     
     /**
