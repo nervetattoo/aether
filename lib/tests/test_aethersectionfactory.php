@@ -10,6 +10,7 @@ vim:set expandtab:
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'simpletest.php');
 require_once(AETHER_PATH . 'lib/AetherSectionFactory.php');
+require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 
 class testAetherSectionFactory extends UnitTestCase {
     public function testEnvironment() {
@@ -17,9 +18,9 @@ class testAetherSectionFactory extends UnitTestCase {
     }
 
     public function testCreate() {
-        $section = AetherSectionFactory::create('Priceguide', 'Test');
+        
+        $section = AetherSectionFactory::create('Priceguide', new AetherServiceLocator);
         $this->assertIsA($section, 'AetherSection');
-        $this->assertIsA($section->getSubSection(), 'AetherSubSection');
     }
 }
 

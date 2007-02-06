@@ -22,12 +22,6 @@ require_once(AETHER_PATH . 'lib/AetherResponse.php');
 abstract class AetherSection {
     
     /**
-     * Hold current active subsection
-     * @var AetherSubSection
-     */
-    protected $subsection = null;
-    
-    /**
      * Hold service locator
      * @var AetherServiceLocator
      */
@@ -38,11 +32,9 @@ abstract class AetherSection {
      *
      * @access public
      * @return AetherSection
-     * @param AetherSubSection $subsection
      * @param AetherServiceLocator $subsection
      */
-    public function __construct(AetherSubSection $subsection, AetherServiceLocator $sl) {
-        $this->subsection = $subsection;
+    public function __construct(AetherServiceLocator $sl) {
         $this->sl = $sl;
     }
     
@@ -58,16 +50,6 @@ abstract class AetherSection {
      * @return AetherResponse
      */
     abstract public function response();
-    
-    /**
-     * Get contained subsection
-     *
-     * @access public
-     * @return AetherSubSection
-     */
-    public function getSubSection() {
-        return $this->subsection;
-    }
 }
 
 ?>

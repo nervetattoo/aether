@@ -29,16 +29,11 @@ class AetherSectionPriceguide extends AetherSection {
      * @return AetherResponse
      */
     public function response() {
-        $response = $this->subsection->response();
-        if (($response instanceof AetherTextResponse) == false)
-            $response = new AetherTextResponse('foo');
-        else {
-            // We have a text response, good, now wrap it and have it processed
-            $tpl = $this->sl->getTemplate(96);
-            $tpl->selectTemplate('wrapper');
-            $tpl->setVar('content', $response->get());
-            $response = new AetherTextResponse($tpl->returnPage());
-        }
+        // We have a text response, good, now wrap it and have it processed
+        $tpl = $this->sl->getTemplate(96);
+        $tpl->selectTemplate('wrapper');
+        $tpl->setVar('content', 'foo');
+        $response = new AetherTextResponse($tpl->returnPage());
         return $response;
     }
 }

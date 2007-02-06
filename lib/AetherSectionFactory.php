@@ -12,7 +12,7 @@ vim:set expandtab:
  * Factory for creating instances of section objects
  * Usage:
  * <code>
- * $section = AetherSectionFactory::create('Priceguide', $subsection);
+ * $section = AetherSectionFactory::create('Priceguide');
  * </code>
  * 
  * Created: 2007-02-02
@@ -28,18 +28,13 @@ class AetherSectionFactory {
      * @access public
      * @return AetherSection
      * @param string $section
-     * @param string $subsection
      * @param AetherServiceLocator $sl
      */
-    public static function create($section, $subsection, AetherServiceLocator $sl) {
+    public static function create($section, AetherServiceLocator $sl) {
         $section = 'AetherSection' . ucfirst($section);
-        $subsection = $section . ucfirst($subsection);
-        if (self::exists($section, $subsection)) {
-            self::includeFile($section . '/' . $subsection);
+        if (self::exists($section)) {
             self::includeFile($section);
-            $aetherSection = new $section(
-                new $subsection($sl),
-                $sl);
+            $aetherSection = new $section($sl);
             return $aetherSection;
         }
         else {
@@ -55,10 +50,9 @@ class AetherSectionFactory {
      * @param string $section
      * @param string $subsection
      */
-    private static function exists($section, $subsection) {
-        $subsection = AETHER_PATH . 'sections/' . $section . '/' . $subsection . '.php';
+    private static function exists($section) {
         $section = AETHER_PATH . 'sections/' . $section . '.php';
-        return (file_exists($section) AND file_exists($subsection));
+        return file_exists($section);
     }
     
     /**

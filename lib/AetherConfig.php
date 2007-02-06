@@ -26,12 +26,6 @@ class AetherConfig {
     private $section;
     
     /**
-     * What subsection was found
-     * @var string
-     */
-    private $subsection;
-    
-    /**
      * What control template should be used for layout
      * @var string
      */
@@ -153,9 +147,6 @@ class AetherConfig {
                 case 'section': 
                     $this->section = $child->nodeValue;
                     break;
-                case 'subsection':
-                    $this->subsection = $child->nodeValue;
-                    break;
                 case 'template':
                     $this->template = $child->nodeValue;
                     break;
@@ -178,16 +169,6 @@ class AetherConfig {
      */
     public function getSection() {
         return $this->section;
-    }
-
-    /**
-     * Get subsection
-     *
-     * @access public
-     * @return string
-     */
-    public function getSubSection() {
-        return $this->subsection;
     }
     
     /**
