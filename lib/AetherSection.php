@@ -8,6 +8,7 @@ vim:set expandtab:
 */
 
 require_once('/home/lib/libDefines.lib.php');
+require_once(LIB_PATH . 'Cache.lib.php');
 require_once(AETHER_PATH . 'lib/AetherResponse.php');
 
 /**
@@ -38,6 +39,41 @@ abstract class AetherSection {
         $this->sl = $sl;
     }
     
+    /**
+     * Process the sections business logic that should happen even
+     * when no rendering is neccessary (logging, statistics etc)
+     *
+     * @access protected
+     * @return void
+     */
+    protected function process() {
+    }
+    
+    /**
+     * Render content from modules
+     * this is where caching is implemented
+     *
+     * @access protected
+     * @return string
+     * @param Template $tpl
+     */
+    protected function renderModules(Template $tpl) {
+        /* Load controller template
+         * This template basicaly knows where all modules should be placed
+         * and have internal wrapping html for this section
+         */
+        $config = $this->sl->fetchCustomObject('aetherConfig');
+        $modules = $config->getModules();
+        if (is_array($modules)) {
+            $tpl->selectTemplate($config->getTemplate());
+            foreach ($modules as $module) {
+                $mod = AetherModuleFactory::create($module['name'], $this->sl);
+                $tpl->setVar($module['name'], $mod->render());
+            }
+        }
+        return $tpl->returnPage();
+    }
+
     /**
      * Render this section
      * Returns a Response object which can contain a text response or

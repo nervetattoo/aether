@@ -33,23 +33,9 @@ class AetherSectionPriceguide extends AetherSection {
         // We have a text response, good, now wrap it and have it processed
         $tpl = $this->sl->getTemplate(96);
         $tpl->selectTemplate('wrapper');
+        // Inherited method
+        $tpl->setVar('content', $this->renderModules($tpl));
 
-        $config = $this->sl->fetchCustomObject('aetherConfig');
-        /* Load controller template
-         * This template basicaly knows where all modules should be placed
-         * and have internal wrapping html for this section
-         */
-        $modules = $config->getModules();
-        if (is_array($modules)) {
-            $tpl->selectTemplate($config->getTemplate());
-            foreach ($modules as $moduleName) {
-                $module = AetherModuleFactory::create($moduleName, $this->sl);
-                $tpl->setVar($moduleName, $module->render());
-            }
-        }
-
-
-        $tpl->setVar('content', $tpl->returnPage());
         $response = new AetherTextResponse($tpl->returnPage());
         return $response;
     }

@@ -26,6 +26,12 @@ class AetherConfig {
     private $section;
     
     /**
+     * How long should this section be cached
+     * @var int/false
+     */
+    private $cache = false;
+    
+    /**
      * What control template should be used for layout
      * @var string
      */
@@ -140,6 +146,10 @@ class AetherConfig {
      * @param DOMNode $node
      */
      private function subtractNodeConfiguration(DOMNode $node) {
+        if ($node->hasAttribute('cache')) {
+            $cache = $node->getAttribute('cache');
+            $this->cache = $cache;
+        }
         foreach ($node->childNodes as $child) {
             if ($child instanceof DOMText)
                 continue;
@@ -151,7 +161,12 @@ class AetherConfig {
                     $this->template = $child->nodeValue;
                     break;
                 case 'module':
-                    $this->modules[] = $child->nodeValue;
+                    $module = array('name' => $child->nodeValue);
+                    if (!isset($cache)) {
+                        if ($child->hasAttribute('cache'))
+                            $module['cache'] = $child->getAttribute('cache');
+                    }
+                    $this->modules[] = $module;
                     break;
                 case 'option':
                     $this->options[$child->getAttribute('name')] =
@@ -169,6 +184,16 @@ class AetherConfig {
      */
     public function getSection() {
         return $this->section;
+    }
+    
+    /**
+     * Get cache time
+     *
+     * @access public
+     * @return int/bool
+     */
+    public function getCacheTime() {
+        return $this->cache;
     }
     
     /**
