@@ -32,7 +32,7 @@ abstract class AetherSection {
      *
      * @access public
      * @return AetherSection
-     * @param AetherServiceLocator $subsection
+     * @param AetherServiceLocator $sl
      */
     public function __construct(AetherServiceLocator $sl) {
         $this->sl = $sl;
