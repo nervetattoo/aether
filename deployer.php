@@ -21,6 +21,4 @@ require('Aether.php');
 
 $aether = new Aether;
 $aether->render();
-echo "<pre>";
-print_r($aether);
 ?>

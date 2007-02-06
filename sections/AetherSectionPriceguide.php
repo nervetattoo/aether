@@ -10,6 +10,7 @@ vim:set expandtab:
 require_once('/home/lib/libDefines.lib.php');
 require_once(AETHER_PATH . 'lib/AetherSection.php');
 require_once(AETHER_PATH . 'lib/AetherTextResponse.php');
+require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
 
 /**
  * 
@@ -32,7 +33,23 @@ class AetherSectionPriceguide extends AetherSection {
         // We have a text response, good, now wrap it and have it processed
         $tpl = $this->sl->getTemplate(96);
         $tpl->selectTemplate('wrapper');
-        $tpl->setVar('content', 'foo');
+
+        $config = $this->sl->fetchCustomObject('aetherConfig');
+        /* Load controller template
+         * This template basicaly knows where all modules should be placed
+         * and have internal wrapping html for this section
+         */
+        $modules = $config->getModules();
+        if (is_array($modules)) {
+            $tpl->selectTemplate($config->getTemplate());
+            foreach ($modules as $moduleName) {
+                $module = AetherModuleFactory::create($moduleName, $this->sl);
+                $tpl->setVar($moduleName, $module->render());
+            }
+        }
+
+
+        $tpl->setVar('content', $tpl->returnPage());
         $response = new AetherTextResponse($tpl->returnPage());
         return $response;
     }
