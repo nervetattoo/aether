@@ -1,41 +1,27 @@
 <!--
-This is how you might lay out a config file for an aether instance
+Example config file, showing how one could configure a priceguide setup
 -->
 <config>
-    <site name="aether.raymond.raw.no">
-        <options>
-            <option name="RequireAuth" disable="true" />
-            <option name="RequirePermission" disable="true">editor</option>
-        </options>
-
+    <site name="pgfoo.raymond.raw.no">
         <urlRules>
-            <!-- Set up a branch of rules for UrlResources residing at $site/foobar/* -->
-            <rule match="foobar">
-                <rule match="helloworld">
-                    <section>Foobar</section>
-                    <subsection>Hello</subsection>
-                </rule>
-
-                <rule match="goodbye">
-                    <section>Foobar</section>
-                    <subsection>Goodbye</subsection>
-                </rule>
-
+            <!-- Set up a branch of rules for UrlResources residing at pgfoo./prisguide/* -->
+            <rule match="prisguide">
                 <!-- Default rule for foobar -->
                 <rule default="true">
-                    <section>Foobar</section>
-                    <subsection>PageNotFound</subsection>
+                    <section>Priceguide</section>
+                    <subsection>Frontpage</subsection>
+                    <template>pgfoo.raymond.raw.no_prisguide_default</template>
+                    <module>Ad160</module>
+                    <module>Categories</module>
+                    <module>SearchControl</module>
+                    <!-- <option name="RequirePermission">editor</option> -->
                 </rule>
             </rule>
-
             <!-- A default rule will be the fallback rule if no match is found -->
             <rule default="true">
                 <section>Error</section>
                 <subsection>PageNotFound</subsection>
             </rule>
         </urlRules>
-    </site>
-
-    <site name="foo.raw.no">
     </site>
 </config>
