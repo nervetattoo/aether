@@ -24,7 +24,7 @@ abstract class AetherModule {
      * Hold service locator
      * @var AetherServiceLocator
      */
-    private $sl = null;
+    protected $sl = null;
     
     /**
      * Constructor. Accept service locator
