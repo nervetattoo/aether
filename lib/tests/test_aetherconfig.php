@@ -19,18 +19,20 @@ class testAetherConfig extends UnitTestCase {
     }
 
     public function testConfigReadExact() {
-        /*
-        $url = 'http://aether.raymond.raw.no/prisguide/data';
+        $url = 'http://pgfoo.raymond.raw.no/prisguide/data';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
-        $this->assertEqual($conf->getSection(), 'Foobar');
-        $this->assertEqual($conf->getSubSection(), 'Hello');
-        */
+        $this->assertEqual($conf->getSection(), 'Priceguide');
+        $this->assertEqual($conf->getSubSection(), 'Frontpage');
+        $this->assertEqual($conf->getTemplate(), 
+            'pgfoo.raymond.raw.no_prisguide_default');
+        $this->assertEqual($conf->getModules(), 
+            array('Ad160','Categories','SearchControl'));
     }
     
     public function testConfigReadDefault() {
-        $url = 'http://aether.raymond.raw.no/prisguide';
+        $url = 'http://pgfoo.raymond.raw.no/prisguide';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
@@ -39,7 +41,7 @@ class testAetherConfig extends UnitTestCase {
     }
 
     public function testConfigReadDefaultBase() {
-        $url = 'http://aether.raymond.raw.no/fluff';
+        $url = 'http://pgfoo.raymond.raw.no/fluff';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');

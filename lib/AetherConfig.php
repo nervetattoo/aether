@@ -20,6 +20,36 @@ vim:set expandtab:
 class AetherConfig {
     
     /**
+     * What section was found
+     * @var string
+     */
+    private $section;
+    
+    /**
+     * What subsection was found
+     * @var string
+     */
+    private $subsection;
+    
+    /**
+     * What control template should be used for layout
+     * @var string
+     */
+    private $template;
+    
+    /**
+     * What modules should be included
+     * @var array
+     */
+    private $modules = array();
+    
+    /**
+     * Option settings for this section (highly optional)
+     * @var array
+     */
+    private $options = array();
+    
+    /**
      * Constructor.
      *
      * @access public
@@ -126,6 +156,16 @@ class AetherConfig {
                 case 'subsection':
                     $this->subsection = $child->nodeValue;
                     break;
+                case 'template':
+                    $this->template = $child->nodeValue;
+                    break;
+                case 'module':
+                    $this->modules[] = $child->nodeValue;
+                    break;
+                case 'option':
+                    $this->options[$child->getAttribute('name')] =
+                        $child->nodeValue;
+                    break;
             }
         }
     }  
@@ -148,6 +188,36 @@ class AetherConfig {
      */
     public function getSubSection() {
         return $this->subsection;
+    }
+    
+    /**
+     * Get requested control templates name
+     *
+     * @access public
+     * @return string
+     */
+    public function getTemplate() {
+        return $this->template;
+    }
+    
+    /**
+     * Get array over what modules should be used when rendering page
+     *
+     * @access public
+     * @return array
+     */
+    public function getModules() {
+        return $this->modules;
+    }
+    
+    /**
+     * Get all options set for section
+     *
+     * @access public
+     * @return array
+     */
+    public function getOptions() {
+        return $this->options;
     }
 }
 ?>
