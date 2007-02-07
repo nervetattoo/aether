@@ -55,17 +55,18 @@ abstract class AetherSection {
      *
      * @access protected
      * @return string
-     * @param Template $tpl
      */
-    protected function renderModules(Template $tpl) {
+    protected function renderModules() {
         /* Load controller template
          * This template basicaly knows where all modules should be placed
          * and have internal wrapping html for this section
          */
         $config = $this->sl->fetchCustomObject('aetherConfig');
+        $tplInfo = $config->getTemplate();
+        $tpl = $this->sl->getTemplate($tplInfo['setId']);
         $modules = $config->getModules();
         if (is_array($modules)) {
-            $tpl->selectTemplate($config->getTemplate());
+            $tpl->selectTemplate($tplInfo['name']);
             foreach ($modules as $module) {
                 $mod = AetherModuleFactory::create($module['name'], $this->sl);
                 $tpl->setVar($module['name'], $mod->render());

@@ -174,7 +174,10 @@ class AetherConfig {
                     $this->section = $child->nodeValue;
                     break;
                 case 'template':
-                    $this->template = $child->nodeValue;
+                    $tpl = array();
+                    $tpl['setId'] = $child->getAttribute('id');
+                    $tpl['name'] = $child->nodeValue;
+                    $this->template = $tpl;
                     break;
                 case 'module':
                     $module = array('name' => $child->nodeValue);
