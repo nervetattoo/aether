@@ -8,7 +8,7 @@ vim:set expandtab:
 */
 
 require_once('/home/lib/libDefines.lib.php');
-require('Aether.php');
+require(AETHER_PATH . 'Aether.php');
 
 /**
  * 
