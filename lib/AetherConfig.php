@@ -50,6 +50,12 @@ class AetherConfig {
     private $options = array();
     
     /**
+     * Variables found in the url
+     * @var arra
+     */
+    private $urlVariables = array();
+    
+    /**
      * Constructor.
      *
      * @access public
@@ -101,14 +107,24 @@ class AetherConfig {
         foreach ($list as $node) {
             // This have to be a DOMElement
             if ($node instanceof DOMElement) {
-                /* If the attribute match is not set its no point
+                /* If the attribute match is not set theres no point
                  * in searching through this path
                  * Check if this actually matches the current part
                  * of the path we are examining ($current)
                  */
                 if ($node->hasAttribute('match') AND
                     !empty($current) AND
-                    $node->getAttribute('match') == $current) {
+                    ($node->getAttribute('match') == $current OR
+                    substr($node->getAttribute('match'),0,1) == '$')) {
+                    /* If the match attribute actually contained a $
+                     * at the start, then this value should be saved
+                     * as a variable
+                     */
+                    $match = $node->getAttribute('match');
+                    if ($match[0] == '$') {
+                        $varName = substr($match, 1);
+                        $this->storeVariable($varName, $current);
+                    }
                     /* If this node is a match, and has child nodes
                      * then try to crawl the next level aswell, see
                      * if a more exact match is possible
@@ -174,7 +190,19 @@ class AetherConfig {
                     break;
             }
         }
-    }  
+    }
+    
+    /**
+     * Store a variable fetched from the url
+     *
+     * @access private
+     * @return void
+     * @param string $key
+     * @param mixed $val
+     */
+    public function storeVariable($key, $val) {
+        $this->urlVariables[$key] = $val;
+    }
     
     /**
      * Get section
@@ -224,6 +252,22 @@ class AetherConfig {
      */
     public function getOptions() {
         return $this->options;
+    }
+    
+    /**
+     * Get an url variable
+     *
+     * @access public
+     * @return mixed
+     * @param string $key
+     */
+    public function getUrlVariable($key) {
+        if (array_key_exists($key, $this->urlVariables)) {
+            return $this->urlVariables[$key];
+        }
+        else {
+            throw new Exception("[$key] is not an existing variable");
+        }
     }
 }
 ?>

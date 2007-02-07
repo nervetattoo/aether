@@ -13,7 +13,6 @@ By this time we have the following information:
 This information alltogether we call a UrlResource (the priceguide search is a resource that can be used, and have various properties)
 * Url
 * What section to call
-* What subsection is requested (Section decides what to do with this information)
 
 Authentication:
 * Check if the user have an active session
