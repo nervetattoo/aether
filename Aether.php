@@ -95,20 +95,7 @@ class Aether {
          */
         header("HTTP/1.1 200 OK");
         header("Status: 200 OK");
-        // Cached?
-        $config = $this->sl->fetchCustomObject('aetherConfig');
-        $cachetime = $config->getCacheTime();
-        if (is_numeric($cachetime)) {
-            $cache = new Cache;
-            $cacheName = $this->sl->fetchCustomObject('parsedUrl')->__toString();
-            if (($response = $cache->getObject($cacheName)) == false) {
-                $response = $this->section->response();
-                $cache->saveObject($cacheName, $response, $cachetime);
-            }
-        }
-        else {
-            $response = $this->section->response();
-        }
+        $response = $this->section->response();
         $response->draw();
     }
 }

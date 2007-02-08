@@ -62,17 +62,23 @@ abstract class AetherSection {
          * and have internal wrapping html for this section
          */
         $config = $this->sl->fetchCustomObject('aetherConfig');
-        $tplInfo = $config->getTemplate();
-        $tpl = $this->sl->getTemplate($tplInfo['setId']);
-        $modules = $config->getModules();
-        if (is_array($modules)) {
-            $tpl->selectTemplate($tplInfo['name']);
-            foreach ($modules as $module) {
-                $mod = AetherModuleFactory::create($module['name'], $this->sl);
-                $tpl->setVar($module['name'], $mod->render());
+        $cache = new Cache;
+        $cachetime = $config->getCacheTime();
+        $cacheName = $this->sl->fetchCustomObject('parsedUrl')->__toString();
+        if (!is_numeric($cachetime) OR ($output = $cache->getObject($cacheName) == false)) {
+            $tplInfo = $config->getTemplate();
+            $tpl = $this->sl->getTemplate($tplInfo['setId']);
+            $modules = $config->getModules();
+            if (is_array($modules)) {
+                $tpl->selectTemplate($tplInfo['name']);
+                foreach ($modules as $module) {
+                    $mod = AetherModuleFactory::create($module['name'], $this->sl);
+                    $tpl->setVar($module['name'], $mod->render());
+                }
             }
+            $output = $tpl->returnPage();
         }
-        return $tpl->returnPage();
+        return $output;
     }
 
     /**
