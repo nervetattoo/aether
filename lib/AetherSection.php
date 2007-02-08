@@ -77,6 +77,11 @@ abstract class AetherSection {
                 }
             }
             $output = $tpl->returnPage();
+            if (is_numeric($cachetime))
+                $cache->saveObject($cacheName, $output, $cachetime);
+        }
+        else {
+            $output = $cache->getObject($cacheName);
         }
         return $output;
     }
