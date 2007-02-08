@@ -56,6 +56,12 @@ class AetherConfig {
     private $urlVariables = array();
     
     /**
+     * If set, a specific base to be used for all urls within app
+     * @var string
+     */
+    private $urlBase = '';
+    
+    /**
      * Constructor.
      *
      * @access public
@@ -124,6 +130,16 @@ class AetherConfig {
                     if ($match[0] == '$') {
                         $varName = substr($match, 1);
                         $this->storeVariable($varName, $current);
+                    }
+                    /* If the isBase attribute is set to true,
+                     * then the match attribute should be used as
+                     * the base for all urls used for all subsequent
+                     * rule matches
+                     */
+                    if ($node->hasAttribute('isBase')) {
+                        // We cant have wildcards as url base
+                        if ($match[0] != '$')
+                            $this->urlBase = '/'.$match.'/';
                     }
                     /* If this node is a match, and has child nodes
                      * then try to crawl the next level aswell, see
@@ -271,6 +287,16 @@ class AetherConfig {
         else {
             throw new Exception("[$key] is not an existing variable");
         }
+    }
+    
+    /**
+     * Fetch url base
+     *
+     * @access public
+     * @return string
+     */
+    public function getBase() {
+        return $this->urlBase;
     }
 }
 ?>

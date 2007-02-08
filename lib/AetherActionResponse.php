@@ -35,7 +35,7 @@ class AetherActionResponse extends AetherResponse {
      * @param string $url
      */
     public function __construct($url) {
-        $this->out = $url;
+        $this->url = $url;
     }
     
     /**

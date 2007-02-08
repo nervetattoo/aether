@@ -62,7 +62,7 @@ class Aether {
         $this->sl->saveCustomObject('session', $session);
         // If a user is associated to the session, create user object
         if (is_numeric($session->get('userId'))) {
-            $user = new AetherUser($session->get('userId'));
+            $user = new AetherUser($this->sl, $session->get('userId'));
             $this->sl->saveCustomObject('user', $user);
         }
 
