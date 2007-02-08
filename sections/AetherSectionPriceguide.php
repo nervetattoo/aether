@@ -30,9 +30,11 @@ class AetherSectionPriceguide extends AetherSection {
      * @return AetherResponse
      */
     public function response() {
+        $config = $this->sl->fetchCustomObject('aetherConfig');
         // We have a text response, good, now wrap it and have it processed
         $tpl = $this->sl->getTemplate(99);
         $tpl->selectTemplate('wrapper_prisguide.no');
+        $tpl->setVar('urlbase', $config->getBase());
         if ($this->sl->hasCustomObject('user')) {
             $user = $this->sl->fetchCustomObject('user');
             $tplUser = array(
