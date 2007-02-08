@@ -59,7 +59,7 @@ class AetherConfig {
      * If set, a specific base to be used for all urls within app
      * @var string
      */
-    private $urlBase = '';
+    private $urlBase = '/';
     
     /**
      * Constructor.
