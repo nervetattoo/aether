@@ -9,6 +9,8 @@ vim:set expandtab:
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'Cache.lib.php');
+require_once(LIB_PATH . 'SessionHandler.lib.php');
+require_once(AETHER_PATH . 'lib/AetherUser.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
 require_once(AETHER_PATH . 'lib/AetherConfig.php');
@@ -55,6 +57,14 @@ class Aether {
         $this->sl->saveCustomObject('parsedUrl', $parsedUrl);
         $config = new AetherConfig($parsedUrl, AETHER_PATH . 'aether.config.xml');
         $this->sl->saveCustomObject('aetherConfig', $config);
+        // Construct session
+        $session = new SessionHandler;
+        $this->sl->saveCustomObject('session', $session);
+        // If a user is associated to the session, create user object
+        if (is_numeric($session->get('userId'))) {
+            $user = new AetherUser($session->get('userId'));
+            $this->sl->saveCustomObject('user', $user);
+        }
 
         // Initiate section/subsection
         try {

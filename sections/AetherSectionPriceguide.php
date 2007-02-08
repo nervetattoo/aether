@@ -31,8 +31,20 @@ class AetherSectionPriceguide extends AetherSection {
      */
     public function response() {
         // We have a text response, good, now wrap it and have it processed
-        $tpl = $this->sl->getTemplate(96);
-        $tpl->selectTemplate('wrapper');
+        $tpl = $this->sl->getTemplate(99);
+        $tpl->selectTemplate('wrapper_prisguide.no');
+        if ($this->sl->hasCustomObject('user')) {
+            $user = $this->sl->fetchCustomObject('user');
+            $tplUser = array(
+                'id' => $user->get('userId'),
+                'username' => $user->get('username'),
+                'email' => $user->get('email'));
+            $tpl->setVar('user', $tplUser);
+        }
+        else {
+            $tpl->setVar('user', false);
+        }
+
         // Inherited method
         $tpl->setVar('content', $this->renderModules($tpl));
 
