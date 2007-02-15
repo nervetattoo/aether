@@ -50,6 +50,12 @@ class AetherConfig {
     private $options = array();
     
     /**
+     * Whats left of the request path when url parsing is finished
+     * @var array
+     */
+    private $path;
+    
+    /**
      * Variables found in the url
      * @var arra
      */
@@ -77,17 +83,18 @@ class AetherConfig {
 
 
         /*
-         * Iterate over all parts of url, creating an increasingly more specific
-         * xpath query, on the way run this query, and if succesfull, continue
-         * running over the parts. Once a failure happens, stop as we
-         * have the closest matching node
+         * Find starting point of url rules, from this point on we
+         * use recursion to decide on the correct rule to use
          */
         $xquery = "//config/site[@name='" . $url->get('host') . "']";
         $xquery .= '/urlRules/*';
         $nodelist = $xpath->query($xquery);
+        $path = $url->get('path');
+        if (substr($path, -1) == '/')
+            $path = substr($path, 0, -1);
         $node = $this->findMatchingConfigNode(
             $nodelist, 
-            explode('/',substr($url->get('path'),1))
+            explode('/',substr($path,1))
         );
     }
     
@@ -151,11 +158,13 @@ class AetherConfig {
                         }
                         else {
                             $this->subtractNodeConfiguration($node);
+                            $this->path = $path;
                             return true;
                         }
                     }
                     else {
                         $this->subtractNodeConfiguration($node);
+                        $this->path = $path;
                         return true;
                     }
                 }
@@ -164,6 +173,7 @@ class AetherConfig {
                      * better matches on this level
                      */
                     $this->subtractNodeConfiguration($node);
+                    $this->path = $path;
                 }
             }
         }
@@ -297,6 +307,16 @@ class AetherConfig {
      */
     public function getBase() {
         return $this->urlBase;
+    }
+    
+    /**
+     * Fetch whats left and "unusued" of the path originaly requested
+     *
+     * @access public
+     * @return array
+     */
+    public function getPathLeftOvers() {
+        return $this->path;
     }
 }
 ?>
