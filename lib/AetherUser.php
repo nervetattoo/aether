@@ -9,7 +9,7 @@ vim:set expandtab:
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . '/user/User.lib.php');
-require_once(AETHER_PATH . 'lib/AetherDefaultConfig.php');
+require_once(AETHER_PATH . 'lib/AetherUserConfig.php');
 
 /**
  * AetherUser object.
@@ -36,8 +36,8 @@ class AetherUser {
     private $sl;
 
     /**
-     * Holds the AetherDefaultConfig object for this user
-     * @var AetherDefaultConfig
+     * Holds the AetherUserConfig object for this user
+     * @var AetherUserConfig
      */
     private $config;
     
@@ -51,7 +51,7 @@ class AetherUser {
     public function __construct(AetherServiceLocator $sl, $userId) {
         $this->sl = $sl;
         $this->user = new User($userId);
-        $this->config  = new AetherDefaultConfig($sl, $userId);
+        $this->config  = new AetherUserConfig($sl, $userId);
     }
     
     /**
@@ -100,7 +100,13 @@ class AetherUser {
         return $this->user->hasPrivilege($privilege, $site);
     }
 
-    public function getDefaultConfig() {
+    /**
+     * Returns default config
+     *
+     * @access public
+     * @return AetherDefaultConfig
+     */
+    public function getConfig() {
         return $this->config;
     }
     

@@ -9,13 +9,13 @@ vim:set expandtab:
 
 /**
  * 
- * Holds default config for user
+ * Holds config for user
  *
  * Created: 2007-02-20
  * @author Pål-Eivind Johnsen
  */
 
-class AetherDefaultConfig {
+class AetherUserConfig {
     /**
      * User id
      * @var int
