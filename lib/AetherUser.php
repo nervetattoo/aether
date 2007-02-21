@@ -101,10 +101,10 @@ class AetherUser {
     }
 
     /**
-     * Returns default config
+     * Returns user config
      *
      * @access public
-     * @return AetherDefaultConfig
+     * @return AetherUserConfig
      */
     public function getConfig() {
         return $this->config;

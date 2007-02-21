@@ -49,7 +49,7 @@ class AetherUserConfig {
         if (isset($this->values))
             unset($this->values);
 
-        $db = $this->sl->getDatabase("prisguide");
+        $db = $this->sl->getDatabase("pubsys");
         $q = "  
             SELECT `key`, `value`
             FROM aether_user_config 
@@ -110,7 +110,7 @@ class AetherUserConfig {
      * @return void
      */
     public function reset($key = false) {
-        $db = $this->sl->getDatabase("prisguide");
+        $db = $this->sl->getDatabase("pubsys");
         if ($key == false) {
             $q = "DELETE FROM aether_user_config
                 WHERE `id` = '{$this->id}'";
@@ -130,7 +130,7 @@ class AetherUserConfig {
      */
     public function save() {
         if (is_array($this->values)) {
-            $db = $this->sl->getDatabase("prisguide");
+            $db = $this->sl->getDatabase("pubsys");
             foreach ($this->values as $key => $value) {
                 $value = mysql_escape_string($value); 
                 $q = "INSERT INTO aether_user_config 
