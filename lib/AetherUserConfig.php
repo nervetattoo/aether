@@ -100,7 +100,8 @@ class AetherUserConfig {
      * @return array
      */
     public function getAllKeys() {
-        return array_keys($this->values);
+        if (!empty($this->values))
+            return array_keys($this->values);
     }
  
     /**
