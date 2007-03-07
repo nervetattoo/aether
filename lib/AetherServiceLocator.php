@@ -110,7 +110,7 @@ class AetherServiceLocator {
         if ($this->hasCustomObject($name))
             return $this->custom[$name];
         else
-            throw new Exception('No such custom object exists');
+            throw new Exception('Custom object ['.$name.'] does not exist');
     }
     
     /**
