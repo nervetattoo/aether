@@ -69,10 +69,11 @@ class AetherUserConfig {
      * @return string
      */
     public function get($key) {
-        if (array_key_exists($key, $this->values))
-            return $this->values[$key];
-        else
-            throw new Exception("No such key set [$key]");
+        if (is_array($this->values))
+            if (array_key_exists($key, $this->values))
+                return $this->values[$key];
+            else
+                throw new Exception("No such key set [$key]");
     }
 
     /**
