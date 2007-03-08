@@ -50,6 +50,17 @@ class AetherSectionPriceguide extends AetherSection {
         // Inherited method
         $tpl->setVar('content', $this->renderModules($tpl));
 
+        /**
+         * Load bread crumbs info
+         */
+        try {
+            $crumbs = (array) $this->sl->fetchCustomObject('breadcrumbs');
+            $tpl->setVar('crumbs', $crumbs);
+        }
+        catch (Exception $e) {
+            // And do nothing
+        }
+
         $response = new AetherTextResponse($tpl->returnPage());
         return $response;
     }
