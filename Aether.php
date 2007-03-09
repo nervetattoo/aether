@@ -50,7 +50,6 @@ class Aether {
      * @return Aether
      */
     public function __construct() {
-        $_GET['debug'] = 1;
         // Initiate all required helper objects
         $this->sl = new AetherServiceLocator;
         $parsedUrl = new AetherUrlParser;
@@ -90,6 +89,7 @@ class Aether {
      * @return string
      */
     public function render() {
+        $_GET['debug'] = 1;
         /* Because aether uses the 404 trick for routing all requests
          * to a single entry point (FrontController), we need to send
          * the http return code manualy to be sure its treated correctly
@@ -98,11 +98,9 @@ class Aether {
         $this->sl->getDatabase('prisguide')->debug->printLog();
         $response->draw();
         // Just for the fun of it, print how much queries we ran
-        /*
         echo "<pre>";
         print_r($this->sl->getDatabase('prisguide')->count);
         echo "</pre>";
-        */
     }
 }
 ?>
