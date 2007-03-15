@@ -59,6 +59,9 @@ class Aether {
         $this->sl->saveCustomObject('aetherConfig', $config);
         // Construct session
         $session = new SessionHandler;
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $session->set('wasGoingTo', $_SERVER['HTTP_REFERER']);
+        }
         $this->sl->saveCustomObject('session', $session);
         // If a user is associated to the session, create user object
         if (is_numeric($session->get('userId'))) {

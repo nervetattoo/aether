@@ -42,7 +42,7 @@ class AetherServiceLocator {
     
     /**
      * Get a database connection. If a connection to the desired database
-     * allready exists, return it. Else create a new and store it
+     * already exists, return it. Else create a new and store it
      *
      * @access public
      * @return Database
@@ -97,7 +97,7 @@ class AetherServiceLocator {
         }
         else {
             // Throw exception
-            throw new Exception('Object name is allready in use ['.$name.']');
+            throw new Exception('Object name is already in use ['.$name.']');
         }
     }
     
