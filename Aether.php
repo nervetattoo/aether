@@ -59,9 +59,6 @@ class Aether {
         $this->sl->saveCustomObject('aetherConfig', $config);
         // Construct session
         $session = new SessionHandler;
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            $session->set('wasGoingTo', $_SERVER['HTTP_REFERER']);
-        }
         $this->sl->saveCustomObject('session', $session);
         // If a user is associated to the session, create user object
         if (is_numeric($session->get('userId'))) {
@@ -93,6 +90,8 @@ class Aether {
      */
     public function render() {
         $response = $this->section->response();
+        $session = $this->sl->fetchCustomObject('session');
+        $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
         //$this->sl->getDatabase('prisguide')->debug->printLog();
         $response->draw();
         // Just for the fun of it, print how much queries we ran
