@@ -35,7 +35,7 @@ class AetherModuleFactory {
             return $mod;
         }
         else {
-            throw new Exception('Module does not exist');
+            throw new Exception("Module '$file' does not exist");
         }
     }
 }

@@ -78,7 +78,7 @@ class AetherConfig {
     public function __construct(AetherUrlParser $url, $configFilePath) {
         $doc = new DOMDocument;
         $doc->preserveWhiteSpace = false;
-        $doc->Load($configFilePath);
+        $doc->load($configFilePath);
         $xpath = new DOMXPath($doc);
 
 
@@ -199,27 +199,44 @@ class AetherConfig {
                 case 'section': 
                     $this->section = $child->nodeValue;
                     break;
+
                 case 'template':
                     $tpl = array();
                     $tpl['setId'] = $child->getAttribute('id');
                     $tpl['name'] = $child->nodeValue;
                     $this->template = $tpl;
                     break;
+
                 case 'module':
-                    $module = array('name' => $child->nodeValue);
+                    // Modules can contain options, which we need to take into account
+                    $text = '';
+                    $options = array();
+                    foreach ($child->childNodes as $option) {
+                        if ($option->nodeName == '#text')
+                            $text .= $option->nodeValue;
+                        if ($option->nodeName == 'option')
+                            $options[$option->getAttribute('name')] = $option->nodeValue;
+                    }
+                        
+                    // Todo: Make sure this works with the new suboptions
+                    $module = array(
+                        'name' => trim($text),
+                        'options' => $options
+                    );
                     if (!isset($cache)) {
                         if ($child->hasAttribute('cache'))
                             $module['cache'] = $child->getAttribute('cache');
                     }
                     $this->modules[] = $module;
                     break;
+
                 case 'option':
                     $this->options[$child->getAttribute('name')] =
                         $child->nodeValue;
                     break;
             }
         }
-    }
+   }
     
     /**
      * Store a variable fetched from the url

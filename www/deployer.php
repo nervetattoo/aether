@@ -19,6 +19,6 @@ require(AETHER_PATH . 'Aether.php');
  * @package
  */
 
-$aether = new Aether;
+$aether = new Aether();
 $aether->render();
 ?>
