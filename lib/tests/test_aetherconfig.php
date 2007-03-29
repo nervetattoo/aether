@@ -24,11 +24,10 @@ class testAetherConfig extends UnitTestCase {
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
         $this->assertEqual($conf->getSection(), 'Priceguide');
-        $this->assertEqual($conf->getSubSection(), 'Frontpage');
         $this->assertEqual($conf->getTemplate(), 
-            'pgfoo.raymond.raw.no_prisguide_default');
-        $this->assertEqual($conf->getModules(), 
-            array('Ad160','Categories','SearchControl'));
+            array('setId'=>98,'name' => 'prisguide_category'));
+        $this->assertIsA($conf->getModules(), 'array');
+        $this->assertEqual(count($conf->getModules()), 5);
     }
     
     public function testConfigReadDefault() {
@@ -37,7 +36,6 @@ class testAetherConfig extends UnitTestCase {
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
         $this->assertEqual($conf->getSection(), 'Priceguide');
-        $this->assertEqual($conf->getSubSection(), 'Frontpage');
     }
 
     public function testConfigReadDefaultBase() {
@@ -46,7 +44,6 @@ class testAetherConfig extends UnitTestCase {
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
         $this->assertEqual($conf->getSection(), 'Error');
-        $this->assertEqual($conf->getSubSection(), 'PageNotFound');
     }
 }
 

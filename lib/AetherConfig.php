@@ -125,29 +125,7 @@ class AetherConfig {
                  * Check if this actually matches the current part
                  * of the path we are examining ($current)
                  */
-                if ($node->hasAttribute('match') AND
-                    !empty($current) AND
-                    ($node->getAttribute('match') == $current OR
-                    substr($node->getAttribute('match'),0,1) == '$')) {
-                    /* If the match attribute actually contained a $
-                     * at the start, then this value should be saved
-                     * as a variable
-                     */
-                    $match = $node->getAttribute('match');
-                    if ($match[0] == '$') {
-                        $varName = substr($match, 1);
-                        $this->storeVariable($varName, $current);
-                    }
-                    /* If the isBase attribute is set to true,
-                     * then the match attribute should be used as
-                     * the base for all urls used for all subsequent
-                     * rule matches
-                     */
-                    if ($node->hasAttribute('isBase')) {
-                        // We cant have wildcards as url base
-                        if ($match[0] != '$')
-                            $this->urlBase = '/'.$match.'/';
-                    }
+                if ($this->matches($current, $node)) {
                     /* If this node is a match, and has child nodes
                      * then try to crawl the next level aswell, see
                      * if a more exact match is possible
@@ -177,6 +155,49 @@ class AetherConfig {
                 }
             }
         }
+    }
+    
+    /**
+     * Check if an url fragment matches the match or pattern
+     * attribute for an url rule.
+     * There are two ways to apply url rule matching:
+     * Match: A simple string checking if the url part exactly
+     * matches the match attribute. Very good for defining sections
+     * like "video" or "articles"
+     * Pattern: A full fledged PCRE match. Suited when you need to
+     * assure the matching part only consists of numbers, or that
+     * it doesnt contain special signs, or need to be a minimum length
+     * When using pattern matching you need to type a valid regex, 
+     * making it harder to use: pattern="/[0-9]+/"
+     *
+     * @access private
+     * @return bool
+     * @param string $check
+     * @param object $node
+     */
+    private function matches($check, $node) {
+        if (!empty($check)) {
+            if ($node->hasAttribute('match')) {
+                $matches = $node->getAttribute('match') == $check;
+            }
+            elseif ($node->hasAttribute('pattern')) {
+                $matches = preg_match(
+                    $node->getAttribute('pattern'), $check);
+            }
+            if ($matches) {
+                // Store value of url fragment, typical stores and id
+                if ($node->hasAttribute('store')) {
+                    $this->storeVariable(
+                        $node->getAttribute('store'), $check);
+                }
+                // Remember the url base if this is it
+                if ($node->hasAttribute('isBase')) {
+                    $this->urlBase = '/'.$check.'/';
+                }
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
