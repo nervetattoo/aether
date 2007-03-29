@@ -52,28 +52,45 @@ abstract class AetherSection {
     /**
      * Render content from modules
      * this is where caching is implemented
+     * TODO Possible refactoring, many leves of nesting
      *
      * @access protected
      * @return string
      */
     protected function renderModules() {
-        /* Load controller template
-         * This template basicaly knows where all modules should be placed
-         * and have internal wrapping html for this section
-         */
         $config = $this->sl->fetchCustomObject('aetherConfig');
         $cache = new Cache;
         $cachetime = $config->getCacheTime();
         $cacheName = $this->sl->fetchCustomObject('parsedUrl')->__toString();
         if (!is_numeric($cachetime) OR ($output = $cache->getObject($cacheName) == false)) {
+            /* Load controller template
+             * This template knows where all modules should be placed
+             * and have internal wrapping html for this section
+             */
             $tplInfo = $config->getTemplate();
             $tpl = $this->sl->getTemplate($tplInfo['setId']);
             $modules = $config->getModules();
             if (is_array($modules)) {
                 $tpl->selectTemplate($tplInfo['name']);
                 foreach ($modules as $module) {
-                    $mod = AetherModuleFactory::create($module['name'], $this->sl);
-                    $tpl->setVar($module['name'], $mod->render());
+                    // If module should be cached, handle it
+                    if (array_key_exists('cache', $module)) {
+                        $mCacheName = 
+                            $cacheName . "_" . $module['name'] ;
+                        // Try to read from cache, else generate and cache
+                        if (($mOut = $cache->getObject($mCacheName)) == false) {
+                            $mCacheTime = $module['cache'];
+                            $mod = AetherModuleFactory::create(
+                                    $module['name'], $this->sl);
+                            $mOut = $mod->render();
+                            $cache->saveObject($mCacheName, $mOut, $mCacheTime);
+                        }
+                    }
+                    else {
+                        $mod = AetherModuleFactory::create($module['name'], $this->sl);
+                        $mOut = $mod->render();
+                    }
+                    $tpl->setVar($module['name'], $mOut);
                 }
             }
             $output = $tpl->returnPage();
