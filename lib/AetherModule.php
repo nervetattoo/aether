@@ -27,14 +27,22 @@ abstract class AetherModule {
     protected $sl = null;
     
     /**
+     * Specific options for this module
+     * @var array
+     */
+    protected $options = array();
+    
+    /**
      * Constructor. Accept service locator
      *
      * @access public
      * @return AetherModule
      * @param AetherServiceLocator $sl
+     * @param array $options
      */
-    public function __construct(AetherServiceLocator $sl) {
+    public function __construct(AetherServiceLocator $sl, $options=array()) {
         $this->sl = $sl;
+        $this->options = $options;
     }
     
     /**

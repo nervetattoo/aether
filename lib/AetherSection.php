@@ -74,6 +74,8 @@ abstract class AetherSection {
                 $tpl->selectTemplate($tplInfo['name']);
                 foreach ($modules as $module) {
                     // If module should be cached, handle it
+                    if (!isset($module['options']))
+                        $module['options'] = array();
                     if (array_key_exists('cache', $module)) {
                         $mCacheName = 
                             $cacheName . "_" . $module['name'] ;
@@ -81,13 +83,16 @@ abstract class AetherSection {
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
                             $mod = AetherModuleFactory::create(
-                                    $module['name'], $this->sl);
+                                    $module['name'], $this->sl,
+                                    $module['options']);
                             $mOut = $mod->render();
                             $cache->saveObject($mCacheName, $mOut, $mCacheTime);
                         }
                     }
                     else {
-                        $mod = AetherModuleFactory::create($module['name'], $this->sl);
+                        $mod = AetherModuleFactory::create(
+                                $module['name'], $this->sl,
+                                $module['options']);
                         $mOut = $mod->render();
                     }
                     $tpl->setVar($module['name'], $mOut);

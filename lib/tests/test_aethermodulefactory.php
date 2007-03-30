@@ -18,7 +18,7 @@ class testAetherModuleFactory extends UnitTestCase {
 
     public function testCreate() {
         $mod = AetherModuleFactory::create('Helloworld', 
-            new AetherServiceLocator);
+            new AetherServiceLocator,array('foo'=>'bar'));
         $this->assertIsA($mod, 'AetherModule');
     }
 }

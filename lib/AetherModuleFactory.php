@@ -25,13 +25,14 @@ class AetherModuleFactory {
      * @return AetherModule
      * @param string $module
      * @param AetherServiceLocator $sl
+     * @param array $options
      */
-    public static function create($module, AetherServiceLocator $sl) {
+    public static function create($module, AetherServiceLocator $sl, $options=array()) {
         $module = 'AetherModule' . ucfirst($module);
         $file = AETHER_PATH . 'modules/' . $module . '.php';
         if (file_exists($file)) {
             include($file);
-            $mod = new $module($sl);
+            $mod = new $module($sl, $options);
             return $mod;
         }
         else {
