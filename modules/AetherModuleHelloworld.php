@@ -19,7 +19,7 @@ require_once(AETHER_PATH . 'lib/AetherModule.php');
  * @package aether.module
  */
 
-class AetherModuleAd200x300 extends AetherModule {
+class AetherModuleHelloworld extends AetherModule {
     
     /**
      * Render module
@@ -28,12 +28,7 @@ class AetherModuleAd200x300 extends AetherModule {
      * @return string
      */
     public function render() {
-        $config = $this->sl->fetchCustomObject('aetherConfig');
-        $tpl = $this->sl->getTemplate(106);
-        $tpl->selectTemplate('gamerAd200x300');
-
-        // Render output and return
-        return $tpl->returnPage();
+        return 'Hello world';
     }
 }
 ?>
