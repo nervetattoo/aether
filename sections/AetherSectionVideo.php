@@ -38,7 +38,9 @@ class AetherSectionVideo extends AetherSection {
         }
         catch (Exception $e) {} // Do nothing, it only means a specific video was not chosen
 
-        $this->sl->saveCustomObject('video', new Video($videoId));
+        $video = new Video($videoId);
+        $video->countView();
+        $this->sl->saveCustomObject('video', $video);
 
         return new AetherTextResponse($this->renderModules());
     }
