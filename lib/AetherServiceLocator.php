@@ -51,8 +51,10 @@ class AetherServiceLocator {
     public function getDatabase($name) {
         if (!array_key_exists($name, $this->databases) OR
             $this->databases[$name]->isValid() === false) {
+            /*
             if ($name == 'prisguide')
                 $name = 'prisguide_new';
+            */
             $this->databases[$name] = new Database($name);
         }
         return $this->databases[$name];

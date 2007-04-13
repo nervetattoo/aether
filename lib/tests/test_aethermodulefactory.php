@@ -19,7 +19,15 @@ class testAetherModuleFactory extends UnitTestCase {
     public function testCreate() {
         $mod = AetherModuleFactory::create('Helloworld', 
             new AetherServiceLocator,array('foo'=>'bar'));
-        $this->assertIsA($mod, 'AetherModule');
+        $this->assertEqual($mod->render(), 'Hello world');
+    }
+
+    public function testCreateModuleFromCustomFolder() {
+        $dir = dirname(__FILE__) . '/';
+        AetherModuleFactory::$path = $dir;
+        $mod = AetherModuleFactory::create('Hellolocal', 
+            new AetherServiceLocator,array('foo'=>'bar'));
+        $this->assertEqual($mod->render(), 'Hello local');
     }
 }
 

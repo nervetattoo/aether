@@ -19,6 +19,12 @@ vim:set expandtab:
 class AetherModuleFactory {
     
     /**
+     * The path to search for modules in
+     * @var 
+     */
+    static public $path = AETHER_PATH;
+    
+    /**
      * Createa instance of module
      *
      * @access public
@@ -29,7 +35,7 @@ class AetherModuleFactory {
      */
     public static function create($module, AetherServiceLocator $sl, $options=array()) {
         $module = 'AetherModule' . ucfirst($module);
-        $file = AETHER_PATH . 'modules/' . $module . '.php';
+        $file = self::$path . 'modules/' . $module . '.php';
         if (file_exists($file)) {
             include($file);
             $mod = new $module($sl, $options);
