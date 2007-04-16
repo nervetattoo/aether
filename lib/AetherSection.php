@@ -69,8 +69,8 @@ abstract class AetherSection {
              */
             $tplInfo = $config->getTemplate();
             $options = $config->getOptions();
-            $modulePath = (isset($options['codepath'])) 
-                ? $options['codepath'] : AETHER_PATH;
+            $modulePath = (isset($options['searchpath'])) 
+                ? $options['searchpath'] : AETHER_PATH;
             $tpl = $this->sl->getTemplate($tplInfo['setId']);
             $modules = $config->getModules();
             if (is_array($modules)) {
