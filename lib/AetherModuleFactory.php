@@ -35,15 +35,20 @@ class AetherModuleFactory {
      */
     public static function create($module, AetherServiceLocator $sl, $options=array()) {
         $module = 'AetherModule' . ucfirst($module);
-        $file = self::$path . 'modules/' . $module . '.php';
-        if (file_exists($file)) {
-            include($file);
-            $mod = new $module($sl, $options);
-            return $mod;
-        }
+        if (!strpos(self::$path, ';'))
+            $paths = array(self::$path);
         else {
-            throw new Exception("Module '$file' does not exist");
+            $paths = array_map('trim', explode(';', self::$path));
         }
+        foreach ($paths as $path) {
+            $file = $path . 'modules/' . $module . '.php';
+            if (file_exists($file)) {
+                include($file);
+                $mod = new $module($sl, $options);
+                return $mod;
+            }
+        }
+        throw new Exception("Module '$file' does not exist");
     }
 }
 ?>
