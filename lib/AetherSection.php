@@ -69,7 +69,7 @@ abstract class AetherSection {
              */
             $tplInfo = $config->getTemplate();
             $options = $config->getOptions();
-            $modulePath = (isset($options['searchpath'])) 
+            $searchPath = (isset($options['searchpath'])) 
                 ? $options['searchpath'] : AETHER_PATH;
             $tpl = $this->sl->getTemplate($tplInfo['setId']);
             $modules = $config->getModules();
@@ -79,13 +79,13 @@ abstract class AetherSection {
                     // If module should be cached, handle it
                     if (!isset($module['options']))
                         $module['options'] = array();
+                    AetherModuleFactory::$path = $searchPath;
                     if (array_key_exists('cache', $module)) {
                         $mCacheName = 
                             $cacheName . "_" . $module['name'] ;
                         // Try to read from cache, else generate and cache
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
-                            AetherModuleFactory::$path = $modulePath;
                             $mod = AetherModuleFactory::create(
                                     $module['name'], $this->sl,
                                     $module['options']);

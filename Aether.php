@@ -68,6 +68,10 @@ class Aether {
 
         // Initiate section/subsection
         try {
+            $options = $config->getOptions();
+            $searchPath = (isset($options['searchpath'])) 
+                ? $options['searchpath'] : AETHER_PATH;
+            AetherSectionFactory::$path = $searchPath;
             $this->section = AetherSectionFactory::create(
                 $config->getSection(), 
                 $this->sl
