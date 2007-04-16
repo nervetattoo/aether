@@ -21,6 +21,12 @@ vim:set expandtab:
  */
 
 class AetherSectionFactory {
+    
+    /**
+     * The path to search for sections in
+     * @var 
+     */
+    static public $path = AETHER_PATH;
      
     /**
      * Create an instance of a section/subsection combination
@@ -32,39 +38,15 @@ class AetherSectionFactory {
      */
     public static function create($section, AetherServiceLocator $sl) {
         $section = 'AetherSection' . ucfirst($section);
-        if (self::exists($section)) {
-            self::includeFile($section);
+        $file = self::$path . 'sections/' . $section . '.php';
+        if (file_exists($file)) {
+            include($file);
             $aetherSection = new $section($sl);
             return $aetherSection;
         }
         else {
             throw new Exception('Section and Subsection does not exists');
         }
-    }
-    
-    /**
-     * Check if a section exists (if the file exists)
-     *
-     * @access private
-     * @return bool
-     * @param string $section
-     * @param string $subsection
-     */
-    private static function exists($section) {
-        $section = AETHER_PATH . 'sections/' . $section . '.php';
-        return file_exists($section);
-    }
-    
-    /**
-     * Include the requested file
-     *
-     * @access private
-     * @return void
-     * @param string $name
-     */
-    private static function includeFile($name) {
-        $file = AETHER_PATH . 'sections/' . $name . '.php';
-        include_once($file);
     }
 }
 ?>

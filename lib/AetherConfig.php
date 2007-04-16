@@ -131,11 +131,17 @@ class AetherConfig {
                      * if a more exact match is possible
                      */
                     if ($node->hasChildNodes()) {
+                        /**
+                         * Fetch global options from this scope
+                         * Options can be set on any level and
+                         * overridden on deeper levels if set there
+                         */
+                        $this->subtractNodeConfiguration($node);
                         if ($this->findMatchingConfigNode($node->childNodes, $path)) {
                             return true;
                         }
                         else {
-                            $this->subtractNodeConfiguration($node);
+                            //$this->subtractNodeConfiguration($node);
                             $this->path = $path;
                             return true;
                         }
@@ -242,7 +248,7 @@ class AetherConfig {
                     // Todo: Make sure this works with the new suboptions
                     $module = array(
                         'name' => trim($text),
-                        'options' => $options
+                        'options' => trim($options)
                     );
                     if (!isset($cache)) {
                         if ($child->hasAttribute('cache'))
@@ -253,7 +259,7 @@ class AetherConfig {
 
                 case 'option':
                     $this->options[$child->getAttribute('name')] =
-                        $child->nodeValue;
+                        trim($child->nodeValue);
                     break;
             }
         }
