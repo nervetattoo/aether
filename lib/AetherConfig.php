@@ -248,7 +248,7 @@ class AetherConfig {
                     // Todo: Make sure this works with the new suboptions
                     $module = array(
                         'name' => trim($text),
-                        'options' => trim($options)
+                        'options' => $options
                     );
                     if (!isset($cache)) {
                         if ($child->hasAttribute('cache'))
