@@ -237,19 +237,21 @@ class AetherConfig {
                 case 'module':
                     // Modules can contain options, which we need to take into account
                     $text = '';
-                    $options = array();
+                    $opts = array();
                     foreach ($child->childNodes as $option) {
                         if ($option->nodeName == '#text')
                             $text .= $option->nodeValue;
                         if ($option->nodeName == 'option')
-                            $options[$option->getAttribute('name')] = $option->nodeValue;
+                            $opts[$option->getAttribute('name')] = $option->nodeValue;
                     }
                         
-                    // Todo: Make sure this works with the new suboptions
-                    $module = array(
-                        'name' => trim($text),
-                        'options' => $options
-                    );
+                    // Merge options from all scopes together
+                    $options = array_merge($this->options, $opts);
+                    $module = array();
+                    //$module = array(
+                    $module['name'] = trim($text);
+                    $module['options'] = $options;
+                    $module['_'] = null;
                     if (!isset($cache)) {
                         if ($child->hasAttribute('cache'))
                             $module['cache'] = $child->getAttribute('cache');

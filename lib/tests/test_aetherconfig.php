@@ -45,6 +45,18 @@ class testAetherConfig extends UnitTestCase {
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
         $this->assertEqual($conf->getSection(), 'Error');
     }
+
+    public function testConfigAssembleOptionsCorrectly() {
+        $url = 'http://pgfoo.raymond.raw.no/unittest/foo';
+        $aetherUrl = new AetherUrlParser;
+        $aetherUrl->parse($url);
+        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
+        $modules = $conf->getModules();
+        $module = $modules[0];
+        // Check options against the first module
+        $this->assertEqual($module['options']['foo'], 'foobar');
+        $this->assertEqual($module['options']['bar'], 'foo');
+    }
 }
 
 if (testRunMode(__FILE__) == SINGLE) {
