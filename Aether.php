@@ -15,6 +15,10 @@ require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
 require_once(AETHER_PATH . 'lib/AetherConfig.php');
 require_once(AETHER_PATH . 'lib/AetherSectionFactory.php');
+require_once(AETHER_PATH . 'lib/AetherSection.php');
+require_once(AETHER_PATH . 'lib/AetherTextResponse.php');
+require_once(AETHER_PATH . 'lib/AetherModule.php');
+require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
 
 /**
  * 
