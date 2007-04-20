@@ -256,6 +256,12 @@ class AetherConfig {
                         if ($child->hasAttribute('cache'))
                             $module['cache'] = $child->getAttribute('cache');
                     }
+                    /**
+                     * In order to support multiple instances of the
+                     * same module, support naming each module
+                     */
+                    if ($child->hasAttribute('name'))
+                        $module['surname'] = trim($child->getAttribute('name'));
                     $this->modules[] = $module;
                     break;
 

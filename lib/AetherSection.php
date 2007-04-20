@@ -75,14 +75,18 @@ abstract class AetherSection {
             $modules = $config->getModules();
             if (is_array($modules)) {
                 $tpl->selectTemplate($tplInfo['name']);
+                $modulesOut = array();
                 foreach ($modules as $module) {
-                    // If module should be cached, handle it
                     if (!isset($module['options']))
                         $module['options'] = array();
+                    // Support custom searchpaths
                     AetherModuleFactory::$path = $searchPath;
+                    // If module should be cached, handle it
                     if (array_key_exists('cache', $module)) {
                         $mCacheName = 
                             $cacheName . "_" . $module['name'] ;
+                        if ($module['surname'])
+                            $mCacheName .= '_' . $module['surname'];
                         // Try to read from cache, else generate and cache
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
@@ -99,7 +103,28 @@ abstract class AetherSection {
                                 $module['options']);
                         $mOut = $mod->render();
                     }
-                    $tpl->setVar($module['name'], $mOut);
+                    /**
+                     * Support multiple modules of same type by 
+                     * specificaly naming them with a surname when
+                     * duplicates are encountered
+                     */
+                    $modName = $module['name'];
+                    if (!isset($modulesOut[$modName])) {
+                        $modulesOut[$modName] = array();
+                    }
+                    if ($module['surname']) {
+                        $modulesOut[$modName][$module['surname']] = $mOut;
+                    }
+                    else {
+                        $modulesOut[$modName][] = $mOut;
+                    }
+                }
+                // Export rendered modules to template
+                foreach ($modulesOut as $name => $mod) {
+                    if (count($mod) > 1)
+                        $tpl->setVar($name, $mod);
+                    else
+                        $tpl->setVar($name, current($mod));
                 }
             }
             $output = $tpl->returnPage();

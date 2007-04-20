@@ -57,6 +57,16 @@ class testAetherConfig extends UnitTestCase {
         $this->assertEqual($module['options']['foo'], 'foobar');
         $this->assertEqual($module['options']['bar'], 'foo');
     }
+
+    public function testMultipleModulesOfSameType() {
+        $url = 'http://pgfoo.raymond.raw.no/tema/Playstation 3';
+        $aetherUrl = new AetherUrlParser;
+        $aetherUrl->parse($url);
+        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
+        $modules = $conf->getModules();
+        // Check options against the first module
+        $this->assertTrue(is_array($modules));
+    }
 }
 
 if (testRunMode(__FILE__) == SINGLE) {
