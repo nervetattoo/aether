@@ -10,6 +10,7 @@ vim:set expandtab:
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'Database.lib.php');
 require_once(LIB_PATH . 'Template.lib.php');
+require_once(LIB_PATH . 'SessionHandler.lib.php');
 /**
  * 
  * Aether service locator, an object to locate services needed
@@ -74,6 +75,19 @@ class AetherServiceLocator {
             $this->templates[$setId] = new Template($setId);
         }
         return $this->templates[$setId];
+    }
+    
+    /**
+     * Get SessionHandler object. Using this implies starting
+     * up a session or continuing the existing one
+     *
+     * @access public
+     * @return SessionHandler
+     */
+    public function getSession() {
+        if (!($this->session instanceof SessionHandler))
+            $this->session = new SessionHandler;
+        return $this->session;
     }
     
     /**
