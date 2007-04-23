@@ -24,7 +24,7 @@ require_once(LIB_PATH . 'user/UserAuthenticator.lib.php');
  * @package aether.module
  */
 
-class AetherModulePriceguideLogin extends AetherModule {
+class AetherModuleLogin extends AetherModule {
     
     /**
      * Render module
@@ -50,6 +50,7 @@ class AetherModulePriceguideLogin extends AetherModule {
                     $session = $this->sl->fetchCustomObject('session');
                     $session->set('loggedIn', 1);
                     $session->set('userId', $userId);
+                    $session->set('username', $user->username);
 
                     /* This is hackish from a to z. First of all
                      * we shouldnt just replace /login as other names
@@ -75,8 +76,9 @@ class AetherModulePriceguideLogin extends AetherModule {
                 $error = 'username';
             }
         }
-        $tpl = $this->sl->getTemplate(99);
+        $tpl = $this->sl->getTemplate(108);
         $tpl->selectTemplate('login');
+        $tpl->setVar('session', $_SESSION);
         if (isset($error)) {
             $tpl->setVar('failedAt', $error);
             $tpl->setVar('username', $username);
