@@ -51,7 +51,8 @@ class AetherSectionFactory {
                 return $aetherSection;
             }
         }
-        throw new Exception('Section and Subsection does not exists');
+        $pathString = implode(';', $paths);
+        throw new Exception("Failed to locate section in searchpath: $pathString");
     }
 }
 ?>
