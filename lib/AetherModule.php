@@ -54,5 +54,18 @@ abstract class AetherModule {
      * @return string
      */
     abstract public function render();
+    
+    /**
+     * Allow each module to decide if caching should be totaly
+     * forbidden in a given context. Useful for modules
+     * that deliver highly dynamic data based on each request
+     * but where it is generic in certain cases
+     *
+     * @access public
+     * @return bool
+     */
+    public function denyCache() {
+        return false;
+    }
 }
 ?>

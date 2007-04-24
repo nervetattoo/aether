@@ -62,27 +62,50 @@ abstract class AetherSection {
         $cache = new Cache;
         $cachetime = $config->getCacheTime();
         $cacheName = $this->sl->fetchCustomObject('parsedUrl')->__toString();
+        /**
+         * If one object requests no cache of this request
+         * then we need to take that into consideration.
+         * If the application frontend and adminpanel lives
+         * at the same URL, its crucial that the admin part is
+         * not cached and later on displayed to an end user
+         */
+        $options = $config->getOptions();
+        // Support custom searchpaths
+        $searchPath = (isset($options['searchpath'])) 
+            ? $options['searchpath'] : AETHER_PATH;
+        AetherModuleFactory::$path = $searchPath;
+        $mods = $config->getModules();
+        $modules = array(); // Final array over modules
+        foreach ($mods as $module) {
+            if (!isset($module['options']))
+                $module['options'] = array();
+            // Get module object
+            $object = AetherModuleFactory::create($module['name'], 
+                    $this->sl, $module['options']);
+            // If the module, in this setting, blocks caching, accept
+            if ($object->denyCache()) {
+                $module['noCache'] = true;
+                $cachetime = false;
+            }
+            $module['obj'] = $object;
+            $modules[] = $module;
+        }
+        /**
+         * Render page
+         */
         if (!is_numeric($cachetime) OR ($output = $cache->getObject($cacheName) == false)) {
             /* Load controller template
              * This template knows where all modules should be placed
              * and have internal wrapping html for this section
              */
             $tplInfo = $config->getTemplate();
-            $options = $config->getOptions();
-            $searchPath = (isset($options['searchpath'])) 
-                ? $options['searchpath'] : AETHER_PATH;
             $tpl = $this->sl->getTemplate($tplInfo['setId']);
-            $modules = $config->getModules();
             if (is_array($modules)) {
                 $tpl->selectTemplate($tplInfo['name']);
                 $modulesOut = array();
                 foreach ($modules as $module) {
-                    if (!isset($module['options']))
-                        $module['options'] = array();
-                    // Support custom searchpaths
-                    AetherModuleFactory::$path = $searchPath;
                     // If module should be cached, handle it
-                    if (array_key_exists('cache', $module)) {
+                    if (array_key_exists('cache', $module) AND !isset($module['noCache'])) {
                         $mCacheName = 
                             $cacheName . "_" . $module['name'] ;
                         if ($module['surname'])
@@ -90,17 +113,13 @@ abstract class AetherSection {
                         // Try to read from cache, else generate and cache
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
-                            $mod = AetherModuleFactory::create(
-                                    $module['name'], $this->sl,
-                                    $module['options']);
+                            $mod = $module['obj'];
                             $mOut = $mod->render();
                             $cache->saveObject($mCacheName, $mOut, $mCacheTime);
                         }
                     }
                     else {
-                        $mod = AetherModuleFactory::create(
-                                $module['name'], $this->sl,
-                                $module['options']);
+                        $mod = $module['obj'];
                         $mOut = $mod->render();
                     }
                     /**
