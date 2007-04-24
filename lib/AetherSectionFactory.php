@@ -52,7 +52,7 @@ class AetherSectionFactory {
             }
         }
         $pathString = implode(';', $paths);
-        throw new Exception("Failed to locate section in searchpath: $pathString");
+        throw new Exception("Failed to locate section [$section] in searchpath: $pathString");
     }
 }
 ?>
