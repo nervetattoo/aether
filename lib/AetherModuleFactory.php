@@ -43,7 +43,7 @@ class AetherModuleFactory {
         foreach ($paths as $path) {
             $file = $path . 'modules/' . $module . '.php';
             if (file_exists($file)) {
-                include($file);
+                include_once($file);
                 $mod = new $module($sl, $options);
                 return $mod;
             }
