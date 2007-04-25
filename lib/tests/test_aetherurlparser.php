@@ -17,14 +17,14 @@ class testAetherUrlParser extends UnitTestCase {
     }
     
     public function testParser() {
-        $url = 'http://aether.raymond.raw.no/foobar/hello/';
+        $url = 'http://aether.raymond.raw.no/foobar/hello?foo';
         $parser = new AetherUrlParser;
         $parser->parse($url);
         $this->assertEqual($parser->get('scheme'), 'http');
         $user = $parser->get('user');
         $this->assertTrue(empty($user));
 
-        $url2 = 'ftp://foo:bar@hw.no/world';
+        $url2 = 'ftp://foo:bar@hw.no/world?bar';
         $parser = new AetherUrlParser;
         $parser->parse($url2);
         $this->assertEqual($parser->get('scheme'), 'ftp');
@@ -32,7 +32,7 @@ class testAetherUrlParser extends UnitTestCase {
         $this->assertEqual($parser->get('pass'), 'bar');
         $this->assertEqual($parser->get('path'), '/world');
 
-        $this->assertEqual($parser->__toString(), $url2);
+        $this->assertEqual($parser->__toString(), preg_replace('/\?.*/', '', $url2));
     }
 
     public function testParseServerArray() {
@@ -44,7 +44,7 @@ class testAetherUrlParser extends UnitTestCase {
             'GATEWAY_INTERFACE' => 'CGI/1.1',
             'SERVER_PROTOCOL' => 'HTTP/1.1',
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/',
+            'REQUEST_URI' => '/foobar/hello?foo',
             'SCRIPT_NAME' => '/deployer.php',
             'PHP_SELF' => '/deployer.php',
             'REQUEST_TIME' => 1170332549
@@ -52,7 +52,7 @@ class testAetherUrlParser extends UnitTestCase {
         $parser = new AetherUrlParser;
         $parser->parseServerArray($server);
         $this->assertEqual($parser->get('scheme'), 'http');
-        $this->assertEqual($parser->get('path'), '/');
+        $this->assertEqual($parser->get('path'), '/foobar/hello');
 
         $server['PHP_AUTH_USER'] = 'foo';
         $server['PHP_AUTH_PW'] = 'bar';
@@ -61,7 +61,7 @@ class testAetherUrlParser extends UnitTestCase {
         $this->assertEqual($parser->get('pass'), 'bar');
 
         // Get as string again
-        $this->assertEqual($parser->__toString(), 'http://foo:bar@aether.raymond.raw.no/');
+        $this->assertEqual($parser->__toString(), 'http://foo:bar@aether.raymond.raw.no/foobar/hello');
     }
 }
 

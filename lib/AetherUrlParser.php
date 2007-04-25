@@ -53,6 +53,7 @@ class AetherUrlParser {
      * @var string
      */
     private $path;
+    private $query;
     
     /**
      * Parse an url
@@ -88,7 +89,9 @@ class AetherUrlParser {
         // Host
         $this->host = $server['HTTP_HOST'];
         $this->port = $server['SERVER_PORT'];
-        $this->path = urldecode($server['REQUEST_URI']);
+        $path = urldecode($server['REQUEST_URI']);
+        $qsa = strpos($path, '?');
+        $this->path = substr($path, 0, $qsa);
         if (!empty($server['PHP_AUTH_USER']))
             $this->user = $server['PHP_AUTH_USER'];
         if (!empty($server['PHP_AUTH_PW']))
