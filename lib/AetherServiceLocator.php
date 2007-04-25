@@ -109,7 +109,7 @@ class AetherServiceLocator extends ServiceLocator {
      * @return array
      * @param string $name
      */
-    public function vector($name) {
+    public function getVector($name) {
         if (!isset($this->vectors[$name]))
             $this->vectors[$name] = new Vector;
         return $this->vectors[$name];
