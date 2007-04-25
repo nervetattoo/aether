@@ -91,6 +91,8 @@ class AetherUrlParser {
         $this->port = $server['SERVER_PORT'];
         $path = urldecode($server['REQUEST_URI']);
         $qsa = strpos($path, '?');
+        if (!$qsa)
+            $qsa = strlen($path);
         $this->path = substr($path, 0, $qsa);
         if (!empty($server['PHP_AUTH_USER']))
             $this->user = $server['PHP_AUTH_USER'];
