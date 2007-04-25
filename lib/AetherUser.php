@@ -31,7 +31,7 @@ class AetherUser {
 
     /**
      * Holds the ServiceLocator
-     * @var AetherServiceLocator
+     * @var ServiceLocator
      */
     private $sl;
 
@@ -45,10 +45,10 @@ class AetherUser {
      * Constructor. Takes a ServiceLocator object.
      *
      * @access public
-     * @param AetherServiceLocator $sl
+     * @param ServiceLocator $sl
      * @param int $userId
      */
-    public function __construct(AetherServiceLocator $sl, $userId) {
+    public function __construct(ServiceLocator $sl, $userId) {
         $this->sl = $sl;
         $this->user = new User($userId);
         $this->config  = new AetherUserConfig($sl, $userId);
@@ -65,20 +65,6 @@ class AetherUser {
         return $this->user->$key;
     }
 
-    /**
-     * Checks if a user is logged in
-     *
-     * @access public
-     * @return boolean
-     */
-    public function isLoggedIn() {
-    if (isset($this->user))
-        return true;
-    else if (isset($_SESSION['loggedInUserId']))
-        return true;
-    else
-        return false;
-    }
     /**
      * Checks privileges
      *
@@ -109,56 +95,5 @@ class AetherUser {
     public function getConfig() {
         return $this->config;
     }
-    
-    /**
-     * Lets the user act as another.
-     *
-     * @access public
-     * @return boolean Was the user allowed to su and does the user exist?
-     */
-     /*
-    public function su($user = false) {
-        if ($this->canSu()) {
-            if (!$this->originalUserId) {
-                $this->originalUserId = $this->user->userId;
-                $_SESSION['originalUserId'] = $this->user->userId;
-                $_SESSION['originalUsername'] = $this->user->username;
-            }
-            if (is_numeric($user))
-                $newUser = new User($user);
-            else if ($user == false)
-                $newUser = new User($this->originalUserId);
-            else {
-                $db = $this->sl->getDatabase("neo");
-                $id = $db->queryValue("SELECT brukerid FROM Bruker
-                    WHERE brukernavn = '$user'");
-                $newUser = new User($id);
-            }
-            if (is_numeric($newUser->userId)) {
-                $this->user = $newUser;
-                $this->config =
-                    new NeoDefaultConfig($this->sl, 'user', $newUser->userId);
-                $_SESSION['loggedInUserId'] = $newUser->userId;
-                return true;
-            }
-        }
-        return false;
-    }
-    */
-
-    /**
-     * Checks if the user is allowed to even try to su()
-     *
-     * @access public
-     * @return boolean Is suing allowed?
-     */
-    /*
-    public function canSu() {
-        if (!isset($this->user))
-            return false;
-        return ($this->user->isNeoRoot || $this->originalUserId);
-    }
-    */
-
 }
 ?>

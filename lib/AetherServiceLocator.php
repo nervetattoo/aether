@@ -22,10 +22,30 @@ require_once(LIB_PATH . 'ServiceLocator.php');
 class AetherServiceLocator extends ServiceLocator {
     
     /**
+     * Holds user objects
+     * @var array
+     */
+    private $users = array();
+    
+    /**
      * Hold custom objects
      * @var array
      */
     private $custom = array();
+    
+    /**
+     * Fetch a user object. If non existing, create it
+     *
+     * @access public
+     * @return AetherUser
+     * @param int $userId
+     */
+    public function getUser($userId) {
+        if (array_key_exists($userId, $this->users))
+            return $this->users[$userId];
+        else
+            return $this->templates[$userId] = new AetherUser($this, $userId);
+    }
 
     /**
      * Save a custom object to the service locators storage
