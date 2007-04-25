@@ -9,6 +9,8 @@ vim:set expandtab:
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'ServiceLocator.php');
+require_once(LIB_PATH . 'Vector.php');
+
 /**
  * 
  * Aether service locator, an object to locate services needed
@@ -32,6 +34,12 @@ class AetherServiceLocator extends ServiceLocator {
      * @var array
      */
     private $custom = array();
+    
+    /**
+     * Hold list of vectors
+     * @var array
+     */
+    public $vectors = array();
     
     /**
      * Fetch a user object. If non existing, create it
@@ -59,6 +67,9 @@ class AetherServiceLocator extends ServiceLocator {
      * @param object $object The actual object
      */
     public function saveCustomObject($name, $object) {
+        return $this->set($name, $object);
+    }
+    public function set($name, $object) {
         if (!$this->hasCustomObject($name)) {
             // Do not allow saving non objects
             if (is_object($object)) {
@@ -82,10 +93,26 @@ class AetherServiceLocator extends ServiceLocator {
      * @param string $name
      */
     public function fetchCustomObject($name) {
+        return $this->get($name);
+    }
+    public function get($name) {
         if ($this->hasCustomObject($name))
             return $this->custom[$name];
         else
             throw new Exception('Custom object ['.$name.'] does not exist');
+    }
+    
+    /**
+     * Give access to vector x
+     *
+     * @access public
+     * @return array
+     * @param string $name
+     */
+    public function vector($name) {
+        if (!isset($this->vectors[$name]))
+            $this->vectors[$name] = new Vector;
+        return $this->vectors[$name];
     }
     
     /**

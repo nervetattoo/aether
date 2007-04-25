@@ -37,6 +37,14 @@ class testAetherServiceLocator extends UnitTestCase {
         $tester = $asl->fetchCustomObject('tester');
         $this->assertIdentical($tester, $obj);
     }
+
+    public function testArray() {
+        $asl = new AetherServiceLocator;
+        $arr = $asl->vector('foo');
+        $arr['foo'] = 'bar';
+        $arr2 = $asl->vector('foo');
+        $this->assertEqual($arr['foo'], $arr2['foo']);
+    }
 }
 
 if (testRunMode(__FILE__) == SINGLE) {
