@@ -24,6 +24,12 @@ abstract class AetherService {
     protected $options = array();
     
     /**
+     * What type of output should this service return
+     * @var string
+     */
+    protected $type = 'xml';
+    
+    /**
      * Constructor. Accept service locator
      *
      * @access public
@@ -43,5 +49,48 @@ abstract class AetherService {
      * @return string
      */
     abstract public function render();
+    
+    /**
+     * Render to xml
+     *
+     * @access public
+     * @return string
+     * @param array $data
+     */
+    public function __toXml($data, $document=false) {
+        if (!$document) {
+            $document = new DOMDocument('1.0', 'UTF-8');
+        }
+        foreach ($data as $key => $val) {
+            if (is_numeric($key))
+                $key = 'item';
+            $tmp = $document->createElement($key);
+            if (is_array($val)) {
+                $tmp->appendChild($this->__toXml($val, $document));
+            }
+            else {
+                $tmp->appendChild($document->createTextNode($val));
+            }
+            $document->appendChild($tmp);
+        }
+        return $document;
+    }
+    
+    /**
+     * Pack data to format as requested for this service
+     *
+     * @access public
+     * @return mixed
+     * @param mixed $data
+     */
+    public function pack($data) {
+        switch ($this->type) {
+            case 'xml':
+            default:
+                $document = $this->__toXml($data);
+                return $document->saveXML();
+                break;
+        }
+    }
 }
 ?>

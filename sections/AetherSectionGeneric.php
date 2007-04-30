@@ -41,7 +41,10 @@ class AetherSectionGeneric extends AetherSection {
             $mods = $config->getModules();
             $service = AetherServiceFactory::create(
                 $config->getService(), $this->sl, $options);
-            $out = $service->render();
+            $data = $service->render();
+            if (!is_array($data))
+                $data = array('root' => $data);
+            $out = $service->pack($data);
             $response = new AetherTextResponse($out);
             return $response;
         }
