@@ -1,5 +1,5 @@
 <config>
-    <site name="pgfoo.raymond.raw.no">
+    <site name="raw.no">
         <urlRules>
             <rule match="prisguide" isBase="true">
                 <!-- Global options for prisguide -->

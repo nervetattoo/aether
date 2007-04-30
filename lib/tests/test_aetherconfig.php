@@ -19,7 +19,7 @@ class testAetherConfig extends UnitTestCase {
     }
 
     public function testConfigReadExact() {
-        $url = 'http://pgfoo.raymond.raw.no/prisguide/data';
+        $url = 'http://raw.no/prisguide/data';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
@@ -31,7 +31,7 @@ class testAetherConfig extends UnitTestCase {
     }
     
     public function testConfigReadDefault() {
-        $url = 'http://pgfoo.raymond.raw.no/prisguide';
+        $url = 'http://raw.no/prisguide';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
@@ -39,7 +39,7 @@ class testAetherConfig extends UnitTestCase {
     }
 
     public function testConfigReadDefaultBase() {
-        $url = 'http://pgfoo.raymond.raw.no/fluff';
+        $url = 'http://raw.no/fluff';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
@@ -47,7 +47,7 @@ class testAetherConfig extends UnitTestCase {
     }
 
     public function testConfigAssembleOptionsCorrectly() {
-        $url = 'http://pgfoo.raymond.raw.no/unittest/foo';
+        $url = 'http://raw.no/unittest/foo';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
@@ -59,13 +59,17 @@ class testAetherConfig extends UnitTestCase {
     }
 
     public function testMultipleModulesOfSameType() {
-        $url = 'http://pgfoo.raymond.raw.no/tema/Playstation 3';
+        $url = 'http://raw.no/tema/Playstation 3';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
         $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
         $modules = $conf->getModules();
         // Check options against the first module
         $this->assertTrue(is_array($modules));
+    }
+
+    public function testWebservice() {
+        $url = 'http://raw.no/tema/saveLayout';
     }
 }
 
