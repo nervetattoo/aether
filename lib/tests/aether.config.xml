@@ -1,0 +1,58 @@
+<config>
+    <site name="pgfoo.raymond.raw.no">
+        <urlRules>
+            <rule match="prisguide" isBase="true">
+                <!-- Global options for prisguide -->
+                <option name="searchpath">
+                    /home/raymond/prisguide/lib/aether/
+                </option>
+                <!-- CATEGORY / PRODUCT -->
+                <rule pattern="/[a-z]+/" store="catName">
+                    <!-- Product page -->
+                    <rule match="$productId">
+                        <section>PriceguideProduct</section>
+                        <template id="98">prisguide_product_default</template>
+                        <module>PriceguideProductTop</module>
+                    </rule>
+                    <!-- General category listing -->
+                    <rule default="true">
+                        <option name="javascripts">
+                            http://static.prisguide.no/js/category/simpleSearchSimplify.js
+                        </option>
+                        <section>Priceguide</section>
+                        <template id="98">prisguide_category</template>
+                        <module>PriceguideCategory</module>
+                        <module>PriceguideCategorySimpleFilter</module>
+                        <!-- Search renderer gets used when it is a product category -->
+                        <module>PriceguideSearchRenderer</module>
+                        <module>PriceguideUserReviews</module>
+                        <module>PriceguideOurReviews</module>
+                    </rule>
+                </rule>
+                <rule default="true">
+                    <section>Priceguide</section>
+                    <template id="98">pgfoo.raymond.raw.no_prisguide_default</template>
+                    <module>PriceguideCategory</module>
+                    <module>PriceguideUserReviews</module>
+                    <module>PriceguideOurReviews</module>
+                    <!-- <option name="RequirePermission">editor</option> -->
+                </rule>
+            </rule>
+            <rule match="unittest">
+                <option name="foo">bar</option>
+                <option name="bar">foo</option>
+                <rule match="foo">
+                    <module>
+                        GamerHeader
+                        <option name="foo">foobar</option>
+                    </module>
+                </rule>
+            </rule>
+            <!-- A default rule will be the fallback rule if no match is found -->
+            <rule default="true">
+                <section>Generic</section>
+                <module>PageNotFound</module>
+            </rule>
+        </urlRules>
+    </site>
+</config>

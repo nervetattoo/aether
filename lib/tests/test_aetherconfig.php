@@ -22,7 +22,7 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://pgfoo.raymond.raw.no/prisguide/data';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
+        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
         $this->assertEqual($conf->getSection(), 'Priceguide');
         $this->assertEqual($conf->getTemplate(), 
             array('setId'=>98,'name' => 'prisguide_category'));
@@ -34,7 +34,7 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://pgfoo.raymond.raw.no/prisguide';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
+        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
         $this->assertEqual($conf->getSection(), 'Priceguide');
     }
 
@@ -42,15 +42,15 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://pgfoo.raymond.raw.no/fluff';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
-        $this->assertEqual($conf->getSection(), 'Error');
+        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
+        $this->assertEqual($conf->getSection(), 'Generic');
     }
 
     public function testConfigAssembleOptionsCorrectly() {
         $url = 'http://pgfoo.raymond.raw.no/unittest/foo';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
+        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
         $modules = $conf->getModules();
         $module = $modules[0];
         // Check options against the first module
@@ -62,7 +62,7 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://pgfoo.raymond.raw.no/tema/Playstation 3';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'aether.config.xml');
+        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
         $modules = $conf->getModules();
         // Check options against the first module
         $this->assertTrue(is_array($modules));
