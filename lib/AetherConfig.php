@@ -278,7 +278,7 @@ class AetherConfig {
                         $module['surname'] = trim($child->getAttribute('name'));
                     // SUpport services aswell
                     if ($child->nodeName == 'service') {
-                        $this->services[] = $module;
+                        $this->services[] = $module['name'];
                         $this->mode = 'service';
                     }
                     else {
@@ -345,6 +345,16 @@ class AetherConfig {
      */
     public function getModules() {
         return $this->modules;
+    }
+    
+    /**
+     * Return what service to use
+     *
+     * @access public
+     * @return string
+     */
+    public function getService() {
+        return $this->services[0];
     }
     
     /**

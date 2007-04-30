@@ -27,17 +27,17 @@ class AetherServiceFactory {
      * @param array $options
      */
     public static function create($service, AetherServiceLocator $sl, $options=array()) {
-        $module = 'AetherService' . ucfirst($module);
+        $service = 'AetherService' . ucfirst($service);
         if (!strpos(self::$path, ';'))
             $paths = array(self::$path);
         else {
             $paths = array_map('trim', explode(';', self::$path));
         }
         foreach ($paths as $path) {
-            $file = $path . 'services/' . $module . '.php';
+            $file = $path . 'services/' . $service . '.php';
             if (file_exists($file)) {
                 include_once($file);
-                $mod = new $module($sl, $options);
+                $mod = new $service($sl, $options);
                 return $mod;
             }
         }

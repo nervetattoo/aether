@@ -30,7 +30,24 @@ class AetherSectionGeneric extends AetherSection {
      * @return AetherResponse
      */
     public function response() {
-        return new AetherTextResponse($this->renderModules());
+        $config = $this->sl->get('aetherConfig');
+        if ($config->mode() == 'service') {
+            // Only support one service at the time
+            $options = $config->getOptions();
+            // Support custom searchpaths
+            $searchPath = (isset($options['searchpath'])) 
+                ? $options['searchpath'] : AETHER_PATH;
+            AetherServiceFactory::$path = $searchPath;
+            $mods = $config->getModules();
+            $service = AetherServiceFactory::create(
+                $config->getService(), $this->sl, $options);
+            $out = $service->render();
+            $response = new AetherTextResponse($out);
+            return $response;
+        }
+        else {
+            return new AetherTextResponse($this->renderModules());
+        }
     }
 }
 ?>
