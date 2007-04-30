@@ -58,16 +58,16 @@ class Aether {
         $this->sl = new AetherServiceLocator;
         $parsedUrl = new AetherUrlParser;
         $parsedUrl->parseServerArray($_SERVER);
-        $this->sl->saveCustomObject('parsedUrl', $parsedUrl);
+        $this->sl->set('parsedUrl', $parsedUrl);
         $config = new AetherConfig($parsedUrl, AETHER_PATH . 'aether.config.xml');
-        $this->sl->saveCustomObject('aetherConfig', $config);
+        $this->sl->set('aetherConfig', $config);
         // Construct session
         $session = new SessionHandler;
-        $this->sl->saveCustomObject('session', $session);
+        $this->sl->set('session', $session);
         // If a user is associated to the session, create user object
         if (is_numeric($session->get('userId'))) {
             $user = new AetherUser($this->sl, $session->get('userId'));
-            $this->sl->saveCustomObject('user', $user);
+            $this->sl->set('user', $user);
         }
 
         // Initiate section/subsection
@@ -80,9 +80,10 @@ class Aether {
                 $config->getSection(), 
                 $this->sl
             );
+            $this->sl->set('section', $this->section);
         }
         catch (Exception $e) {
-            // Failed to load section/subsection, what to do?
+            // Failed to load section, what to do?
             exit('Failed horribly: ' . $e->getMessage());
         }
     }
@@ -98,7 +99,7 @@ class Aether {
      */
     public function render() {
         $response = $this->section->response();
-        $session = $this->sl->fetchCustomObject('session');
+        $session = $this->sl->get('session');
         $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
         //$this->sl->getDatabase('prisguide')->debug->printLog();
         $response->draw();
