@@ -2,14 +2,14 @@
 
 /**
  * 
- * Factory for loading modules
+ * Create an aether service
  * 
- * Created: 2007-02-06
+ * Created: 2007-04-30
  * @author Raymond Julin
- * @package aether.lib
+ * @package aether
  */
 
-class AetherModuleFactory {
+class AetherServiceFactory {
     
     /**
      * The path to search for modules in
@@ -18,30 +18,30 @@ class AetherModuleFactory {
     static public $path = AETHER_PATH;
     
     /**
-     * Createa instance of module
+     * Create instance of service
      *
      * @access public
-     * @return AetherModule
-     * @param string $module
+     * @return AetherService
+     * @param string $service
      * @param AetherServiceLocator $sl
      * @param array $options
      */
-    public static function create($module, AetherServiceLocator $sl, $options=array()) {
-        $module = 'AetherModule' . ucfirst($module);
+    public static function create($service, AetherServiceLocator $sl, $options=array()) {
+        $module = 'AetherService' . ucfirst($module);
         if (!strpos(self::$path, ';'))
             $paths = array(self::$path);
         else {
             $paths = array_map('trim', explode(';', self::$path));
         }
         foreach ($paths as $path) {
-            $file = $path . 'modules/' . $module . '.php';
+            $file = $path . 'services/' . $module . '.php';
             if (file_exists($file)) {
                 include_once($file);
                 $mod = new $module($sl, $options);
                 return $mod;
             }
         }
-        throw new Exception("Module '$file' does not exist");
+        throw new Exception("Service '$file' does not exist");
     }
 }
 ?>
