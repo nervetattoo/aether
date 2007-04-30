@@ -47,6 +47,10 @@
                         <option name="foo">foobar</option>
                     </module>
                 </rule>
+                <rule match="saveLayout">
+                    <section>Generic</section>
+                    <service>HelloWorld</service>
+                </rule>
             </rule>
             <!-- A default rule will be the fallback rule if no match is found -->
             <rule default="true">

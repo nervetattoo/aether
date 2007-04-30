@@ -38,10 +38,23 @@ class AetherConfig {
     private $template;
     
     /**
+     * What mode to operate under
+     * Can either be 'module' og 'service'
+     * @var string
+     */
+    private $mode = 'module';
+    
+    /**
      * What modules should be included
      * @var array
      */
     private $modules = array();
+    
+    /**
+     * What services should be called
+     * @var array
+     */
+    private $services = array();
     
     /**
      * Option settings for this section (highly optional)
@@ -235,6 +248,7 @@ class AetherConfig {
                     break;
 
                 case 'module':
+                case 'service':
                     // Modules can contain options, which we need to take into account
                     $text = '';
                     $opts = array();
@@ -262,7 +276,15 @@ class AetherConfig {
                      */
                     if ($child->hasAttribute('name'))
                         $module['surname'] = trim($child->getAttribute('name'));
-                    $this->modules[] = $module;
+                    // SUpport services aswell
+                    if ($child->nodeName == 'service') {
+                        $this->services[] = $module;
+                        $this->mode = 'service';
+                    }
+                    else {
+                        $this->modules[] = $module;
+                        $this->mode = 'module';
+                    }
                     break;
 
                 case 'option':
@@ -369,6 +391,16 @@ class AetherConfig {
      */
     public function getPathLeftOvers() {
         return $this->path;
+    }
+    
+    /**
+     * Get what mode to operate in
+     *
+     * @access public
+     * @return string
+     */
+    public function mode() {
+        return $this->mode;
     }
 }
 ?>
