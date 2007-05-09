@@ -57,23 +57,26 @@ abstract class AetherService {
      * @return string
      * @param array $data
      */
-    public function __toXml($data, $document=false) {
+    public function __toXml($data, $element = false, $document=false) {
         if (!$document) {
             $document = new DOMDocument('1.0', 'UTF-8');
+            $element = $document;
         }
         foreach ($data as $key => $val) {
             if (is_numeric($key))
                 $key = 'item';
             $tmp = $document->createElement($key);
+
             if (is_array($val)) {
-                $tmp->appendChild($this->__toXml($val, $document));
+                $this->__toXml($val, $tmp, $document);
             }
             else {
                 $tmp->appendChild($document->createTextNode($val));
             }
-            $document->appendChild($tmp);
+
+            $element->appendChild($tmp);
         }
-        return $document;
+        return $element;
     }
     
     /**
