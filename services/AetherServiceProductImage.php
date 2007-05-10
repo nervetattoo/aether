@@ -18,6 +18,7 @@ class AetherServiceProductImage extends AetherService {
         $productId = $_GET['productId'];
         $productBaseUrl = $_GET['productBaseUrl'];
         $imageBaseUrl = $_GET['imageBaseUrl'];
+        $conatinerId = $_GET['containerId'];
 
         $p = new Product($productId);
         $image = $p->images[0];
@@ -42,7 +43,8 @@ class AetherServiceProductImage extends AetherService {
             "return" => array(
                 "imageUrl" => $imageUrl, 
                 "productName" => $productName, 
-                "productUrl" => $productUrl
+                "productUrl" => $productUrl,
+                "containerId" => $conatinerId
             )
         );
     }
