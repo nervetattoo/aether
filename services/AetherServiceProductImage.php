@@ -28,7 +28,7 @@ class AetherServiceProductImage extends AetherService {
         $imageUrl = "#";
 
         if ($image) {
-            $productUrl = $productBaseUrl . "?productId=" . $productId;
+            $productUrl = $productBaseUrl . "product.php?productId=" . $productId;
 
             foreach ($image->imageVersions as $v) {
                 if ($v->imageFormatId == 3) {
