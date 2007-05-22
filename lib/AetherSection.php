@@ -168,6 +168,43 @@ abstract class AetherSection {
      * @return AetherResponse
      */
     abstract public function response();
+    
+    /**
+     * Render service
+     *
+     * @access public
+     * @return AetherResponse
+     * @param string $moduleName
+     * @param string $serviceName Name of service
+     */
+    public function service($moduleName, $serviceName) {
+        // Locate module containing service
+        $config = $this->sl->get('aetherConfig');
+        $options = $config->getOptions();
+        // Support custom searchpaths
+        $searchPath = (isset($options['searchpath'])) 
+            ? $options['searchpath'] : AETHER_PATH;
+        AetherModuleFactory::$path = $searchPath;
+
+        // Create module
+        $mod = null;
+        foreach ($config->getModules() as $module) {
+            if ($module['name'] != $moduleName)
+                continue;
+            if (!isset($module['options']))
+                $module['options'] = array();
+            // Get module object
+            $mod = AetherModuleFactory::create($module['name'], 
+                    $this->sl, $module['options']);
+            break;
+        }
+        // Run service
+        if ($mod instanceof AetherModule) {
+            // Run service
+            return $mod->service($serviceName);
+        }
+        throw Exception("Failed to locate module [$moduleName]");
+    }
 }
 
 ?>

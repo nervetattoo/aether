@@ -17,6 +17,7 @@ require_once(AETHER_PATH . 'lib/AetherConfig.php');
 require_once(AETHER_PATH . 'lib/AetherSectionFactory.php');
 require_once(AETHER_PATH . 'lib/AetherSection.php');
 require_once(AETHER_PATH . 'lib/AetherTextResponse.php');
+require_once(AETHER_PATH . 'lib/AetherXMLResponse.php');
 require_once(AETHER_PATH . 'lib/AetherModule.php');
 require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
 require_once(AETHER_PATH . 'lib/AetherService.php');
@@ -72,7 +73,7 @@ class Aether {
             $this->sl->set('user', $user);
         }
 
-        // Initiate section/subsection
+        // Initiate section
         try {
             $options = $config->getOptions();
             $searchPath = (isset($options['searchpath'])) 
@@ -100,17 +101,20 @@ class Aether {
      * @return string
      */
     public function render() {
-        $response = $this->section->response();
-        $session = $this->sl->get('session');
-        $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
-        //$this->sl->getDatabase('prisguide')->debug->printLog();
-        $response->draw();
-        // Just for the fun of it, print how much queries we ran
-        /*
-        echo "<pre>";
-        print_r($this->sl->getDatabase('prisguide')->count);
-        echo "</pre>";
-        */
+        /**
+         * If a service is requested simply render the service
+         */
+        if (isset($_GET['service']) AND isset($_GET['module'])) {
+            $response = $this->section->service(
+                $_GET['module'], $_GET['service']);
+            $response->draw();
+        }
+        else {
+            $response = $this->section->response();
+            $session = $this->sl->get('session');
+            $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
+            $response->draw();
+        }
     }
 }
 ?>

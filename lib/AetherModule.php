@@ -67,5 +67,13 @@ abstract class AetherModule {
     public function denyCache() {
         return false;
     }
+    
+    /**
+     * Render a given service
+     *
+     * @access public
+     * @return AetherResponse
+     */
+    abstract public function service($name);
 }
 ?>
