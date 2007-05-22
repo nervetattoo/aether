@@ -44,6 +44,7 @@ class AetherXMLResponse extends AetherResponse {
      * @return void
      */
     public function draw() {
+        header("Content-Type: text/xml");
         echo $this->__toXml($this->struct)->saveXML();
     }
     
