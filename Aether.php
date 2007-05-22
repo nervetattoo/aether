@@ -20,8 +20,6 @@ require_once(AETHER_PATH . 'lib/AetherTextResponse.php');
 require_once(AETHER_PATH . 'lib/AetherXMLResponse.php');
 require_once(AETHER_PATH . 'lib/AetherModule.php');
 require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
-require_once(AETHER_PATH . 'lib/AetherService.php');
-require_once(AETHER_PATH . 'lib/AetherServiceFactory.php');
 
 /**
  * 

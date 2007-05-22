@@ -67,14 +67,6 @@ class testAetherConfig extends UnitTestCase {
         // Check options against the first module
         $this->assertTrue(is_array($modules));
     }
-
-    public function testWebservice() {
-        $url = 'http://raw.no/unittest/saveLayout';
-        $aetherUrl = new AetherUrlParser;
-        $aetherUrl->parse($url);
-        $conf = new AetherConfig($aetherUrl, AETHER_PATH . 'lib/tests/aether.config.xml');
-        $this->assertEqual($conf->mode(), 'service');
-    }
 }
 
 if (testRunMode(__FILE__) == SINGLE) {
