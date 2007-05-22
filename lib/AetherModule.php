@@ -74,6 +74,7 @@ abstract class AetherModule {
      * @access public
      * @return AetherResponse
      */
-    abstract public function service($name);
+    public function service($name) {
+    }
 }
 ?>
