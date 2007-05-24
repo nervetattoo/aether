@@ -70,19 +70,21 @@ class AetherXMLResponse extends AetherResponse {
             $document = new DOMDocument('1.0', 'UTF-8');
             $element = $document;
         }
-        foreach ($data as $key => $val) {
-            if (is_numeric($key))
-                $key = 'item';
-            $tmp = $document->createElement($key);
+        if (is_array($data)) {
+            foreach ($data as $key => $val) {
+                if (is_numeric($key))
+                    $key = 'item';
+                $tmp = $document->createElement($key);
 
-            if (is_array($val)) {
-                $this->__toXml($val, $tmp, $document);
-            }
-            else {
-                $tmp->appendChild($document->createTextNode($val));
-            }
+                if (is_array($val)) {
+                    $this->__toXml($val, $tmp, $document);
+                }
+                else {
+                    $tmp->appendChild($document->createTextNode($val));
+                }
 
-            $element->appendChild($tmp);
+                $element->appendChild($tmp);
+            }
         }
         return $element;
     }
