@@ -90,6 +90,7 @@ abstract class AetherSection {
             $module['obj'] = $object;
             $modules[] = $module;
         }
+
         /**
          * Render page
          */
@@ -122,6 +123,14 @@ abstract class AetherSection {
                         $mod = $module['obj'];
                         $mOut = $mod->render();
                     }
+                    /**
+                     * If this module provides some service
+                     * make sure we actually push it
+                     */
+                    if (array_key_exists('provides', $module)) {
+                        $this->provide($module['provides'], $mOut);
+                    }
+
                     /**
                      * Support multiple modules of same type by 
                      * specificaly naming them with a surname when
@@ -204,6 +213,19 @@ abstract class AetherSection {
             return $mod->service($serviceName);
         }
         throw Exception("Failed to locate module [$moduleName]");
+    }
+    
+    /**
+     * Provide the output of a module
+     *
+     * @access public
+     * @return void
+     * @param string $name
+     * @param string $content
+     */
+    public function provide($name, $content) {
+        $vector = $this->sl->getVector('aetherProviders');
+        $vector[$name] = $content;
     }
 }
 

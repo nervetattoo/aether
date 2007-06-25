@@ -257,6 +257,15 @@ class AetherConfig {
                             $module['cache'] = $child->getAttribute('cache');
                     }
                     /**
+                     * A module could provide itself under a fake name
+                     * For example AmobilHeader could be provided as
+                     * "header", this object would then be usable
+                     * elsewhere in the application
+                     */
+                    if ($child->hasAttribute('provides'))
+                        $module['provides'] = trim($child->getAttribute('provides'));
+
+                    /**
                      * In order to support multiple instances of the
                      * same module, support naming each module
                      */
@@ -322,7 +331,17 @@ class AetherConfig {
      * @return array
      */
     public function getModules() {
-        return $this->modules;
+        // Reorder modules so providers are first
+        $regular = array();
+        $providers = array();
+        foreach ($this->modules as $module) {
+            if (array_key_exists('provides', $module))
+                $providers[] = $module;
+            else
+                $regular[] = $module;
+            
+        }
+        return array_merge($providers, $regular);
     }
     
     /**

@@ -54,6 +54,27 @@ class AetherServiceLocator extends ServiceLocator {
         else
             return $this->templates[$userId] = new AetherUser($this, $userId);
     }
+    
+    /**
+     * Returns a reference to a template object
+     * This is defined in the base class, but aether needs
+     * to always make sure a special array $aether is
+     * put into the mix
+     *
+     * @access public
+     * @return template A template object
+     * @param integer $id Template set id
+     */
+    public function getTemplate($id) {
+        if (!array_key_exists($id, $this->templates))
+            $this->templates[$id] = new Template($id);
+        $tpl = $this->templates[$id];
+        // Add global stuff
+        $providers = $this->getVector('aetherProviders');
+        $tpl->setVar('aether', array(
+            'providers' => $providers));
+        return $tpl;
+    }
 
     /**
      * Save a custom object to the service locators storage
