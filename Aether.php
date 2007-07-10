@@ -25,7 +25,7 @@ require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
  * 
  * Main class for Aether.
  * Fires up the Aether system and delegates down to
- * section/subsection that is requested based on the
+ * section that is requested based on the
  * rules.
  * 
  * Created: 2007-01-31
@@ -53,14 +53,22 @@ class Aether {
      *
      * @access public
      * @return Aether
+     * @param string $configPath
      */
-    public function __construct() {
+    public function __construct($configPath=false) {
         // Initiate all required helper objects
         $this->sl = new AetherServiceLocator;
         $parsedUrl = new AetherUrlParser;
         $parsedUrl->parseServerArray($_SERVER);
         $this->sl->set('parsedUrl', $parsedUrl);
-        $config = new AetherConfig($parsedUrl, AETHER_PATH . 'aether.config.xml');
+        if ($configPath === false) {
+            $thisDir = getcwd();
+            if (file_exists($thisDir . '/aether.config.xml'))
+                $configPath = $thisDir . '/aether.config.xml';
+            else
+                $configPath = AETHER_PATH . 'aether.config.xml';
+        }
+        $config = new AetherConfig($parsedUrl, $configPath);
         $this->sl->set('aetherConfig', $config);
         // Construct session
         $session = new SessionHandler;
