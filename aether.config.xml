@@ -1,11 +1,14 @@
 <config>
     <!--<site name="pgfoo.raymond.raw.no">-->
     <site name="*">
+        <option name="version">1.0</option>
         <urlRules>
             <rule default="true">
                 <template id="98">splash_controller</template>
                 <section>Generic</section>
-                <module>AetherSplashScreen</module>
+                <module>
+                    AetherSplashScreen
+                </module>
             </rule>
         </urlRules>
     </site>
