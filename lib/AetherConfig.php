@@ -89,6 +89,10 @@ class AetherConfig {
         $xquery = "//config/site[@name='" . $url->get('host') . "']";
         $xquery .= '/urlRules/*';
         $nodelist = $xpath->query($xquery);
+        if ($nodelist->length == 0) {
+            $xquery = "//config/site[@name='*']/urlRules/*";
+            $nodelist = $xpath->query($xquery);
+        }
         $path = $url->get('path');
         if (substr($path, -1) == '/')
             $path = substr($path, 0, -1);
