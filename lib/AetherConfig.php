@@ -86,13 +86,20 @@ class AetherConfig {
          * Find starting point of url rules, from this point on we
          * use recursion to decide on the correct rule to use
          */
-        $xquery = "//config/site[@name='" . $url->get('host') . "']";
+        $sitename = $url->get('host');
+        $xquery = "//config/site[@name='$sitename']";
         $xquery .= '/urlRules/*';
         $nodelist = $xpath->query($xquery);
         if ($nodelist->length == 0) {
-            $xquery = "//config/site[@name='*']/urlRules/*";
+            $sitename = '*';
+            $xquery = "//config/site[@name='$sitename']/urlRules/*";
             $nodelist = $xpath->query($xquery);
         }
+        // Subtract global options
+        $xquery = "//config/site[@name='$sitename']/option";
+        $optionList = $xpath->query($xquery);
+        if ($optionList->length > 0)
+            $this->subtractNodeConfiguration($optionList);
         $path = $url->get('path');
         if (substr($path, -1) == '/')
             $path = substr($path, 0, -1);
@@ -218,12 +225,18 @@ class AetherConfig {
      * @return void
      * @param DOMNode $node
      */
-     private function subtractNodeConfiguration(DOMNode $node) {
-        if ($node->hasAttribute('cache')) {
-            $cache = $node->getAttribute('cache');
-            $this->cache = $cache;
+     private function subtractNodeConfiguration($node) {
+        if ($node instanceof DOMNode) {
+            if ($node->hasAttribute('cache')) {
+                $cache = $node->getAttribute('cache');
+                $this->cache = $cache;
+            }
+            $nodelist = $node->childNodes;
         }
-        foreach ($node->childNodes as $child) {
+        else {
+            $nodelist = $node;
+        }
+        foreach ($nodelist as $child) {
             if ($child instanceof DOMText)
                 continue;
             switch ($child->nodeName) {
