@@ -23,10 +23,13 @@ abstract class AetherModuleHeader extends AetherModule {
      * @access protected
      * @return void
      * @param Template $tpl
+     * @param boolean $options 
      */
-    protected function applyCommonVariables($tpl) {
+    protected function applyCommonVariables($tpl, $options = false) {
         $config = $this->sl->get('aetherConfig');
-        $options = $config->getOptions();
+
+        if (!$options) 
+            $options = $config->getOptions();
 
         $tpl->setVar('urlbase', $config->getBase()); 
         // Stylesheets. Read from config and code
