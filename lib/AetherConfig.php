@@ -169,9 +169,17 @@ class AetherConfig {
                      */
                     $this->subtractNodeConfiguration($node);
                     $this->path = $path;
+                    return false;
                 }
             }
         }
+        /**
+         * If we reach this point it means NO rules truly matched
+         * not even a default rule. Damn bastard developer who doesnt
+         * provide a default rule in your app!!!
+         */
+        throw new AetherNoUrlRuleMatchException(
+            "No rules matches this url. App.config error");
     }
     
     /**

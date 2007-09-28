@@ -21,6 +21,7 @@ class AetherModuleAetherSplashScreen extends AetherModule {
     public function render() {
         $tpl = $this->sl->getTemplate(98);
         $tpl->selectTemplate('splash');
+        $tpl->setVar('options', $this->options);
         return $tpl->returnPage();
     }
 }

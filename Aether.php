@@ -10,6 +10,7 @@ vim:set expandtab:
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'Cache.lib.php');
 require_once(LIB_PATH . 'SessionHandler.lib.php');
+require_once(AETHER_PATH . 'lib/AetherExceptions.php');
 require_once(AETHER_PATH . 'lib/AetherUser.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
@@ -68,7 +69,17 @@ class Aether {
             else
                 $configPath = AETHER_PATH . 'aether.config.xml';
         }
-        $config = new AetherConfig($parsedUrl, $configPath);
+        try {
+            $config = new AetherConfig($parsedUrl, $configPath);
+        }
+        catch (AetherNoUrlRuleMatchException $e) {
+            /**
+             * This means parsing of configuration file failed
+             * by the simple fact that no rules matches
+             * the url. This is due to a bad developer
+             */
+            exit("No rule matched url in config file. Bad developer");
+        }
         $this->sl->set('aetherConfig', $config);
         // Construct session
         $session = new SessionHandler;
