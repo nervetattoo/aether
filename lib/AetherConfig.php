@@ -141,7 +141,7 @@ class AetherConfig {
                      * then try to crawl the next level aswell, see
                      * if a more exact match is possible
                      */
-                    if ($node->hasChildNodes()) {
+                    if ($this->hasChildRules($node)) {
                         /**
                          * Fetch global options from this scope
                          * Options can be set on any level and
@@ -152,7 +152,6 @@ class AetherConfig {
                             return true;
                         }
                         else {
-                            //$this->subtractNodeConfiguration($node);
                             $this->path = $path;
                             return true;
                         }
@@ -178,10 +177,31 @@ class AetherConfig {
          * not even a default rule. Damn bastard developer who doesnt
          * provide a default rule in your app!!!
          */
-         /*
         throw new AetherNoUrlRuleMatchException(
             "No rules matches this url. App.config error");
-        */
+    }
+    
+    /**
+     * Test if a <rule> node have other <rule>s below it
+     * cause if it does we need to search further down
+     * for a match, if not we can simply stop.
+     *
+     * @access private
+     * @return bool
+     * @param object $node
+     */
+    private function hasChildRules($node) {
+        if ($node->hasChildNodes()) {
+            foreach ($node->childNodes as $child) {
+                if ($child->nodeName == 'rule') {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else {
+            return false;
+        }
     }
     
     /**

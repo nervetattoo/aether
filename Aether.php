@@ -78,7 +78,7 @@ class Aether {
              * by the simple fact that no rules matches
              * the url. This is due to a bad developer
              */
-            exit("No rule matched url in config file. Bad developer");
+            exit("No rule matched url in config file.");
         }
         $this->sl->set('aetherConfig', $config);
         // Construct session
