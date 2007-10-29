@@ -70,6 +70,9 @@ abstract class AetherSection {
          * not cached and later on displayed to an end user
          */
         $options = $config->getOptions();
+        // Support i18n
+        $locale = (isset($options['locale'])) ? $options['locale'] : "nb_NO";
+        setlocale(LC_ALL, $locale);
         // Support custom searchpaths
         $searchPath = (isset($options['searchpath'])) 
             ? $options['searchpath'] : AETHER_PATH;
