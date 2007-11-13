@@ -1,4 +1,0 @@
-<config>
-    <module>AetherSplashScreen</module>
-    <module provides="extra">Helloworld</module>
-</config>

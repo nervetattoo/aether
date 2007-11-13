@@ -82,6 +82,10 @@ class AetherConfig {
      * @param string $configFilePath
      */
     public function __construct(AetherUrlParser $url, $configFilePath) {
+        if (!file_exists($configFilePath)) {
+            throw new AetherMissingFileException(
+                "Config file [$configFilePath] is missing.");
+        }
         $doc = new DOMDocument;
         $doc->preserveWhiteSpace = false;
         $doc->load($configFilePath);
@@ -139,14 +143,6 @@ class AetherConfig {
         foreach ($list as $node) {
             // This have to be a DOMElement
             if ($node instanceof DOMElement) {
-                /**
-                 * Handle import statements the moment they appear as
-                 * its possible there are rules to be imported that will
-                 * match at this rule
-                 */
-                if ($node->nodeName == "import") {
-                    $this->import($node, $node->parentNode);
-                }
                 /* If the attribute match is not set theres no point
                  * in searching through this path
                  * Check if this actually matches the current part
@@ -341,48 +337,7 @@ class AetherConfig {
                     $this->options[$child->getAttribute('name')] =
                         trim($child->nodeValue);
                     break;
-                
-                case 'import':
-                    $this->import($child, $node);
-                    break;
             }
-        }
-    }
-    
-    /**
-     * Import a file into the current position
-     *
-     * @access private
-     * @return DOMNode
-     * @param DOMNode $node
-     * @param DOMNode $parent Where to import into
-     */
-    private function import($node, $parent) {
-        $toImport = $node->nodeValue;
-        if (strpos($toImport, "/") !== 0)
-            $toImport = AETHER_PATH . $toImport;
-        // Check if file exists
-        if (file_exists($toImport)) {
-            $import = new DOMDocument;
-            $import->preserveWhiteSpace = false;
-            $import->load($toImport);
-            $import = $import->documentElement;
-            if ($import->childNodes->length > 1) {
-                // Import several
-                foreach ($import->childNodes as $child) {
-                    $parent->appendChild(
-                        $this->doc->importNode($child,true));
-                }
-            }
-            elseif ($import->childNodes->length == 1)  {
-                $parent->appendChild($this->doc->importNode($node,true));
-            }
-        }
-        else {
-            // Trying to import missing file, exception!
-            throw new AetherMissingFileException(
-                "Cant import config file [$toImport] " .
-                "because it doesnt exist. Quitting");
         }
     }
     
