@@ -145,8 +145,7 @@ class AetherConfig {
                  * match at this rule
                  */
                 if ($node->nodeName == "import") {
-                    $import = $this->createImport($node);
-                    $node->parentNode->appendChild($import);
+                    $this->import($node, $node->parentNode);
                 }
                 /* If the attribute match is not set theres no point
                  * in searching through this path
@@ -344,8 +343,7 @@ class AetherConfig {
                     break;
                 
                 case 'import':
-                    $import = $this->createImport($child);
-                    $node->appendChild($import);
+                    $this->import($child, $node);
                     break;
             }
         }
@@ -357,8 +355,9 @@ class AetherConfig {
      * @access private
      * @return DOMNode
      * @param DOMNode $node
+     * @param DOMNode $parent Where to import into
      */
-    private function createImport($node) {
+    private function import($node, $parent) {
         $toImport = $node->nodeValue;
         if (strpos($toImport, "/") !== 0)
             $toImport = AETHER_PATH . $toImport;
@@ -367,9 +366,17 @@ class AetherConfig {
             $import = new DOMDocument;
             $import->preserveWhiteSpace = false;
             $import->load($toImport);
-            $imported = $this->doc->importNode(
-                $import->documentElement, true);
-            return $imported;
+            $import = $import->documentElement;
+            if ($import->childNodes->length > 1) {
+                // Import several
+                foreach ($import->childNodes as $child) {
+                    $parent->appendChild(
+                        $this->doc->importNode($child,true));
+                }
+            }
+            elseif ($import->childNodes->length == 1)  {
+                $parent->appendChild($this->doc->importNode($node,true));
+            }
         }
         else {
             // Trying to import missing file, exception!
