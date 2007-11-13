@@ -12,4 +12,7 @@
 
 class AetherNoUrlRuleMatchException extends Exception {
 }
+
+class AetherMissingFileException extends Exception {
+}
 ?>

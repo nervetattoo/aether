@@ -20,6 +20,12 @@ vim:set expandtab:
 class AetherConfig {
     
     /**
+     * XMLDoc
+     * @var DOMDocument
+     */
+    private $doc;
+    
+    /**
      * What section was found
      * @var string
      */
@@ -79,6 +85,7 @@ class AetherConfig {
         $doc = new DOMDocument;
         $doc->preserveWhiteSpace = false;
         $doc->load($configFilePath);
+        $this->doc = $doc;
         $xpath = new DOMXPath($doc);
 
 
@@ -90,6 +97,7 @@ class AetherConfig {
         $xquery = "//config/site[@name='$sitename']";
         $xquery .= '/urlRules/*';
         $nodelist = $xpath->query($xquery);
+        // Fallback to the "any" site qualifier
         if ($nodelist->length == 0) {
             $sitename = '*';
             $xquery = "//config/site[@name='$sitename']/urlRules/*";
@@ -131,6 +139,15 @@ class AetherConfig {
         foreach ($list as $node) {
             // This have to be a DOMElement
             if ($node instanceof DOMElement) {
+                /**
+                 * Handle import statements the moment they appear as
+                 * its possible there are rules to be imported that will
+                 * match at this rule
+                 */
+                if ($node->nodeName == "import") {
+                    $import = $this->createImport($node);
+                    $node->parentNode->appendChild($import);
+                }
                 /* If the attribute match is not set theres no point
                  * in searching through this path
                  * Check if this actually matches the current part
@@ -325,9 +342,42 @@ class AetherConfig {
                     $this->options[$child->getAttribute('name')] =
                         trim($child->nodeValue);
                     break;
+                
+                case 'import':
+                    $import = $this->createImport($child);
+                    $node->appendChild($import);
+                    break;
             }
         }
-   }
+    }
+    
+    /**
+     * Import a file into the current position
+     *
+     * @access private
+     * @return DOMNode
+     * @param DOMNode $node
+     */
+    private function createImport($node) {
+        $toImport = $node->nodeValue;
+        if (strpos($toImport, "/") !== 0)
+            $toImport = AETHER_PATH . $toImport;
+        // Check if file exists
+        if (file_exists($toImport)) {
+            $import = new DOMDocument;
+            $import->preserveWhiteSpace = false;
+            $import->load($toImport);
+            $imported = $this->doc->importNode(
+                $import->documentElement, true);
+            return $imported;
+        }
+        else {
+            // Trying to import missing file, exception!
+            throw new AetherMissingFileException(
+                "Cant import config file [$toImport] " .
+                "because it doesnt exist. Quitting");
+        }
+    }
     
     /**
      * Store a variable fetched from the url
