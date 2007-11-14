@@ -334,8 +334,41 @@ class AetherConfig {
                     break;
 
                 case 'option':
-                    $this->options[$child->getAttribute('name')] =
-                        trim($child->nodeValue);
+                    $name = $child->getAttribute('name');
+                    // Support additive options
+                    $mode = "overwrite";
+                    if ($child->hasAttribute("mode")) {
+                        if (array_key_exists($name, $this->options)) {
+                            $mode = $child->getAttribute("mode");
+                            $prev = array_map(
+                                "trim", explode(";", $this->options[$name]));
+                            $opts = array_map(
+                                "trim", explode(";", $child->nodeValue));
+                        }
+                    }
+                    switch ($mode) {
+                        case 'add':
+                            /**
+                             * If mode is "add", add to ; separated list
+                             * and ensure no duplicates are created?
+                             */
+                            // Add everything that doesnt create dupes
+                            foreach ($opts as $opt) {
+                                if (!in_array($opt, $prev))
+                                    $prev[] = $opt;
+                            }
+                            $value = implode(";", $prev);
+                            break;
+                        case 'del':
+                             // If mode is "del", delete from ; list
+                            $value = implode(";", array_diff($prev, $opts));
+                            break;
+                        default:
+                            // Simple string/int value
+                            $value = trim($child->nodeValue);
+                            break;
+                    }
+                    $this->options[$name] = $value;
                     break;
             }
         }

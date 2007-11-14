@@ -1,8 +1,11 @@
 <config>
     <site name="*">
         <option name="version">1.0</option>
+        <option name="additive">foo;bar</option>
         <urlRules>
             <rule default="true">
+                <option name="additive" mode="add">ugh;agh</option>
+                <option name="additive" mode="del">agh</option>
                 <template id="98">splash_controller</template>
                 <section>Generic</section>
                 <module provides="title">Helloworld</module>
