@@ -251,7 +251,7 @@ class AetherConfig {
                 }
                 // Remember the url base if this is it
                 if ($node->hasAttribute('isBase')) {
-                    $this->urlBase = '/'.$check.'/';
+                    $this->urlBase .= $check.'/';
                 }
                 return true;
             }
