@@ -53,11 +53,14 @@ abstract class AetherSection {
      * Render content from modules
      * this is where caching is implemented
      * TODO Possible refactoring, many leves of nesting
+     * TODO Reconsider the solution with passing in extra tpl data
+     * to renderModules() as an argument. Smells bad
      *
      * @access protected
      * @return string
+     * @param array $tplVars
      */
-    protected function renderModules() {
+    protected function renderModules($tplVars = array()) {
         $config = $this->sl->get('aetherConfig');
         $cache = new Cache;
         $cachetime = $config->getCacheTime();
@@ -106,6 +109,8 @@ abstract class AetherSection {
             $tpl = $this->sl->getTemplate($tplInfo['setId']);
             if (is_array($modules)) {
                 $tpl->selectTemplate($tplInfo['name']);
+                // Make tplVars sent in available
+                $tpl->setVar("extras", $tplVars);
                 $modulesOut = array();
                 foreach ($modules as $module) {
                     // If module should be cached, handle it
