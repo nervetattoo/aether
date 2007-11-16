@@ -61,6 +61,14 @@ abstract class AetherSection {
      * @param array $tplVars
      */
     protected function renderModules($tplVars = array()) {
+        try {
+            // Timer
+            $timer = $this->sl->get('timer');
+            $timer->timerStart('module_render');
+        }
+        catch (Exception $e) {
+            // No timing, we're in prod
+        }
         $config = $this->sl->get('aetherConfig');
         $cache = new Cache;
         $cachetime = $config->getCacheTime();
@@ -96,6 +104,13 @@ abstract class AetherSection {
             $module['obj'] = $object;
             $modules[] = $module;
         }
+        /**
+         * If we have a timer, end this timing
+         * we're in test mode and thus showing timing
+         * information
+         */
+        if (is_object($timer))
+            $timer->timerTick('module_render', 'read_config');
 
         /**
          * Render page
@@ -154,6 +169,21 @@ abstract class AetherSection {
                     else {
                         $modulesOut[$modName][] = $mOut;
                     }
+                    /**
+                     * If we have a timer, end this timing
+                     * we're in test mode and thus showing timing
+                     * information
+                     */
+                    if (is_object($timer)) {
+                        if ($module['provides'])
+                            $timerMsg = $module['provides'];
+                        else {
+                            $timerMsg = $modName;
+                            $timerMsg .= isset($module['surname']) ? 
+                                $module['surname'] : "";
+                        }
+                        $timer->timerTick('module_render', $timerMsg);
+                    }
                 }
                 // Export rendered modules to template
                 foreach ($modulesOut as $name => $mod) {
@@ -170,6 +200,14 @@ abstract class AetherSection {
         else {
             $output = $cache->getObject($cacheName);
         }
+        /**
+         * If we have a timer, end this timing
+         * we're in test mode and thus showing timing
+         * information
+         */
+        if (is_object($timer))
+            $timer->timerEnd('module_render');
+        // Return output
         return $output;
     }
 

@@ -10,6 +10,7 @@ vim:set expandtab:
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'Cache.lib.php');
 require_once(LIB_PATH . 'SessionHandler.lib.php');
+require_once(LIB_PATH . 'time/TimeFactory.lib.php');
 require_once(AETHER_PATH . 'lib/AetherExceptions.php');
 require_once(AETHER_PATH . 'lib/AetherUser.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
@@ -58,8 +59,8 @@ class Aether {
      * @param string $configPath
      */
     public function __construct($configPath=false) {
-        // Initiate all required helper objects
         $this->sl = new AetherServiceLocator;
+        // Initiate all required helper objects
         $parsedUrl = new AetherUrlParser;
         $parsedUrl->parseServerArray($_SERVER);
         $this->sl->set('parsedUrl', $parsedUrl);
@@ -99,6 +100,17 @@ class Aether {
              */
             exit("No rule matched url in config file.");
         }
+        /**
+         * If we are in TEST mode we should prepare a timer object
+         * and time everything that happens
+         */
+        $options = $config->getOptions();
+        if ($options['AetherRunningMode'] == 'test') {
+            // Prepare timer
+            $timer = TimeFactory::create('norwegian');
+            $timer->timerStart('aether_main');
+            $this->sl->set('timer', $timer);
+        }
         $this->sl->set('aetherConfig', $config);
         // Construct session
         $session = new SessionHandler;
@@ -111,7 +123,6 @@ class Aether {
 
         // Initiate section
         try {
-            $options = $config->getOptions();
             $searchPath = (isset($options['searchpath'])) 
                 ? $options['searchpath'] : AETHER_PATH;
             AetherSectionFactory::$path = $searchPath;
@@ -120,6 +131,7 @@ class Aether {
                 $this->sl
             );
             $this->sl->set('section', $this->section);
+            $timer->timerTick('aether_main', 'section_initiate');
         }
         catch (Exception $e) {
             // Failed to load section, what to do?
@@ -149,7 +161,31 @@ class Aether {
             $response = $this->section->response();
             $session = $this->sl->get('session');
             $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
-            $response->draw();
+            try {
+                // Timer
+                $timer = $this->sl->get('timer');
+                $timer->timerEnd('aether_main');
+                // Replace into out content
+                $tpl = $this->sl->getTemplate(98);
+                $tpl->selectTemplate('debugBar');
+                $timers = $timer->getAllTimers();
+                foreach ($timers as $key => $tr) {
+                    foreach ($tr as $k => $t) {
+                        $timers[$key][$k]['elapsed'] = number_format(
+                            $t['elapsed'], 4);
+                    }
+                }
+                $tpl->setVar('timers', $timers);
+                $out = $tpl->returnPage();
+                $out = str_replace(
+                    "<!--INSERTIONPOINT-->",
+                    $out, $response->get());
+            }
+            catch (Exception $e) {
+                // No timing, we're in prod
+                $out = $response->get();
+            }
+            echo $out;
         }
     }
 }
