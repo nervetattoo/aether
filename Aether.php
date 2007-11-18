@@ -131,7 +131,8 @@ class Aether {
                 $this->sl
             );
             $this->sl->set('section', $this->section);
-            $timer->timerTick('aether_main', 'section_initiate');
+            if (isset($timer)) 
+                $timer->timerTick('aether_main', 'section_initiate');
         }
         catch (Exception $e) {
             // Failed to load section, what to do?
