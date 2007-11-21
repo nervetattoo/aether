@@ -64,6 +64,8 @@ foreach ($nodelist as $node) {
     // If prefixed file exists, use it
     if (file_exists($prefixedFile))
         $toImport = $prefixedFile;
+    elseif ($prefix == 'test' AND !file_exists($toImport))
+        $toImport = str_replace($filename, 'prod.' . $filename, $toImport);
 
     // Read in import file
     $import = new DOMDocument;
