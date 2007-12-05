@@ -91,9 +91,9 @@ class AetherServiceLocator extends ServiceLocator {
         return $this->set($name, $object);
     }
     public function set($name, $object) {
-        if (!$this->hasCustomObject($name)) {
+        if (!$this->hasObject($name)) {
             // Do not allow saving non objects
-            if (is_object($object)) {
+            if (is_object($object) || is_array($object)) {
                 $this->custom[$name] = $object;
             }
             else {
@@ -117,7 +117,7 @@ class AetherServiceLocator extends ServiceLocator {
         return $this->get($name);
     }
     public function get($name) {
-        if ($this->hasCustomObject($name))
+        if ($this->hasObject($name))
             return $this->custom[$name];
         else
             throw new Exception('Custom object ['.$name.'] does not exist');
@@ -144,8 +144,12 @@ class AetherServiceLocator extends ServiceLocator {
      * @param string $name
      */
     public function hasCustomObject($name) {
+        return $this->hasObject($name);
+    }
+
+    public function hasObject($name) {
         if (array_key_exists($name, $this->custom)) {
-            return (is_object($this->custom[$name]));
+            return (is_object($this->custom[$name]) || is_array($this->custom[$name]));
         }
         return false;
     }
