@@ -98,17 +98,22 @@ class AetherConfig {
          * use recursion to decide on the correct rule to use
          */
         $sitename = $url->get('host');
-        $xquery = "//config/site[@name='$sitename']";
+        $xquery = "/config/site[@name='$sitename']";
         $xquery .= '/urlRules/*';
         $nodelist = $xpath->query($xquery);
         // Fallback to the "any" site qualifier
         if ($nodelist->length == 0) {
             $sitename = '*';
-            $xquery = "//config/site[@name='$sitename']/urlRules/*";
+            $xquery = "/config/site[@name='$sitename']/urlRules/*";
             $nodelist = $xpath->query($xquery);
         }
         // Subtract global options
-        $xquery = "//config/site[@name='$sitename']/option";
+        $ruleBase = " | /config/site[@name='$sitename']/urlRules/";
+        $xquery = "/config/site[@name='$sitename']/option";
+        $xquery .= $ruleBase . 'section';
+        $xquery .= $ruleBase . 'template';
+        $xquery .= $ruleBase . 'module';
+        $xquery .= $ruleBase . 'option';
         $optionList = $xpath->query($xquery);
         if ($optionList->length > 0)
             $this->subtractNodeConfiguration($optionList);
