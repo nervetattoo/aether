@@ -139,7 +139,10 @@ class AetherUrlParser {
      * @return string
      */
     public function cacheName() {
-        return str_replace('/', '_', $this->host . $this->path);
+        $path = $this->path;
+        if (substr($path, -1) != "/")
+            $path .= "/";
+        return str_replace('/', '_', $this->host . $path);
     }
 }
 ?>

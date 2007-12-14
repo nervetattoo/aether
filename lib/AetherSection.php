@@ -131,9 +131,9 @@ abstract class AetherSection {
                     // If module should be cached, handle it
                     if (array_key_exists('cache', $module) AND !isset($module['noCache'])) {
                         $mCacheName = 
-                            $cacheName . "_" . $module['name'] ;
+                            $cacheName . $module['name'] ;
                         if ($module['surname'])
-                            $mCacheName .= '_' . $module['surname'];
+                            $mCacheName .= $module['surname'];
                         // Try to read from cache, else generate and cache
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
