@@ -131,5 +131,15 @@ class AetherUrlParser {
         $url .= $this->host . $this->path;
         return $url;
     }
+    
+    /**
+     * Return url as a system safe string/filename
+     *
+     * @access public
+     * @return string
+     */
+    public function cacheName() {
+        return str_replace('/', '_', $this->host . $this->path);
+    }
 }
 ?>

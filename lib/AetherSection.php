@@ -72,7 +72,7 @@ abstract class AetherSection {
         $config = $this->sl->get('aetherConfig');
         $cache = new Cache;
         $cachetime = $config->getCacheTime();
-        $cacheName = $this->sl->get('parsedUrl')->__toString();
+        $cacheName = $this->sl->get('parsedUrl')->cacheName();
         /**
          * If one object requests no cache of this request
          * then we need to take that into consideration.
