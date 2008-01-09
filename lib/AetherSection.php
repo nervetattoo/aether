@@ -71,8 +71,18 @@ abstract class AetherSection {
         }
         $config = $this->sl->get('aetherConfig');
         $cache = new Cache;
+        /** 
+         * Decide cache name for rule based cache
+         * If the option cacheas is set, we will use the cache name
+         * $domainname_$cacheas
+         */
+        $url = $this->sl->get('parsedUrl');
+        $cacheas = $config->getCacheName();
+        if ($cacheas != false)
+            $cacheName = $url->get('host') . '_' . $cacheas;
+        else
+            $cacheName = $url->cacheName();
         $cachetime = $config->getCacheTime();
-        $cacheName = $this->sl->get('parsedUrl')->cacheName();
         /**
          * If one object requests no cache of this request
          * then we need to take that into consideration.

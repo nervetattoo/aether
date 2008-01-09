@@ -36,6 +36,7 @@ class AetherConfig {
      * @var int/false
      */
     private $cache = false;
+    private $cacheas = false;
     
     /**
      * What control template should be used for layout
@@ -274,10 +275,10 @@ class AetherConfig {
      */
      private function subtractNodeConfiguration($node) {
         if ($node instanceof DOMNode) {
-            if ($node->hasAttribute('cache')) {
-                $cache = $node->getAttribute('cache');
-                $this->cache = $cache;
-            }
+            if ($node->hasAttribute('cache'))
+                $this->cache = $node->getAttribute('cache');
+            if ($node->hasAttribute('cacheas'))
+                $this->cacheas = $node->getAttribute('cacheas');
             $nodelist = $node->childNodes;
         }
         else {
@@ -409,6 +410,9 @@ class AetherConfig {
      */
     public function getCacheTime() {
         return $this->cache;
+    }
+    public function getCacheName() {
+        return $this->cacheas;
     }
     
     /**
