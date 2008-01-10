@@ -148,13 +148,23 @@ abstract class AetherSection {
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
                             $mod = $module['obj'];
-                            $mOut = $mod->render();
+                            try {
+                                $mOut = $mod->render();
+                            }
+                            catch (Exception $e) {
+                                $this->logerror($e);
+                            }
                             $cache->saveObject($mCacheName, $mOut, $mCacheTime);
                         }
                     }
                     else {
                         $mod = $module['obj'];
-                        $mOut = $mod->render();
+                        try {
+                            $mOut = $mod->render();
+                        }
+                        catch (Exception $e) {
+                            $this->logerror($e);
+                        }
                     }
                     /**
                      * If this module provides some service
@@ -279,6 +289,17 @@ abstract class AetherSection {
     public function provide($name, $content) {
         $vector = $this->sl->getVector('aetherProviders');
         $vector[$name] = $content;
+    }
+    
+    /**
+     * Log an error message from an exception to error log
+     *
+     * @access private
+     * @return void
+     * @param Exception $e
+     */
+    private function logerror($e) {
+        trigger_error("Caught exception: " . $e->getMessage());
     }
 }
 
