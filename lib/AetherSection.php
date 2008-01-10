@@ -79,7 +79,7 @@ abstract class AetherSection {
         $url = $this->sl->get('parsedUrl');
         $cacheas = $config->getCacheName();
         if ($cacheas != false)
-            $cacheName = $url->get('host') . '_' . $cacheas;
+            $cacheName = $cacheas;
         else
             $cacheName = $url->cacheName();
         $cachetime = $config->getCacheTime();
@@ -142,8 +142,8 @@ abstract class AetherSection {
                     if (array_key_exists('cache', $module) AND !isset($module['noCache'])) {
                         $mCacheName = 
                             $cacheName . $module['name'] ;
-                        if ($module['surname'])
-                            $mCacheName .= $module['surname'];
+                        if ($module['provides'])
+                            $mCacheName .= $module['provides'];
                         // Try to read from cache, else generate and cache
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
@@ -173,8 +173,8 @@ abstract class AetherSection {
                     if (!isset($modulesOut[$modName])) {
                         $modulesOut[$modName] = array();
                     }
-                    if ($module['surname']) {
-                        $modulesOut[$modName][$module['surname']] = $mOut;
+                    if ($module['provides']) {
+                        $modulesOut[$modName][$module['provides']] = $mOut;
                     }
                     else {
                         $modulesOut[$modName][] = $mOut;
@@ -187,11 +187,8 @@ abstract class AetherSection {
                     if (is_object($timer)) {
                         if ($module['provides'])
                             $timerMsg = $module['provides'];
-                        else {
+                        else
                             $timerMsg = $modName;
-                            $timerMsg .= isset($module['surname']) ? 
-                                $module['surname'] : "";
-                        }
                         $timer->timerTick('module_render', $timerMsg);
                     }
                 }
