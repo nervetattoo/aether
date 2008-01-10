@@ -112,13 +112,18 @@ class Aether {
             $this->sl->set('timer', $timer);
         }
         $this->sl->set('aetherConfig', $config);
-        // Construct session
-        $session = new SessionHandler;
-        $this->sl->set('session', $session);
-        // If a user is associated to the session, create user object
-        if (is_numeric($session->get('userId'))) {
-            $user = new AetherUser($this->sl, $session->get('userId'));
-            $this->sl->set('user', $user);
+        /**
+         * Start session if session switch is turned on in 
+         * configuration file
+         */
+        if (array_key_exists('session', $options) AND $options['session'] == 'on') {
+            $session = new SessionHandler;
+            $this->sl->set('session', $session);
+            // If a user is associated to the session, create user object
+            if (is_numeric($session->get('userId'))) {
+                $user = new AetherUser($this->sl, $session->get('userId'));
+                $this->sl->set('user', $user);
+            }
         }
 
         // Initiate section
@@ -160,8 +165,13 @@ class Aether {
         }
         else {
             $response = $this->section->response();
-            $session = $this->sl->get('session');
-            $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
+            try {
+                $session = $this->sl->get('session');
+                $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
+            }
+            catch (Exception $e) {
+                // Session is not initiated, do nothing
+            }
             try {
                 // Timer
                 $timer = $this->sl->get('timer');
