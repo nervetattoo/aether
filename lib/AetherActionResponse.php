@@ -43,8 +43,9 @@ class AetherActionResponse extends AetherResponse {
      *
      * @access public
      * @return void
+     * @param AetherServiceLocator $sl
      */
-    public function draw() {
+    public function draw($sl) {
         header("Location: {$this->url}");
     }
     

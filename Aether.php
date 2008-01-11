@@ -166,38 +166,7 @@ class Aether {
         }
         else {
             $response = $this->section->response();
-            try {
-                $session = $this->sl->get('session');
-                $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
-            }
-            catch (Exception $e) {
-                // Session is not initiated, do nothing
-            }
-            try {
-                // Timer
-                $timer = $this->sl->get('timer');
-                $timer->timerEnd('aether_main');
-                // Replace into out content
-                $tpl = $this->sl->getTemplate(98);
-                $tpl->selectTemplate('debugBar');
-                $timers = $timer->getAllTimers();
-                foreach ($timers as $key => $tr) {
-                    foreach ($tr as $k => $t) {
-                        $timers[$key][$k]['elapsed'] = number_format(
-                            $t['elapsed'], 4);
-                    }
-                }
-                $tpl->setVar('timers', $timers);
-                $out = $tpl->returnPage();
-                $out = str_replace(
-                    "<!--INSERTIONPOINT-->",
-                    $out, $response->get());
-            }
-            catch (Exception $e) {
-                // No timing, we're in prod
-                $out = $response->get();
-            }
-            echo $out;
+            $response->draw($this->sl);
         }
     }
 }

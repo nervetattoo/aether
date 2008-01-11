@@ -23,7 +23,8 @@ abstract class AetherResponse {
      *
      * @access public
      * @return void
+     * @param AetherServiceLocator $sl
      */
-    abstract public function draw();
+    abstract public function draw($sl);
 }
 ?>

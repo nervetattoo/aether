@@ -43,9 +43,41 @@ class AetherTextResponse extends AetherResponse {
      *
      * @access public
      * @return void
+     * @param AetherServiceLocator $sl
      */
-    public function draw() {
-        echo $this->out;
+    public function draw($sl) {
+        try {
+            $session = $sl->get('session');
+            $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
+        }
+        catch (Exception $e) {
+            // Session is not initiated, do nothing
+        }
+        try {
+            // Timer
+            $timer = $sl->get('timer');
+            $timer->timerEnd('aether_main');
+            // Replace into out content
+            $tpl = $sl->getTemplate(98);
+            $tpl->selectTemplate('debugBar');
+            $timers = $timer->getAllTimers();
+            foreach ($timers as $key => $tr) {
+                foreach ($tr as $k => $t) {
+                    $timers[$key][$k]['elapsed'] = number_format(
+                        $t['elapsed'], 4);
+                }
+            }
+            $tpl->setVar('timers', $timers);
+            $out = $tpl->returnPage();
+            $out = str_replace(
+                "<!--INSERTIONPOINT-->",
+                $out, $this->out);
+        }
+        catch (Exception $e) {
+            // No timing, we're in prod
+            $out = $this->out;
+        }
+        echo $out;
     }
     
     /**
