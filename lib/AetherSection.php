@@ -70,7 +70,7 @@ abstract class AetherSection {
             // No timing, we're in prod
         }
         $config = $this->sl->get('aetherConfig');
-        $cache = new Cache();
+        $cache = new Cache(false, false, true);
         /** 
          * Decide cache name for rule based cache
          * If the option cacheas is set, we will use the cache name
