@@ -79,7 +79,7 @@ abstract class AetherSection {
         $url = $this->sl->get('parsedUrl');
         $cacheas = $config->getCacheName();
         if ($cacheas != false)
-            $cacheName = $cacheas;
+            $cacheName = $url->get('host') . '_' . $cacheas;
         else
             $cacheName = $url->cacheName();
         $cachetime = $config->getCacheTime();
