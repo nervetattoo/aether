@@ -102,6 +102,15 @@ class Aether {
             exit("No rule matched url in config file.");
         }
         /**
+         * Make sure base and root for this request is stored
+         * in the service locator so it can be made available
+         * to the magical $aether array in templates
+         */
+        $magic = $this->sl->getVector('templateGlobals');
+        $magic['base'] = $config->getBase();
+        $magic['root'] = $config->getRoot();
+
+        /**
          * If we are in TEST mode we should prepare a timer object
          * and time everything that happens
          */

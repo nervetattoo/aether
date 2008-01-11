@@ -73,6 +73,7 @@ class AetherConfig {
      * @var string
      */
     private $urlBase = '/';
+    private $urlRoot = '/';
     
     /**
      * Constructor.
@@ -256,9 +257,10 @@ class AetherConfig {
                         $node->getAttribute('store'), $check);
                 }
                 // Remember the url base if this is it
-                if ($node->hasAttribute('isBase')) {
+                if ($node->hasAttribute('isBase'))
                     $this->urlBase .= $check.'/';
-                }
+                if ($node->hasAttribute('isBase'))
+                    $this->urlRoot .= $check.'/';
                 return true;
             }
         }
@@ -472,6 +474,9 @@ class AetherConfig {
      */
     public function getBase() {
         return $this->urlBase;
+    }
+    public function getRoot() {
+        return $this->urlRoot;
     }
     
     /**

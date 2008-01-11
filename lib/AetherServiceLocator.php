@@ -71,8 +71,10 @@ class AetherServiceLocator extends ServiceLocator {
         $tpl = $this->templates[$id];
         // Add global stuff
         $providers = $this->getVector('aetherProviders');
-        $tpl->setVar('aether', array(
-            'providers' => $providers));
+        $tpl->setVar('aether', array_merge(
+            array('providers' => $providers),
+            $this->getVector('templateGlobals')->getAsArray())
+        );
         return $tpl;
     }
 
