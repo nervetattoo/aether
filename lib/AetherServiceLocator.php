@@ -94,13 +94,7 @@ class AetherServiceLocator extends ServiceLocator {
     }
     public function set($name, $object) {
         if (!$this->hasObject($name)) {
-            // Do not allow saving non objects
-            if (is_object($object) || is_array($object)) {
-                $this->custom[$name] = $object;
-            }
-            else {
-                throw new InvalidArgumentException("[$object] is not a valid object");
-            }
+            $this->custom[$name] = $object;
         }
         else {
             // Throw exception
@@ -150,10 +144,7 @@ class AetherServiceLocator extends ServiceLocator {
     }
 
     public function hasObject($name) {
-        if (array_key_exists($name, $this->custom)) {
-            return (is_object($this->custom[$name]) || is_array($this->custom[$name]));
-        }
-        return false;
+        return array_key_exists($name, $this->custom);
     }
 }
 ?>
