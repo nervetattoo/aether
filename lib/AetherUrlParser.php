@@ -88,7 +88,7 @@ class AetherUrlParser {
         }
         // Host
         $this->port = $server['SERVER_PORT'];
-        $this->host = str_replace($this->port, '', $server['HTTP_HOST']);
+        $this->host = str_replace(":" . $this->port, '', $server['HTTP_HOST']);
         $path = urldecode($server['REQUEST_URI']);
         $qsa = strpos($path, '?');
         if (!$qsa)
