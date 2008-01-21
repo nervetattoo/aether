@@ -64,7 +64,7 @@ class AetherModuleLogin extends AetherModule {
                     else 
                         $location = $config->getBase();
 
-                    $response = new AetherActionResponse($location);
+                    $response = new AetherActionResponse(302, $location);
                     $response->draw();
                 }
                 else {

@@ -34,8 +34,9 @@ class AetherActionResponse extends AetherResponse {
      * @return AetherActionResponse
      * @param string $url
      */
-    public function __construct($url) {
-        $this->url = $url;
+    public function __construct($statusCode, $data = "") {
+        $this->statusCode = $statusCode;
+        $this->data = $data;
     }
     
     /**
@@ -46,7 +47,22 @@ class AetherActionResponse extends AetherResponse {
      * @param AetherServiceLocator $sl
      */
     public function draw($sl) {
-        header("Location: {$this->url}");
+        switch ($this->statusCode) {
+            case 301: // Moved permanently
+                header("HTTP/1.1 301 Moved Permanently");
+                header("Location: {$this->data}");
+                break;
+            case 302: // Moved temporarily
+                header("HTTP/1.1 302 Found");
+                header("Location: {$this->data}");
+                break;
+            case 404: // Not found
+                header("HTTP/1.1 404 Not found");
+                header("Status: 404 Not found");
+
+                print $this->data;
+                break;
+        }
     }
     
     /**
@@ -56,7 +72,7 @@ class AetherActionResponse extends AetherResponse {
      * @return string
      */
     public function get() {
-        return $this->url;
+        return $this->data;
     }
 }
 ?>
