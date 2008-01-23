@@ -44,7 +44,7 @@ class AetherModuleLogout extends AetherModule {
          * section
          */
         $config = $this->sl->fetchCustomObject('aetherConfig');
-        $response = new AetherActionResponse(302, $config->getBase());
+        $response = new AetherActionResponse(302, $config->getRoot());
         $response->draw();
     }
 }

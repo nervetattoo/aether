@@ -62,7 +62,7 @@ class AetherModuleLogin extends AetherModule {
                     if ($session->get('wasGoingTo')) 
                         $location = $session->get('wasGoingTo');
                     else 
-                        $location = $config->getBase();
+                        $location = $config->getRoot();
 
                     $response = new AetherActionResponse(302, $location);
                     $response->draw();
@@ -83,7 +83,7 @@ class AetherModuleLogin extends AetherModule {
             $tpl->setVar('failedAt', $error);
             $tpl->setVar('username', $username);
         }
-        $tpl->setVar('urlbase', $config->getBase());
+        $tpl->setVar('urlbase', $config->getRoot());
         return $tpl->returnPage();
     }
 }
