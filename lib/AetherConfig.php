@@ -76,6 +76,13 @@ class AetherConfig {
     private $urlRoot = '/';
     
     /**
+     * When matching parts of the url, should the path fragment
+     * maintain its first slash or not.
+     * @var string "keep" or "skip"
+     */
+    private $slashMode = "skip";
+    
+    /**
      * Constructor.
      *
      * @access public
@@ -122,10 +129,17 @@ class AetherConfig {
         $path = $url->get('path');
         if (substr($path, -1) == '/')
             $path = substr($path, 0, -1);
-        $node = $this->findMatchingConfigNode(
-            $nodelist, 
-            explode('/',substr($path,1))
-        );
+        $explodedPath = explode('/', substr($path,1));
+        /**
+         * If AetherSlashMode is "keep", make sure $current is prefixed
+         * with a slash as the slash is not maintained from earlier
+         */
+        if ($this->slashMode() == 'keep') {
+            foreach ($explodedPath as $key => $part) {
+                $explodedPath[$key] = '/' . $part;
+            }
+        }
+        $node = $this->findMatchingConfigNode($nodelist, $explodedPath);
     }
     
     /**
@@ -134,7 +148,9 @@ class AetherConfig {
      * @access private
      * @return node
      * @param DOMNodeList $list
-     * @param array $path
+     * @param array $path the/path/sliced into an array(the,path,sliced).
+     * if AetherSlashMode is "keep", then "/fragment" will be used, 
+     * else "fragment" will be used when matching nodes.
      */
     private function findMatchingConfigNode($list, $path) {
         // Find first non empty part in path
@@ -497,6 +513,17 @@ class AetherConfig {
      */
     public function mode() {
         return $this->mode;
+    }
+    
+    /**
+     * What slashmode are Aether running in
+     *
+     * @access public
+     * @return string
+     */
+    public function slashMode() {
+        $opts = $this->getOptions();
+        return $opts['AetherSlashMode'];
     }
 }
 ?>
