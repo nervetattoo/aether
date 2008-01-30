@@ -83,6 +83,11 @@ class AetherConfig {
     private $slashMode = "skip";
     
     /**
+     * Currently supports 'normal' and 'service' modes.
+     */
+    private $mode = 'normal';
+
+    /**
      * Constructor.
      *
      * @access public
@@ -154,10 +159,12 @@ class AetherConfig {
      */
     private function findMatchingConfigNode($list, $path) {
         // Find first non empty part in path
+        $current = "";
         if (is_array($path)) {
-            foreach ($path as $key => $current) {
-                if (!empty($current)) {
+            foreach ($path as $key => $c) {
+                if (!empty($c)) {
                     $path = array_slice($path, $key+1);
+                    $current = $c;
                     break;
                 }
             }
@@ -266,7 +273,7 @@ class AetherConfig {
                 $matches = preg_match(
                     $node->getAttribute('pattern'), $check);
             }
-            if (isset($matches)) {
+            if (isset($matches) && $matches) {
                 // Store value of url fragment, typical stores and id
                 if ($node->hasAttribute('store')) {
                     $this->storeVariable(
