@@ -266,7 +266,7 @@ class AetherConfig {
                 $matches = preg_match(
                     $node->getAttribute('pattern'), $check);
             }
-            if ($matches) {
+            if (isset($matches)) {
                 // Store value of url fragment, typical stores and id
                 if ($node->hasAttribute('store')) {
                     $this->storeVariable(
@@ -523,7 +523,10 @@ class AetherConfig {
      */
     public function slashMode() {
         $opts = $this->getOptions();
-        return $opts['AetherSlashMode'];
+        if (isset($opts['AetherSlashMode'])) 
+            $this->slashMode = $opts['AetherSlashMode'];
+
+        return $this->slashMode;
     }
 }
 ?>
