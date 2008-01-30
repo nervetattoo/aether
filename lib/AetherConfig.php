@@ -83,11 +83,6 @@ class AetherConfig {
     private $slashMode = "skip";
     
     /**
-     * Currently supports 'normal' and 'service' modes.
-     */
-    private $mode = 'normal';
-
-    /**
      * Constructor.
      *
      * @access public
@@ -510,16 +505,6 @@ class AetherConfig {
      */
     public function getPathLeftOvers() {
         return $this->path;
-    }
-    
-    /**
-     * Get what mode to operate in
-     *
-     * @access public
-     * @return string
-     */
-    public function mode() {
-        return $this->mode;
     }
     
     /**
