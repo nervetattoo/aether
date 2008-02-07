@@ -150,11 +150,21 @@ abstract class AetherSection {
                             $mod = $module['obj'];
                             try {
                                 $mOut = $mod->render();
+                                // Just in case our module fails without throwing an 
+                                // exception we recheck that there is stuff returned
+                                // to prevent saving empty module data
+                                if (!empty($mOut)) {
+                                    $cache->saveObject($mCacheName, $mOut, $mCacheTime);
+                                }
                             }
                             catch (Exception $e) {
                                 $this->logerror($e);
                             }
-                            $cache->saveObject($mCacheName, $mOut, $mCacheTime);
+
+                            // Fall back to old cache if it exists
+                            if (empty($mOut)) {
+                                $mOut = $cache->getObject($mCacheName, 86400);
+                            }
                         }
                     }
                     else {
