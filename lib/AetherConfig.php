@@ -266,7 +266,21 @@ class AetherConfig {
             }
             elseif ($node->hasAttribute('pattern')) {
                 $matches = preg_match(
-                    $node->getAttribute('pattern'), $check);
+                    $node->getAttribute('pattern'), $check, $captures);
+                /**
+                 * If named capturing groups are used within the regex
+                 * we need to store them as variables because this
+                 * means they should be available later on.
+                 * As named captures are strings we assume all int
+                 * matches are uninteresting, meaning int naming
+                 * is unsupported
+                 */
+                if (is_array($captures)) {
+                    foreach ($captures as $name => $value) {
+                        if (is_string($name))
+                            $this->storeVariable($name, $value);
+                    }
+                }
             }
             if (isset($matches) && $matches) {
                 // Store value of url fragment, typical stores and id
