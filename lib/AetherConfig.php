@@ -261,32 +261,26 @@ class AetherConfig {
      */
     private function matches($check, $node) {
         if (!empty($check)) {
+            $matches = false;
             if ($node->hasAttribute('match')) {
-                $matches = $node->getAttribute('match') == $check;
+                $matches = ($node->getAttribute('match') == $check);
+                $store = $check;
             }
             elseif ($node->hasAttribute('pattern')) {
                 $matches = preg_match(
                     $node->getAttribute('pattern'), $check, $captures);
                 /**
-                 * If named capturing groups are used within the regex
-                 * we need to store them as variables because this
-                 * means they should be available later on.
-                 * As named captures are strings we assume all int
-                 * matches are uninteresting, meaning int naming
-                 * is unsupported
+                 * When using pattern based matching make sure we store
+                 * the last matching part of the array of regex matches
                  */
-                if (is_array($captures)) {
-                    foreach ($captures as $name => $value) {
-                        if (is_string($name))
-                            $this->storeVariable($name, $value);
-                    }
-                }
+                if (is_array($captures))
+                    $store = array_pop($captures);
             }
-            if (isset($matches) && $matches) {
+            if ($matches) {
                 // Store value of url fragment, typical stores and id
-                if ($node->hasAttribute('store')) {
+                if ($node->hasAttribute('store') AND isset($store)) {
                     $this->storeVariable(
-                        $node->getAttribute('store'), $check);
+                        $node->getAttribute('store'), $store);
                 }
                 // Remember the url base if this is it
                 if ($node->hasAttribute('isBase'))
