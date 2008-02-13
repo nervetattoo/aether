@@ -171,7 +171,7 @@ class Aether {
         if (isset($_GET['service']) AND isset($_GET['module'])) {
             $response = $this->section->service(
                 $_GET['module'], $_GET['service']);
-            $response->draw();
+            $response->draw($this->sl);
         }
         else {
             $response = $this->section->response();
