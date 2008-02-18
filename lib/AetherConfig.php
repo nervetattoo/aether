@@ -475,6 +475,18 @@ class AetherConfig {
     public function getOptions() {
         return $this->options;
     }
+
+    /**
+     * Set and/or change an option
+     *
+     * Ex: use it to change or add a config option from within a section
+     *
+     * @access public
+     */
+    
+    public function setOption($name, $value) {
+        $this->options[$name] = $value;
+    }
     
     /**
      * Get an url variable
