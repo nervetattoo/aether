@@ -122,6 +122,9 @@ abstract class AetherSection {
         if (is_object($timer))
             $timer->timerTick('module_render', 'read_config');
 
+
+        $saveCache = true;
+
         /**
          * Render page
          */
@@ -159,6 +162,7 @@ abstract class AetherSection {
                             }
                             catch (Exception $e) {
                                 $this->logerror($e);
+                                $saveCache = false;
                             }
 
                             // Fall back to old cache if it exists
@@ -174,6 +178,7 @@ abstract class AetherSection {
                         }
                         catch (Exception $e) {
                             $this->logerror($e);
+                            $saveCache = false;
                         }
                     }
                     /**
@@ -221,7 +226,7 @@ abstract class AetherSection {
                 }
             }
             $output = $tpl->returnPage();
-            if (is_numeric($cachetime))
+            if (is_numeric($cachetime) && $saveCache)
                 $cache->saveObject($cacheName, $output, $cachetime);
         }
         else {
