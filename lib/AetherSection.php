@@ -290,7 +290,7 @@ abstract class AetherSection {
             // Run service
             return $mod->service($serviceName);
         }
-        throw Exception("Failed to locate module [$moduleName]");
+        throw new Exception("Failed to locate module [$moduleName]");
     }
     
     /**
