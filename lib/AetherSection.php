@@ -153,10 +153,14 @@ abstract class AetherSection {
                             $mod = $module['obj'];
                             try {
                                 $mOut = $mod->render();
-                                // Just in case our module fails without throwing an 
-                                // exception we recheck that there is stuff returned
-                                // to prevent saving empty module data
-                                if (!empty($mOut)) {
+                                // Just in case our module fails without
+                                // throwing an exception we recheck that there
+                                // is stuff returned to prevent saving empty
+                                // module data.  We also run the function 
+                                // denyCache to check if some internal module
+                                // logic has marked this not to be cached 
+                                // while rendering the module
+                                if (!empty($mOut) && !$mod->denyCache()) {
                                     $cache->saveObject($mCacheName, $mOut, $mCacheTime);
                                 }
                             }
@@ -168,17 +172,19 @@ abstract class AetherSection {
                             // Fall back to old cache if it exists
                             if (empty($mOut)) {
                                 $mOut = $cache->getObject($mCacheName, 86400);
+                                $saveCache = false;
                             }
                         }
                     }
                     else {
+                        // Module shouldn't be cached, just render it without
+                        // saving to cache
                         $mod = $module['obj'];
                         try {
                             $mOut = $mod->render();
                         }
                         catch (Exception $e) {
                             $this->logerror($e);
-                            $saveCache = false;
                         }
                     }
                     /**
