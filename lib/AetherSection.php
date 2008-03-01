@@ -153,25 +153,24 @@ abstract class AetherSection {
                             $mod = $module['obj'];
                             try {
                                 $mOut = $mod->render();
-                                // Just in case our module fails without
-                                // throwing an exception we recheck that there
-                                // is stuff returned to prevent saving empty
-                                // module data.  We also run the function 
+                                // Run the function 
                                 // denyCache to check if some internal module
                                 // logic has marked this not to be cached 
                                 // while rendering the module
-                                if (!empty($mOut) && !$mod->denyCache()) {
+                                if (!$mod->denyCache()) {
                                     $cache->saveObject($mCacheName, $mOut, $mCacheTime);
+                                }
+                                else {
+                                    $saveCache = false;
                                 }
                             }
                             catch (Exception $e) {
-                                $this->logerror($e);
-                                $saveCache = false;
-                            }
-
-                            // Fall back to old cache if it exists
-                            if (empty($mOut)) {
+                                // TODO: Make a special exception for when a 
+                                // module fails so terribly that it needs to 
+                                // be replaced by an old cached one.
                                 $mOut = $cache->getObject($mCacheName, 86400);
+
+                                $this->logerror($e);
                                 $saveCache = false;
                             }
                         }
@@ -182,8 +181,12 @@ abstract class AetherSection {
                         $mod = $module['obj'];
                         try {
                             $mOut = $mod->render();
+                            if ($mod->denyCache())
+                                $saveCache = false;
                         }
                         catch (Exception $e) {
+                            // Make sure page cache isn't saved if a module fails
+                            $saveCache = false;
                             $this->logerror($e);
                         }
                     }
@@ -232,7 +235,7 @@ abstract class AetherSection {
                 }
             }
             $output = $tpl->returnPage();
-            if (is_numeric($cachetime) && $saveCache)
+            if (is_numeric($cachetime))
                 $cache->saveObject($cacheName, $output, $cachetime);
         }
         else {
