@@ -207,7 +207,7 @@ abstract class AetherSection {
                     if (!isset($modulesOut[$modName])) {
                         $modulesOut[$modName] = array();
                     }
-                    if ($module['provides']) {
+                    if (array_key_exists('provides', $module)) {
                         $modulesOut[$modName][$module['provides']] = $mOut;
                     }
                     else {
@@ -219,7 +219,7 @@ abstract class AetherSection {
                      * information
                      */
                     if (is_object($timer)) {
-                        if ($module['provides'])
+                        if (array_key_exists('provides', $module))
                             $timerMsg = $module['provides'];
                         else
                             $timerMsg = $modName;
