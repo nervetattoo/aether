@@ -323,7 +323,7 @@ abstract class AetherSection {
      * @param Exception $e
      */
     private function logerror($e) {
-        trigger_error("Caught exception: " . $e->getMessage());
+        trigger_error("Caught exception at " . $e->getFile() . ":" . $e->getLine() . ": " . $e->getMessage() . ", trace: " . $e->getTraceAsString());
     }
 }
 
