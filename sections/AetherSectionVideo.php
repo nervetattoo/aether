@@ -41,7 +41,29 @@ class AetherSectionVideo extends AetherSection {
             $this->sl->saveCustomObject('video', $video);
         }
 
+        $this->generateMetaInfo($video);
+
         return new AetherTextResponse($this->renderModules());
+    }
+    
+    /**
+     * Generate meta info for video
+     *
+     * @access private
+     * @return void
+     * @param Object $video
+     */
+    private function generateMetaInfo($video) {
+        // Build keyword list to comma separated list
+        $tags = $video->keywords->getTags();
+        $keywords = join(', ', $tags);
+        $keywords = strip_tags($metaKeywords);
+        $keywords = htmlentities($metaKeywords, ENT_QUOTES, "ISO-8859-1");
+
+        $meta = $this->sl->getVector('metaData');
+        $meta['title'] = $video->videoTitle;
+        $meta['keywords'] = $keywords;
+        $meta['description'] = $video->videoTeaser;
     }
 }
 ?>
