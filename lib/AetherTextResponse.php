@@ -63,8 +63,9 @@ class AetherTextResponse extends AetherResponse {
             $timers = $timer->getAllTimers();
             foreach ($timers as $key => $tr) {
                 foreach ($tr as $k => $t) {
-                    $timers[$key][$k]['elapsed'] = number_format(
-                        $t['elapsed'], 4);
+                    if (!array_key_exists('elapsed', $t))
+                        $t['elapsed'] = 0;
+                    $timers[$key][$k]['elapsed'] = number_format($t['elapsed'], 4);
                 }
             }
             $tpl->setVar('timers', $timers);
