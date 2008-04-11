@@ -170,8 +170,9 @@ abstract class AetherSection {
                                 // be replaced by an old cached one.
                                 $mOut = $cache->getObject($mCacheName, 86400);
 
-                                $this->logerror($e);
                                 $saveCache = false;
+                                $this->logerror($e);
+                                continue;
                             }
                         }
                     }
@@ -188,6 +189,7 @@ abstract class AetherSection {
                             // Make sure page cache isn't saved if a module fails
                             $saveCache = false;
                             $this->logerror($e);
+                            continue;
                         }
                     }
                     /**
@@ -228,10 +230,12 @@ abstract class AetherSection {
                 }
                 // Export rendered modules to template
                 foreach ($modulesOut as $name => $mod) {
-                    if (count($mod) > 1)
+                    if (count($mod) > 1) {
                         $tpl->setVar($name, $mod);
-                    else
+                    }
+                    else {
                         $tpl->setVar($name, current($mod));
+                    }
                 }
             }
             $output = $tpl->returnPage();
