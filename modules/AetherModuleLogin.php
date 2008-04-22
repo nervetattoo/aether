@@ -37,8 +37,8 @@ class AetherModuleLogin extends AetherModule {
         // Log user in if requested
         if (!empty($_POST['username']) AND !empty($_POST['password'])) {
             // Find username (validate if user exists)
-            $username = mysql_real_escape_string($_POST['username']);
-            $password = mysql_real_escape_string($_POST['password']);
+            $username = $_POST['username'];
+            $password = $_POST['password'];
             $uf = new UserFinder;
             $userId = $uf->findByUsername($username);
             if (is_numeric($userId) AND $userId != 0) {
