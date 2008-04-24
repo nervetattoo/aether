@@ -94,6 +94,8 @@ abstract class AetherSection {
         // Support i18n
         $locale = (isset($options['locale'])) ? $options['locale'] : "nb_NO.ISO-8859-1";
         setlocale(LC_ALL, $locale);
+        setlocale(LC_NUMERIC, 'C');
+
         // Support custom searchpaths
         $searchPath = (isset($options['searchpath'])) 
             ? $options['searchpath'] : AETHER_PATH;
