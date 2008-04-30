@@ -40,16 +40,6 @@ abstract class AetherSection {
     }
     
     /**
-     * Process the sections business logic that should happen even
-     * when no rendering is neccessary (logging, statistics etc)
-     *
-     * @access protected
-     * @return void
-     */
-    protected function process() {
-    }
-    
-    /**
      * Render content from modules
      * this is where caching is implemented
      * TODO Possible refactoring, many leves of nesting
@@ -64,7 +54,7 @@ abstract class AetherSection {
         try {
             // Timer
             $timer = $this->sl->get('timer');
-            $timer->timerStart('module_render');
+            $timer->timerStart('module_run');
         }
         catch (Exception $e) {
             // No timing, we're in prod
@@ -122,7 +112,7 @@ abstract class AetherSection {
          * information
          */
         if (is_object($timer))
-            $timer->timerTick('module_render', 'read_config');
+            $timer->timerTick('module_run', 'read_config');
 
 
         $saveCache = true;
@@ -154,7 +144,7 @@ abstract class AetherSection {
                             $mCacheTime = $module['cache'];
                             $mod = $module['obj'];
                             try {
-                                $mOut = $mod->render();
+                                $mOut = $mod->run();
                                 // Run the function 
                                 // denyCache to check if some internal module
                                 // logic has marked this not to be cached 
@@ -183,7 +173,7 @@ abstract class AetherSection {
                         // saving to cache
                         $mod = $module['obj'];
                         try {
-                            $mOut = $mod->render();
+                            $mOut = $mod->run();
                             if ($mod->denyCache())
                                 $saveCache = false;
                         }
@@ -227,7 +217,7 @@ abstract class AetherSection {
                             $timerMsg = $module['provides'];
                         else
                             $timerMsg = $modName;
-                        $timer->timerTick('module_render', $timerMsg);
+                        $timer->timerTick('module_run', $timerMsg);
                     }
                 }
                 // Export rendered modules to template
@@ -253,7 +243,7 @@ abstract class AetherSection {
          * information
          */
         if (is_object($timer))
-            $timer->timerEnd('module_render');
+            $timer->timerEnd('module_run');
         // Return output
         return $output;
     }
