@@ -32,7 +32,7 @@ class AetherModuleLogout extends AetherModule {
      * @access public
      * @return string
      */
-    public function render() {
+    public function run() {
         // Log user in if requested
         $session = $this->sl->fetchCustomObject('session');
         $session->close();

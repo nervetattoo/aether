@@ -27,7 +27,7 @@ class AetherModuleHelloworld extends AetherModule {
      * @access public
      * @return string
      */
-    public function render() {
+    public function run() {
         return 'Hello world';
     }
 }

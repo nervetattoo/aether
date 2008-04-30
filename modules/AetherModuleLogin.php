@@ -32,7 +32,7 @@ class AetherModuleLogin extends AetherModule {
      * @access public
      * @return string
      */
-    public function render() {
+    public function run() {
         $config = $this->sl->fetchCustomObject('aetherConfig');
         // Log user in if requested
         if (!empty($_POST['username']) AND !empty($_POST['password'])) {
