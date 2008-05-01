@@ -1,11 +1,7 @@
-<?php
-/*
-HARDWARE.NO EDITORSETTINGS:
-vim:set tabstop=4:
-vim:set shiftwidth=4:
-vim:set smarttab:
-vim:set expandtab:
-*/
+<?php // vim:set ts=4 sw=4 et:
+
+require_once('/home/lib/libDefines.lib.php');
+require_once(LIB_PATH . 'XMLHelper.php');
 
 /**
  * 
@@ -24,6 +20,12 @@ class AetherConfig {
      * @var DOMDocument
      */
     private $doc;
+    
+    /**
+     * Default rule
+     * @var Object
+     */
+    private $defaultRule = false;
     
     /**
      * What section was found
@@ -127,8 +129,6 @@ class AetherConfig {
         if ($optionList->length > 0)
             $this->subtractNodeConfiguration($optionList);
         $path = $url->get('path');
-        if (substr($path, -1) == '/')
-            $path = substr($path, 0, -1);
         $explodedPath = explode('/', substr($path,1));
         /**
          * If AetherSlashMode is "keep", make sure $current is prefixed
@@ -139,7 +139,16 @@ class AetherConfig {
                 $explodedPath[$key] = '/' . $part;
             }
         }
-        $node = $this->findMatchingConfigNode($nodelist, $explodedPath);
+        try {
+            $node = $this->findMatchingConfigNode($nodelist, $explodedPath);
+        }
+        catch (AetherNoUrlRuleMatchException $e) {
+            // No match found :(
+            throw new Exception("Technical error. No resource found on this url");
+        }
+        catch (Exception $e) {
+            // This is expected
+        }
     }
     
     /**
@@ -152,28 +161,38 @@ class AetherConfig {
      * if AetherSlashMode is "keep", then "/fragment" will be used, 
      * else "fragment" will be used when matching nodes.
      */
-    private function findMatchingConfigNode($list, $path) {
+    private function findMatchingConfigNode($nodeList, $path) {
+        $match = false;
         // Find first non empty part in path
         $current = "";
-        if (is_array($path)) {
-            foreach ($path as $key => $c) {
-                if (!empty($c)) {
-                    $path = array_slice($path, $key+1);
-                    $current = $c;
-                    break;
-                }
-            }
+        $last = false;
+        if (is_array($path) AND count($path) > 0) {
+            $current = $path[0];
+            $path = array_slice($path, 1);
+            if (count($path) == 0)
+                $last = true;
         }
+        else
+            $last = true;
         // Crawl the config hierarchy till the right node is found
-        foreach ($list as $node) {
+        foreach ($nodeList as $node) {
             // This have to be a DOMElement
-            if ($node instanceof DOMElement) {
+            if ($node instanceof DOMElement and $node->nodeName == 'rule') {
+                /**
+                 * When a matching rule is found,
+                 * search this level for a default rule ahead
+                 * incase no matching rule is found.
+                 */
+                if ($node->hasAttribute('default')) {
+                    $this->defaultRule = $node;
+                }
                 /* If the attribute match is not set theres no point
                  * in searching through this path
                  * Check if this actually matches the current part
                  * of the path we are examining ($current)
                  */
                 if ($this->matches($current, $node)) {
+                    $match = $node;
                     /* If this node is a match, and has child nodes
                      * then try to crawl the next level aswell, see
                      * if a more exact match is possible
@@ -185,37 +204,70 @@ class AetherConfig {
                          * overridden on deeper levels if set there
                          */
                         $this->subtractNodeConfiguration($node);
-                        if ($this->findMatchingConfigNode($node->childNodes, $path)) {
-                            return true;
+                        // Search children for next match
+                        try {
+                            $match = $this->findMatchingConfigNode(
+                                $node->childNodes, $path);
                         }
-                        else {
-                            $this->path = $path;
-                            return true;
+                        catch (Exception $e) {
+                            throw new Exception('Final matching rule found');
+                            break;
                         }
                     }
                     else {
+                        /**
+                         * No children found for rule
+                         */
                         $this->subtractNodeConfiguration($node);
                         $this->path = $path;
-                        return true;
+                        /**
+                         * If this is the last fragment
+                         * and a match, throw an exception to notify
+                         * that further searching can be stopped
+                         */
+                        if ($last) {
+                            throw new Exception('Final matching rule found');
+                        }
                     }
-                }
-                elseif ($node->hasAttribute('default')) {
-                    /* This is the default match if we dont find any
-                     * better matches on this level
-                     */
-                    $this->subtractNodeConfiguration($node);
-                    $this->path = $path;
-                    return false;
                 }
             }
         }
+        
+        /**
+         * If this is the last fragment of $path AND
+         * a matching node is found, return that node
+         */
+        if ($last AND $match instanceof DOMElement) {
+            return $match;
+        }
+        /**
+         * No rules matched so far, use default rule if one exists
+         */
+        if ($this->defaultRule !== false) {
+            $this->subtractNodeConfiguration($this->defaultRule);
+            $this->path = $path;
+            return $this->defaultRule;
+        }
+
+        /**
+         * If this is not the last rule and we have gotten this far it
+         * means:
+         * No matching node is found
+         * No default rule is found
+         * So the search should continue until the last rule is processed
+         */
+        if (!$last)
+            return false;
         /**
          * If we reach this point it means NO rules truly matched
          * not even a default rule. Damn bastard developer who doesnt
          * provide a default rule in your app!!!
          */
-        throw new AetherNoUrlRuleMatchException(
-            "No rules matches this url. App.config error");
+        if (count($path) > 0) {
+            throw new AetherNoUrlRuleMatchException(
+                "No rules matches this url. App.config error");
+        }
+        return false;
     }
     
     /**
@@ -260,35 +312,33 @@ class AetherConfig {
      * @param object $node
      */
     private function matches($check, $node) {
-        if (!empty($check)) {
-            $matches = false;
-            if ($node->hasAttribute('match')) {
-                $matches = ($node->getAttribute('match') == $check);
-                $store = $check;
+        $matches = false;
+        if ($node->hasAttribute('match')) {
+            $matches = ($node->getAttribute('match') == $check);
+            $store = $check;
+        }
+        elseif ($node->hasAttribute('pattern')) {
+            $matches = preg_match(
+                $node->getAttribute('pattern'), $check, $captures);
+            /**
+             * When using pattern based matching make sure we store
+             * the last matching part of the array of regex matches
+             */
+            if (is_array($captures))
+                $store = array_pop($captures);
+        }
+        if ($matches) {
+            // Store value of url fragment, typical stores and id
+            if ($node->hasAttribute('store') AND isset($store)) {
+                $this->storeVariable(
+                    $node->getAttribute('store'), $store);
             }
-            elseif ($node->hasAttribute('pattern')) {
-                $matches = preg_match(
-                    $node->getAttribute('pattern'), $check, $captures);
-                /**
-                 * When using pattern based matching make sure we store
-                 * the last matching part of the array of regex matches
-                 */
-                if (is_array($captures))
-                    $store = array_pop($captures);
-            }
-            if ($matches) {
-                // Store value of url fragment, typical stores and id
-                if ($node->hasAttribute('store') AND isset($store)) {
-                    $this->storeVariable(
-                        $node->getAttribute('store'), $store);
-                }
-                // Remember the url base if this is it
-                if ($node->hasAttribute('isBase'))
-                    $this->urlBase .= $check.'/';
-                if ($node->hasAttribute('isRoot'))
-                    $this->urlRoot .= $check.'/';
-                return true;
-            }
+            // Remember the url base if this is it
+            if ($node->hasAttribute('isBase'))
+                $this->urlBase .= $check.'/';
+            if ($node->hasAttribute('isRoot'))
+                $this->urlRoot .= $check.'/';
+            return true;
         }
         return false;
     }
