@@ -111,7 +111,7 @@ abstract class AetherSection {
          * we're in test mode and thus showing timing
          * information
          */
-        if (is_object($timer))
+        if (isset($timer) AND is_object($timer))
             $timer->timerTick('module_run', 'read_config');
 
 
@@ -212,7 +212,7 @@ abstract class AetherSection {
                      * we're in test mode and thus showing timing
                      * information
                      */
-                    if (is_object($timer)) {
+                    if (isset($timer) AND is_object($timer)) {
                         if (array_key_exists('provides', $module))
                             $timerMsg = $module['provides'];
                         else
@@ -242,7 +242,7 @@ abstract class AetherSection {
          * we're in test mode and thus showing timing
          * information
          */
-        if (is_object($timer))
+        if (isset($timer) AND is_object($timer))
             $timer->timerEnd('module_run');
         // Return output
         return $output;

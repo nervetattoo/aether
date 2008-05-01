@@ -648,5 +648,15 @@ class AetherConfig {
 
         return $this->slashMode;
     }
+    
+    /**
+     * Get configuration file path
+     *
+     * @access public
+     * @return string
+     */
+    public function configFilePath() {
+        return $this->configFilePath;
+    }
 }
 ?>

@@ -23,6 +23,7 @@ require_once(AETHER_PATH . 'lib/AetherTextResponse.php');
 require_once(AETHER_PATH . 'lib/AetherXMLResponse.php');
 require_once(AETHER_PATH . 'lib/AetherModule.php');
 require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
+require_once(AETHER_PATH . 'lib/AetherModuleManager.php');
 
 /**
  * 
@@ -49,7 +50,18 @@ class Aether {
      * @var AetherSection
      */
     private $section = null;
+    
+    /**
+     * Root folder for this project
+     * @var string
+     */
     private $projectRoot;
+    
+    /**
+     * Module manager
+     * @var AetherModuleManager
+     */
+    private $moduleManager;
     
     /**
      * Constructor. 
@@ -86,6 +98,7 @@ class Aether {
         try {
             $config = new AetherConfig($configPath);
             $config->matchUrl($parsedUrl);
+            $this->sl->set('aetherConfig', $config);
         }
         catch (AetherMissingFileException $e) {
             /**
@@ -102,6 +115,12 @@ class Aether {
              */
             exit("No rule matched url in config file.");
         }
+        /**
+         * Set up module manager and run the start() stage
+         */
+        $this->moduleManager = new AetherModuleManager($this->sl);
+        $this->moduleManager->start();
+
         /**
          * Make sure base and root for this request is stored
          * in the service locator so it can be made available
@@ -122,7 +141,6 @@ class Aether {
             $timer->timerStart('aether_main');
             $this->sl->set('timer', $timer);
         }
-        $this->sl->set('aetherConfig', $config);
         /**
          * Start session if session switch is turned on in 
          * configuration file
@@ -177,6 +195,10 @@ class Aether {
         else {
             $response = $this->section->response();
             $response->draw($this->sl);
+            /**
+             * Run stop stage of modules
+             */
+            $this->moduleManager->stop();
         }
     }
 }
