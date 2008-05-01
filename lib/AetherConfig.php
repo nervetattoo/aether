@@ -189,22 +189,37 @@ class AetherConfig {
         $xquery = "//option[@name='searchpath']";
         $searchPath = trim($xpath->query($xquery)->item(0)->firstChild->nodeValue);
         $searchPath = str_replace(" ", "", $searchPath);
-        AetherModuleFactory::$path = $searchPath;
+        //AetherModuleFactory::$path = $searchPath;
         // Build array
         $modMap = array('start'=>array(),'run'=>array(),'stop'=>array());
         foreach ($modules as $node) {
             foreach ($node->childNodes as $option) {
                 if ($option->nodeName == '#text')
-                    $name = $option->nodeValue;
+                    $name = trim($option->nodeValue);
             }
             // Load modules file so we can examine the module
-            $module = AetherModuleFactory::create($name, new AetherServiceLocator);
-            if (method_exists($module, 'start'))
-                $modMap['start'][$name] = $name;
-            if (method_exists($module, 'run'))
-                $modMap['run'][$name] = $name;
-            if (method_exists($module, 'stop'))
-                $modMap['stop'][$name] = $name;
+            $name = 'AetherModule' . ucfirst($name);
+            if (!strpos($searchPath, ';'))
+                $paths = array($searchPath);
+            else {
+                $paths = array_map('trim', explode(';', $searchPath));
+            }
+            foreach ($paths as $path) {
+                $file = $path . 'modules/' . $name . '.php';
+                if (file_exists($file)) {
+                    include_once($file);
+                    break;
+                }
+            }
+            $methods = get_class_methods($name);
+            if (is_array($methods)) {
+                if (in_array('start', $methods))
+                    $modMap['start'][$name] = $name;
+                if (in_array('run', $methods))
+                    $modMap['run'][$name] = $name;
+                if (in_array('stop', $methods))
+                    $modMap['stop'][$name] = $name;
+            }
         }
         return $modMap;
     }
