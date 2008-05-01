@@ -84,7 +84,8 @@ class Aether {
                 $configPath = AETHER_PATH . 'aether.config.xml';
         }
         try {
-            $config = new AetherConfig($parsedUrl, $configPath);
+            $config = new AetherConfig($configPath);
+            $config->matchUrl($parsedUrl);
         }
         catch (AetherMissingFileException $e) {
             /**

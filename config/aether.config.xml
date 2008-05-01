@@ -1,14 +1,22 @@
 <config>
     <site name="*">
+        <option name="searchpath">
+            /home/raymond/aether/;
+            /home/raymond/tek/aether/;
+            /home/raymond/themepage/lib/aether/
+        </option>
         <option name="version">1.0</option>
         <option name="additive">foo;bar</option>
         <urlRules>
-            <rule default="true">
+            <rule match="">
                 <option name="additive" mode="add">ugh;agh</option>
                 <option name="additive" mode="del">agh</option>
                 <template id="98">splash_controller</template>
                 <section>Generic</section>
                 <module provides="title">Helloworld</module>
+                <module>AetherSplashScreen</module>
+            </rule>
+            <rule match="foo">
                 <module>AetherSplashScreen</module>
             </rule>
         </urlRules>

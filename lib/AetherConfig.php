@@ -2,6 +2,8 @@
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'XMLHelper.php');
+require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
+require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 
 /**
  * 
@@ -85,14 +87,31 @@ class AetherConfig {
     private $slashMode = "skip";
     
     /**
+     * Hold config file path
+     * @var string
+     */
+    private $configFilePath;
+    
+    /**
      * Constructor.
      *
      * @access public
      * @return AetherConfig
-     * @param AetherUrlParser $url
      * @param string $configFilePath
      */
-    public function __construct(AetherUrlParser $url, $configFilePath) {
+    public function __construct($configFilePath) {
+        $this->configFilePath = $configFilePath;
+    }
+
+    /**
+     * Match an url against this config
+     *
+     * @access public
+     * @return bool
+     * @param AetherUrlParser $url
+     */
+    public function matchUrl(AetherUrlParser $url) {
+        $configFilePath = $this->configFilePath;
         if (!file_exists($configFilePath)) {
             throw new AetherMissingFileException(
                 "Config file [$configFilePath] is missing.");
@@ -151,6 +170,45 @@ class AetherConfig {
         }
     }
     
+    /**
+     * Get all modules that are mentioned in this config file
+     *
+     * @access public
+     * @return array
+     */
+    public function listUsedModules() {
+        $doc = new DOMDocument;
+        $doc->preserveWhiteSpace = false;
+        $doc->load($this->configFilePath);
+        $this->doc = $doc;
+        $xpath = new DOMXPath($doc);
+        $xquery = "//module";
+        $modules = $xpath->query($xquery);
+        // Find searchpath
+        $xpath = new DOMXPath($doc);
+        $xquery = "//option[@name='searchpath']";
+        $searchPath = trim($xpath->query($xquery)->item(0)->firstChild->nodeValue);
+        $searchPath = str_replace(" ", "", $searchPath);
+        AetherModuleFactory::$path = $searchPath;
+        // Build array
+        $modMap = array('start'=>array(),'run'=>array(),'stop'=>array());
+        foreach ($modules as $node) {
+            foreach ($node->childNodes as $option) {
+                if ($option->nodeName == '#text')
+                    $name = $option->nodeValue;
+            }
+            // Load modules file so we can examine the module
+            $module = AetherModuleFactory::create($name, new AetherServiceLocator);
+            if (method_exists($module, 'start'))
+                $modMap['start'][$name] = $name;
+            if (method_exists($module, 'run'))
+                $modMap['run'][$name] = $name;
+            if (method_exists($module, 'stop'))
+                $modMap['stop'][$name] = $name;
+        }
+        return $modMap;
+    }
+
     /**
      * Find matching config node from nodelist and path
      *
