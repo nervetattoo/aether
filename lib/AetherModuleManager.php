@@ -62,7 +62,8 @@ class AetherModuleManager {
             $mods = $config->getModules();
             $modules = array(); // Final array over modules
             foreach ($mods as $mod) {
-                if (!in_array($mod['name'], $modMap['stop']))
+                $modName = 'AetherModule' . $mod['name'];
+                if (!in_array($modName, $modMap['stop']))
                     continue;
                 if (!isset($mod['options']))
                     $mod['options'] = array();

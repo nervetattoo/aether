@@ -205,7 +205,7 @@ class AetherConfig {
                 $paths = array_map('trim', explode(';', $searchPath));
             }
             foreach ($paths as $path) {
-                $file = $path . 'modules/' . $name . '.php';
+                $file = $path . 'modules/' . trim($name) . '.php';
                 if (file_exists($file)) {
                     include_once($file);
                     break;
