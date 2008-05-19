@@ -121,6 +121,8 @@ class Aether {
         $this->moduleManager = new AetherModuleManager($this->sl);
         $this->moduleManager->start();
 
+        $options = $config->getOptions();
+
         /**
          * Make sure base and root for this request is stored
          * in the service locator so it can be made available
@@ -129,12 +131,12 @@ class Aether {
         $magic = $this->sl->getVector('templateGlobals');
         $magic['base'] = $config->getBase();
         $magic['root'] = $config->getRoot();
+        $magic['options'] = $options;
 
         /**
          * If we are in TEST mode we should prepare a timer object
          * and time everything that happens
          */
-        $options = $config->getOptions();
         if ($options['AetherRunningMode'] == 'test') {
             // Prepare timer
             $timer = TimeFactory::create('norwegian');
