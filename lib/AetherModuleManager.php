@@ -48,10 +48,10 @@ class AetherModuleManager {
     public function stop() {
         // Read module map to find what modules to run by here
         $config = $this->sl->get('aetherConfig');
+        $options = $config->getOptions();
+        $modmapCache = $options['ModuleMap'];
         $cache = new Cache(false, true, true);
-        $cacheName = 'module_map' . 
-            str_replace('/', '_', $config->configFilePath());
-        $modMap = $cache->getObject($cacheName, 131400000);
+        $modMap = $cache->getObject($modmapCache, 131400000);
         // If there are stop instructions, run them
         if (count($modMap['stop']) > 0) {
             $options = $config->getOptions();
