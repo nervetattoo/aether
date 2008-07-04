@@ -480,6 +480,9 @@ class AetherConfig {
                      */
                     if ($child->hasAttribute('provides'))
                         $module['provides'] = trim($child->getAttribute('provides'));
+                    else
+                        $module['provides'] = $module['name'];
+
                     $this->modules[] = $module;
                     break;
 
