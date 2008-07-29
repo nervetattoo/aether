@@ -41,7 +41,7 @@ class AetherModuleFactory {
                 return $mod;
             }
         }
-        throw new Exception("Module '$file' does not exist");
+        throw new Exception("Module '$module' does not exist in path [" . join(", ", $paths) . "]");
     }
 }
 ?>

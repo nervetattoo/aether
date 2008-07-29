@@ -131,6 +131,9 @@ class Aether {
         $magic = $this->sl->getVector('templateGlobals');
         $magic['base'] = $config->getBase();
         $magic['root'] = $config->getRoot();
+        $magic['domain'] = $_SERVER['SERVER_NAME'];
+        if ($_SERVER['SERVER_PORT'] != 80)
+            $magic['domain'] .= ":" . $_SERVER['SERVER_PORT'];
         $magic['options'] = $options;
 
         /**
