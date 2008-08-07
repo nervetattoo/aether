@@ -611,21 +611,39 @@ class AetherConfig {
     public function setOption($name, $value) {
         $this->options[$name] = $value;
     }
+
+    /**
+     * Get an array of all urlVariables set.
+     * These are the variables in a regex url ex. /ads/([0-9]+)/images
+     * which are stored with the store="name"-attribute
+     */
+    public function getUrlVars() {
+        return $this->urlVariables;
+    }
     
     /**
-     * Get an url variable
-     *
-     * @access public
-     * @return mixed
-     * @param string $key
+     * Get an url variable.
+     * These are the variables in a regex url ex. /ads/([0-9]+)/images
+     * which are stored with the store="name"-attribute
      */
-    public function getUrlVariable($key) {
+    public function getUrlVar($key) {
         if (array_key_exists($key, $this->urlVariables)) {
             return $this->urlVariables[$key];
         }
         else {
             throw new Exception("[$key] is not an existing variable");
         }
+    }
+
+    /**
+     * Get an url variable (DEPRECATED: use getUrlVar())
+     *
+     * @access public
+     * @return mixed
+     * @param string $key
+     */
+    public function getUrlVariable($key) {
+        return $this->getUrlVar($key);
     }
     
     /**
