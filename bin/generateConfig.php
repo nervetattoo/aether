@@ -3,6 +3,7 @@
 
 require_once("/home/lib/libDefines.lib.php");
 require_once(AETHER_PATH . 'lib/AetherConfig.php');
+require_once(AETHER_PATH . 'Aether.php');
 require_once(LIB_PATH . 'Cache.lib.php');
 
 /**
