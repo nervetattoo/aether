@@ -9,6 +9,7 @@ vim:set expandtab:
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'video/Video.lib.php');
+require_once(LIB_PATH . 'QueryBuilder.lib.php');
 
 /**
  * Common section of video player
@@ -34,10 +35,15 @@ class AetherSectionVideo extends AetherSection {
         }
         catch (Exception $e) {} // Do nothing, it only means a specific video was not chosen
 
-        $video = new Video($videoId);
-        if ($video->isPublished()) {
-            $video->countView();
-            $this->sl->saveCustomObject('video', $video);
+        if (is_numeric($videoId)) {
+            $video = new Video($videoId);
+            if ($video->isPublished()) {
+                $video->countView();
+                $this->sl->saveCustomObject('video', $video);
+            }
+        }
+        else {
+            $video = false;
         }
 
         $this->generateMetaInfo($video);
@@ -52,17 +58,38 @@ class AetherSectionVideo extends AetherSection {
      * @return void
      * @param Object $video
      */
-    private function generateMetaInfo($video) {
-        // Build keyword list to comma separated list
-        $tags = $video->keywords->getTags();
-        $keywords = join(', ', $tags);
-        $keywords = strip_tags($metaKeywords);
-        $keywords = htmlentities($metaKeywords, ENT_QUOTES, "ISO-8859-1");
-
+    private function generateMetaInfo($video = false) {
         $meta = $this->sl->getVector('metaData');
-        $meta['title'] = $video->videoTitle;
+
+        if (isset($_GET['tag']) && is_numeric($_GET['tag'])) {
+            $selectedTagId = $_GET['tag']; 
+            $db = $this->sl->getDatabase('neo');
+            $q = new QueryBuilder();
+            $q->addFrom('tag_tags');
+            $q->addSelect('name');
+            $q->addWhere('id', '=', $selectedTagId, '', NO_ESCAPE);
+            $q->addOrder('name');
+            $title = strtoupper($db->queryValue($q->build())) . " - Videoer";
+        }
+        else if (isset($_GET['query'])) {
+            $title = $_GET['query'];
+            $title = strip_tags($title);
+            $title = "S&oslash;ker etter: " . htmlentities($title) . " - Videoer";
+
+        }
+        else if ($video) {
+            // Build keyword list to comma separated list
+            $tags = $video->keywords->getTags();
+            $keywords = join(', ', $tags);
+            $keywords = strip_tags($metaKeywords);
+            $keywords = htmlentities($metaKeywords, ENT_QUOTES, "ISO-8859-1");
+            $desc = $video->videoTeaser;
+            $title = $video->videoTitle;
+        }
+        
+        $meta['title'] = $title;
         $meta['keywords'] = $keywords;
-        $meta['description'] = $video->videoTeaser;
+        $meta['description'] = $desc;
     }
 }
 ?>
