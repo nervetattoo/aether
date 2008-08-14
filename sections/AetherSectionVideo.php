@@ -11,8 +11,7 @@ require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'video/Video.lib.php');
 
 /**
- * 
- * Entry point to all priceguide applicatino sections
+ * Common section of video player
  * 
  * Created: 2007-02-02
  * @author Raymond Julin
