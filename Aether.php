@@ -134,6 +134,7 @@ class Aether {
         $magic['urlVars'] = $config->getUrlVars();
         $magic['requestUri'] = $_SERVER['REQUEST_URI'];
         $magic['domain'] = $_SERVER['SERVER_NAME'];
+        $magic['server'] = $_SERVER;
         if ($_SERVER['SERVER_PORT'] != 80)
             $magic['domain'] .= ":" . $_SERVER['SERVER_PORT'];
         $magic['options'] = $options;
