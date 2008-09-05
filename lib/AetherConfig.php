@@ -137,6 +137,9 @@ class AetherConfig {
             $xquery = "/config/site[@name='$sitename']/urlRules/*";
             $nodelist = $xpath->query($xquery);
         }
+        if ($nodelist->length == 0) {
+            throw new AetherNoUrlRuleMatchException("No config entry matched site: $sitename");
+        }
         // Subtract global options
         $ruleBase = " | /config/site[@name='$sitename']/urlRules/";
         $xquery = "/config/site[@name='$sitename']/option";

@@ -105,7 +105,8 @@ class Aether {
              * This means that someone forgot to ensure the config
              * file actually exists
              */
-             exit("No configuration file for project found");
+            $msg = "No configuration file for project found: " . $e->getMessage();
+            exit($msg);
         }
         catch (AetherNoUrlRuleMatchException $e) {
             /**
@@ -113,7 +114,8 @@ class Aether {
              * by the simple fact that no rules matches
              * the url. This is due to a bad developer
              */
-            exit("No rule matched url in config file.");
+            $msg = "No rule matched url in config file: " . $e->getMessage();
+            exit($msg);
         }
         /**
          * Set up module manager and run the start() stage
