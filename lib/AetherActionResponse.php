@@ -56,6 +56,10 @@ class AetherActionResponse extends AetherResponse {
                 header("HTTP/1.1 302 Found");
                 header("Location: {$this->data}");
                 break;
+            case 401: // Unauthorized
+                header("HTTP/1.1 401 Unauthorized");
+                header("Location: {$this->data}");
+                break;
             case 404: // Not found
                 header("HTTP/1.1 404 Not found");
                 header("Status: 404 Not found");
