@@ -134,6 +134,7 @@ class Aether {
         $magic['base'] = $config->getBase();
         $magic['root'] = $config->getRoot();
         $magic['urlVars'] = $config->getUrlVars();
+        $magic['runningMode'] = $options['AetherRunningMode'];
         $magic['requestUri'] = $_SERVER['REQUEST_URI'];
         $magic['domain'] = $_SERVER['SERVER_NAME'];
         if (isset($_SERVER['HTTP_REFERER']))
