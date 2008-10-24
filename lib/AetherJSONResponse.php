@@ -55,7 +55,7 @@ class AetherJSONResponse extends AetherResponse {
      * @return string
      */
     public function get() {
-        return json_encode($this->struct);
+        return "/* " . json_encode($this->struct) . " */";
     }
 }
 ?>
