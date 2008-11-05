@@ -45,16 +45,7 @@ class AetherJSONResponse extends AetherResponse {
      * @param AetherServiceLocator $sl
      */
     public function draw($sl) {
-        // Temp. solution for debugging until firefox/etc. get a 
-        // prettyfied jsondisplay
-        if (isset($_GET['debug'])) {
-            echo "<pre>";
-            print_r($this->struct);
-            echo "</pre>";
-        }
-        else {
-            echo $this->get();
-        }
+        echo $this->get();
     }
     
     /**
