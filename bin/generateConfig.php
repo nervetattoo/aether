@@ -10,10 +10,13 @@ require_once(LIB_PATH . 'Cache.lib.php');
  * 
  * Generate compact configuration file with all import statements
  * included in final file for optimization.
- * Supports one option: $mode which can be "test" or "prod"
- * This states wether or not test-files or production-files (settings)
- * will be used throughout the project
- * 
+ * Supports two options: 
+ * Option 1:
+ *      $mode which can be "test" or "prod"
+ *      This states wether or not test-files or production-files (settings)
+ *      will be used throughout the project
+ * Option 2: nocache can be passed as the second argument wich removes cache 
+ *      from the config files
  * Created: 2007-11-13
  * @author Raymond Julin
  */
@@ -46,7 +49,7 @@ if (!in_array($prefix, array("prod", "test"))) {
 }
 
 /**
- * Find base configuration file
+* Find base configuration file
  */
 $baseConfig = $configFolder . "aether.config.xml";
 
@@ -54,9 +57,7 @@ $baseConfig = $configFolder . "aether.config.xml";
 if (!file_exists($baseConfig))
     exit("Base config file doesnt exist [config/aether.config.xml].");
 
-$doc = new DOMDocument;
-$doc->preserveWhiteSpace = false;
-$doc->load($baseConfig);
+$doc = loadConfig($baseConfig);
 $xpath = new DOMXPath($doc);
 $xquery = "//import";
 $nodelist = $xpath->query($xquery);
@@ -79,9 +80,8 @@ foreach ($nodelist as $node) {
         $toImport = str_replace($filename, 'prod.' . $filename, $toImport);
 
     // Read in import file
-    $import = new DOMDocument;
-    $import->preserveWhiteSpace = false;
-    $import->load($toImport);
+    $import = loadConfig($toImport);
+
     if ($import->documentElement->childNodes->length > 1) {
         foreach ($import->documentElement->childNodes as $child) {
             $import = $doc->importNode($child,true);
@@ -159,4 +159,29 @@ echo "Module map written to cachename: $modmapCache\n";
 $cache = new Cache(false, true, true);
 $cache->saveObject($modmapCache, $modules);
 echo "Done\n\n";
+
+/**
+ * Loads an XML config file.
+ * If "nocache" is specified as the second command argument the cache parameter
+ * will be removed from the config files
+ * 
+ * @param mixed $file
+ * @access private
+ * @return Object DOMDocument object
+ */
+function loadConfig($file) {
+    global $argv;
+    $import = new DOMDocument;
+    $import->preserveWhiteSpace = false;
+
+    if ($argv[2] == 'nocache') {
+        $file = file_get_contents($file);
+        $file = preg_replace('/cache="[0-9]*"/', '', $file);
+        $import->loadXML($file);
+    } else {
+        $import->load($file);
+    }
+
+    return $import;
+}
 ?>
