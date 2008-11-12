@@ -155,6 +155,21 @@ $doc->save($saveTo);
 echo "Building array over used modules\n";
 $config = new AetherConfig($saveTo);
 $modules = $config->listUsedModules();
+/**
+ * Spit out warning about non found modules
+ * Todo: Doesnt actually disable the modules as it should
+ * 
+ */
+if (count($modules['missing']) > 0) {
+    echo "\n===== ERRORS =====\n";
+    foreach ($modules['missing'] as $missing) {
+        echo "\033[1;31mCould not locate source file for required module [$missing]\n";
+    }
+    echo "\033[0m===== END ERRORS =====\n\n";
+    unset($modules['missing']);
+}
+
+
 echo "Module map written to cachename: $modmapCache\n";
 $cache = new Cache(false, true, true);
 $cache->saveObject($modmapCache, $modules);

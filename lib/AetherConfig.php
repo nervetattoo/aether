@@ -194,7 +194,10 @@ class AetherConfig {
         $searchPath = str_replace(" ", "", $searchPath);
         //AetherModuleFactory::$path = $searchPath;
         // Build array
-        $modMap = array('start'=>array(),'run'=>array(),'stop'=>array());
+        $modMap = array('start'=>array(),'run'=>array(),
+            'stop'=>array(),'missing'=>array());
+        // Keep track of not found modules
+        $notFound = array();
         foreach ($modules as $node) {
             foreach ($node->childNodes as $option) {
                 if ($option->nodeName == '#text')
@@ -207,23 +210,37 @@ class AetherConfig {
             else {
                 $paths = array_map('trim', explode(';', $searchPath));
             }
+            $found = false;
             foreach ($paths as $path) {
                 $file = $path . 'modules/' . trim($name) . '.php';
                 if (file_exists($file)) {
                     include_once($file);
+                    $found = true;
                     break;
                 }
             }
-            $methods = get_class_methods($name);
-            if (is_array($methods)) {
-                if (in_array('start', $methods))
-                    $modMap['start'][$name] = $name;
-                if (in_array('run', $methods))
-                    $modMap['run'][$name] = $name;
-                if (in_array('stop', $methods))
-                    $modMap['stop'][$name] = $name;
+            /**
+             * Make sure module file actually is found before trying
+             * to check its methods
+             */
+            if ($found) {
+                $methods = get_class_methods($name);
+                if (is_array($methods)) {
+                    if (in_array('start', $methods))
+                        $modMap['start'][$name] = $name;
+                    if (in_array('run', $methods))
+                        $modMap['run'][$name] = $name;
+                    if (in_array('stop', $methods))
+                        $modMap['stop'][$name] = $name;
+                }
+            }
+            else {
+                $notFound[] = trim($name);
+                // No need to track dupes
+                $notFound = array_unique($notFound);
             }
         }
+        $modMap['missing'] = $notFound;
         return $modMap;
     }
 
