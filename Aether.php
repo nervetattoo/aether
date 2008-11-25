@@ -107,7 +107,7 @@ class Aether {
              * file actually exists
              */
             $msg = "No configuration file for project found: " . $e->getMessage();
-            exit($msg);
+            throw new Exception($msg);
         }
         catch (AetherNoUrlRuleMatchException $e) {
             /**
@@ -116,7 +116,7 @@ class Aether {
              * the url. This is due to a bad developer
              */
             $msg = "No rule matched url in config file: " . $e->getMessage();
-            exit($msg);
+            throw new Exception($msg);
         }
         /**
          * Set up module manager and run the start() stage
@@ -183,7 +183,7 @@ class Aether {
         }
         catch (Exception $e) {
             // Failed to load section, what to do?
-            exit('Failed horribly: ' . $e->getMessage());
+            throw new Exception('Failed horribly: ' . $e->getMessage());
         }
     }
     

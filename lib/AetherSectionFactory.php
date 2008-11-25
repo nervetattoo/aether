@@ -57,9 +57,9 @@ class AetherSectionFactory {
         }
         else {
             throw new Exception('AetherSectionFactory::create() received an 
-                empty $section input causing it to look for AetherSection
-                that rightfully doesnt exist. This means that <section/> 
-                is not supplied for this rule in the configuration file.');
+                empty $section variable therefore a section could not be found. 
+                This probably means that the matched rule in the configuration 
+                file didn\'t contain a <section/>-tag');
         }
     }
 }
