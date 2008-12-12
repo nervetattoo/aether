@@ -23,7 +23,6 @@ require(AETHER_PATH . 'Aether.php');
  */
 function __autoload($name) {
     require_once(LIB_PATH . 'AetherAutoload.php');
-    $commonlibs = LIB_PATH;
     
     $loader = new AetherAutoload($name, LIB_PATH, '../lib/');
     $filePath = $loader->load();
