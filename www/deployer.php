@@ -37,7 +37,6 @@ try {
     $aether->render();
 } 
 catch (Exception $e) {
-    header("Content-Type: text/plain");
-    print $e;
+    trigger_error("Uncaught error: " . $e);
 }
 ?>
