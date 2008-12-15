@@ -82,15 +82,8 @@ foreach ($nodelist as $node) {
     // Read in import file
     $import = loadConfig($toImport);
 
-    if ($import->documentElement->childNodes->length > 1) {
-        foreach ($import->documentElement->childNodes as $child) {
-            $import = $doc->importNode($child,true);
-            $parent->insertBefore($import, $node);
-        }
-    }
-    else {
-        // Single
-        $import = $import->documentElement->firstChild;
+    foreach ($import->documentElement->childNodes as $child) {
+        $import = $doc->importNode($child,true);
         $parent->insertBefore($import, $node);
     }
     $node->parentNode->removeChild($node);
