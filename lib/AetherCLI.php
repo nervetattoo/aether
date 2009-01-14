@@ -10,7 +10,7 @@
  * @package aether
  */
 
-class AetherCLI {
+abstract class AetherCLI {
     
     /**
      * Define legal options for this program.
@@ -45,6 +45,15 @@ class AetherCLI {
         }
     }
     
+    
+    /**
+     * Run the app
+     *
+     * @access public
+     * @return void
+     */
+    abstract public function run();
+    
     /**
      * Mix in support for --help/-h always
      * And let it act upon this option without using
@@ -65,8 +74,8 @@ class AetherCLI {
      * @return void
      */
     protected function displayHelpFile() {
-        $dir = dirname(__FILE__);
-        $file = substr_replace(__FILE__, 'help', -3);
+        global $argv;
+        $file = substr_replace(realpath($argv[0]), 'help', -3);
         if (file_exists($file)) {
             $content = file_get_contents($file);
         }
