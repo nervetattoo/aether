@@ -22,6 +22,8 @@ class TestCLIApp extends AetherCLI {
         $this->options = $this->parseOptions($str);
         return $this->options;
     }
+    public function run() {
+    }
 }
 class TestCLIApp2 extends TestCLIApp {
     protected $allowedOptions = array();
