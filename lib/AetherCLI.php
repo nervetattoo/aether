@@ -37,9 +37,12 @@ class AetherCLI {
      */
     public function __construct() {
         $this->mixinHelpSupport();
-        $this->options = $this->parseOptions($argv);
+        $this->options = $this->parseOptions($_SERVER['argv']);
         // Run help file if help required
-
+        if (($this->hasOptions(array('help')) AND count($this->options) == 1)
+            OR count($this->options) == 0) {
+            $this->displayHelpFile();
+        }
     }
     
     /**
@@ -53,6 +56,25 @@ class AetherCLI {
     protected function mixinHelpSupport() {
         if (!array_key_exists('h', $this->allowedOptions))
             $this->allowedOptions['h'] = 'help';
+    }
+    
+    /**
+     * Display the help file following a cli app
+     *
+     * @access protected
+     * @return void
+     */
+    protected function displayHelpFile() {
+        $dir = dirname(__FILE__);
+        $file = substr_replace(__FILE__, 'help', -3);
+        if (file_exists($file)) {
+            $content = file_get_contents($file);
+        }
+        else {
+            // Use default help file for AetherCLI
+            $content = file_get_contents(AETHER_PATH . 'lib/AetherCLI.help');
+        }
+        echo $content;
     }
     
     /**

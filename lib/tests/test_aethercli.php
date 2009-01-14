@@ -29,6 +29,8 @@ class TestCLIApp2 extends TestCLIApp {
 
 class testAetherCLI extends UnitTestCase {
     public function testParseOptions() {
+        $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
+
         $app = new TestCLIApp;
 
         // Pass #0 Long opts with filename.php
@@ -67,21 +69,30 @@ class testAetherCLI extends UnitTestCase {
         $this->assertEqual($app->getOption('meh'), 'eh');
     }
 
-    public function testHelpMixin() {
-        $app = new TestCLIApp2;
-        $this->assertEqual($app->getOption('h'), '');
-        $arr = array('help'=>'');
-        $opts = $app->getOptions(array("--help"));
-        $this->assertEqual($arr, $opts);
-    }
-
     public function testHasOptions() {
+        $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
         $app = new TestCLIApp;
         $opts = $app->getOptions(array("filename.php", "--foo=bar"));
         $arr = array('foo'=>'bar');
         $this->assertEqual($arr, $opts);
         $this->assertTrue($app->hasOptions(array('foo')));
         $this->assertFalse($app->hasOptions(array('foo','bar')));
+    }
+
+    public function testHelpMixin() {
+        $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
+        $app = new TestCLIApp;
+        $this->assertEqual($app->getOption('h'), '');
+        $arr = array('help'=>'');
+        $opts = $app->getOptions(array("--help"));
+        $this->assertEqual($arr, $opts);
+    }
+
+    public function testDisplayHelp() {
+        ob_start();
+        $app = new TestCLIApp2;
+        $out = ob_get_clean();
+        $this->assertTrue(strpos($out, 'default help file') > 0);
     }
 }
 
