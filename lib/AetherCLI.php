@@ -4,6 +4,19 @@
  * Base class for command line scripting in Aether
  * Sorts out command line option handling for you
  * as this can be a bit cumbersome to do manually each time
+ * Usage:
+ *<code>
+ *class MyCLI extends AetherCLI {
+ *    protected $allowedOptions = array('u'=>'update');
+ *    public function run() {
+ *        $opt = $this->getOption('update'); // Will fetch textual value from -u/--update=foo
+ *        doSomeAction($opt);
+ *    }
+ *}
+ *</code>
+ * Help files are automaticaly presented by AetherCLI when no options are
+ * sent to the script or the -h/--help is sent as the only argument
+ * Help files are to be written in a textfile called $appFile.substr('php','help')
  * 
  * Created: 2008-12-12
  * @author Raymond Julin
