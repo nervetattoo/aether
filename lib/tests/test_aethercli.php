@@ -22,10 +22,9 @@ class TestCLIApp extends AetherCLI {
         $this->options = $this->parseOptions($str);
         return $this->options;
     }
-
-    public function returnOption($name) {
-        return $this->getOption($name);
-    }
+}
+class TestCLIApp2 extends TestCLIApp {
+    protected $allowedOptions = array();
 }
 
 class testAetherCLI extends UnitTestCase {
@@ -65,7 +64,24 @@ class testAetherCLI extends UnitTestCase {
         // Pass #6 Fetch option one by one
         $app->getOptions(array("--meh=eh"));
         //$arr = array('meh'=>'eh');
-        $this->assertEqual($app->returnOption('meh'), 'eh');
+        $this->assertEqual($app->getOption('meh'), 'eh');
+    }
+
+    public function testHelpMixin() {
+        $app = new TestCLIApp2;
+        $this->assertEqual($app->getOption('h'), '');
+        $arr = array('help'=>'');
+        $opts = $app->getOptions(array("--help"));
+        $this->assertEqual($arr, $opts);
+    }
+
+    public function testHasOptions() {
+        $app = new TestCLIApp;
+        $opts = $app->getOptions(array("filename.php", "--foo=bar"));
+        $arr = array('foo'=>'bar');
+        $this->assertEqual($arr, $opts);
+        $this->assertTrue($app->hasOptions(array('foo')));
+        $this->assertFalse($app->hasOptions(array('foo','bar')));
     }
 }
 

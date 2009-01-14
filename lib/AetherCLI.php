@@ -36,7 +36,23 @@ class AetherCLI {
      * @return 
      */
     public function __construct() {
+        $this->mixinHelpSupport();
         $this->options = $this->parseOptions($argv);
+        // Run help file if help required
+
+    }
+    
+    /**
+     * Mix in support for --help/-h always
+     * And let it act upon this option without using
+     * the extending script
+     *
+     * @access protected
+     * @return void
+     */
+    protected function mixinHelpSupport() {
+        if (!array_key_exists('h', $this->allowedOptions))
+            $this->allowedOptions['h'] = 'help';
     }
     
     /**
@@ -48,11 +64,11 @@ class AetherCLI {
      * @return array
      */
     protected function parseOptions($args) {
+        $options = array();
         if (is_array($args) AND count($args) > 0) {
-            $options = array();
             foreach ($args as $arg) {
                 // Is valid option
-                if (preg_match('/(--[a-z]+|-[a-z]{1})=[a-z-_\/]+/', $arg))  {
+                if (preg_match('/(--[a-z]+|-[a-z]{1})(?>=[a-z-_\/]+)?/', $arg))  {
                     $parts = explode('=', $arg);
                     $name = preg_replace('/[-]{1,2}/', '', $parts[0]);
 
@@ -76,9 +92,24 @@ class AetherCLI {
      * @return mixed
      * @param string $key
      */
-    protected function getOption($key) {
+    public function getOption($key) {
         if (array_key_exists($key, $this->options))
             return $this->options[$key];
+    }
+    
+    /**
+     * Verify CLI job has all options
+     *
+     * @access protected
+     * @return boolean
+     * @param array $opts As long opts
+     */
+    public function hasOptions($opts) {
+        foreach ($opts as $o) {
+            if (!array_key_exists($o, $this->options))
+                return false;
+        }
+        return true;
     }
 }
 ?>
