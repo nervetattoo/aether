@@ -43,12 +43,21 @@ abstract class AetherCLI {
     protected $options = array();
     
     /**
+     * Start time
+     * @var  int
+     */
+    protected $startTime;
+    protected $endTime;
+    
+    /**
      * Handle option parsing
      *
      * @access 
      * @return 
      */
     public function __construct() {
+        echo "Start time [".date('Y-m-d H:i:s')."]";
+        $this->startTime = $this->getMicroTime();
         $this->mixinHelpSupport();
         $this->options = $this->parseOptions($_SERVER['argv']);
         // Run help file if help required
@@ -57,6 +66,7 @@ abstract class AetherCLI {
             $this->displayHelpFile();
         }
     }
+
     
     
     /**
@@ -154,6 +164,20 @@ abstract class AetherCLI {
                 return false;
         }
         return true;
+    }
+    
+    /**
+     * Return timing information
+     *
+     * @access protected
+     * @return int
+     */
+	protected function getMicroTime() { 
+		list($usec, $sec) = explode(" ", microtime()); 
+		return ((float)$usec + (float)$sec); 
+	}
+    protected function getRunTime() {
+        return $this->getMicroTime() - $this->startTime;
     }
 }
 ?>

@@ -24,6 +24,9 @@ class TestCLIApp extends AetherCLI {
     }
     public function run() {
     }
+    public function getTime() {
+        return $this->getRunTime();
+    }
 }
 class TestCLIApp2 extends TestCLIApp {
     protected $allowedOptions = array();
@@ -33,7 +36,9 @@ class testAetherCLI extends UnitTestCase {
     public function testParseOptions() {
         $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
 
+        ob_start();
         $app = new TestCLIApp;
+        $out = ob_get_clean();
 
         // Pass #0 Long opts with filename.php
         $opts = $app->getOptions(array("filename.php", "--foo=bar"));
@@ -73,20 +78,24 @@ class testAetherCLI extends UnitTestCase {
 
     public function testHasOptions() {
         $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
+        ob_start();
         $app = new TestCLIApp;
         $opts = $app->getOptions(array("filename.php", "--foo=bar"));
         $arr = array('foo'=>'bar');
         $this->assertEqual($arr, $opts);
         $this->assertTrue($app->hasOptions(array('foo')));
         $this->assertFalse($app->hasOptions(array('foo','bar')));
+        $out = ob_get_clean();
     }
 
     public function testHelpMixin() {
+        ob_start();
         $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
         $app = new TestCLIApp;
         $this->assertEqual($app->getOption('h'), '');
         $arr = array('help'=>'');
         $opts = $app->getOptions(array("--help"));
+        $out = ob_get_clean();
         $this->assertEqual($arr, $opts);
     }
 
@@ -95,6 +104,21 @@ class testAetherCLI extends UnitTestCase {
         $app = new TestCLIApp2;
         $out = ob_get_clean();
         $this->assertTrue(strpos($out, 'default help file') > 0);
+    }
+
+    public function testAutoTiming() {
+        ob_start();
+        $app = new TestCLIApp;
+        $app->run();
+        $out = ob_get_clean();
+        $this->assertEqual(strpos($out, 'Start time'), 
+            0, 'Start missing in timing');
+        #$this->assertEqual(strpos($out, 'End time'), 
+            #0, 'End missing in timing');
+        $t1 = $app->getTime();
+        sleep(1);
+        $t2 = $app->getTime();
+        $this->assertTrue($t2 > $ti);
     }
 }
 
