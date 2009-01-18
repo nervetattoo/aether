@@ -45,6 +45,7 @@ class AetherJSONResponse extends AetherResponse {
      * @param AetherServiceLocator $sl
      */
     public function draw($sl) {
+        header("Content-Type: application/json");
         echo $this->get();
     }
     
