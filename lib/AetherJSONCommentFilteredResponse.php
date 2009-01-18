@@ -12,7 +12,7 @@ require_once(AETHER_PATH . 'lib/AetherResponse.php');
  * @package aether.lib
  */
 
-class AetherJSONResponse extends AetherResponse {
+class AetherJSONCommentFilteredResponse extends AetherResponse {
     
     /**
      * Hold text string for output
@@ -55,7 +55,7 @@ class AetherJSONResponse extends AetherResponse {
      * @return string
      */
     public function get() {
-        return json_encode($this->struct);
+        return "/* " . json_encode($this->struct) . " */";
     }
 }
 ?>

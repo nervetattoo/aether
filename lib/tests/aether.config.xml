@@ -7,7 +7,7 @@
                 <option name="bar">foo</option>
                 <rule match="foo">
                     <module>
-                        GamerHeader
+                        HelloWorld
                         <option name="foo">foobar</option>
                     </module>
                     <rule match="a+b">

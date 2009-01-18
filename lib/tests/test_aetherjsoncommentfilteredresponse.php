@@ -2,24 +2,24 @@
 
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'simpletest.php');
-require_once(AETHER_PATH . 'lib/AetherJSONResponse.php');
+require_once(AETHER_PATH . 'lib/AetherJSONCommentFilteredResponse.php');
 
-class testAetherJsonResponse extends UnitTestCase {
+class testAetherJsonCommentFilteredResponse extends UnitTestCase {
     public function testEnvironment() {
-        $this->assertTrue(class_exists('AetherJSONResponse'));
+        $this->assertTrue(class_exists('AetherJSONCommentFilteredResponse'));
     }
     
     public function testResponse() {
         $struct = array('foo'=>'bar',' bar'=>'foo');
-        $res = new AetherJSONResponse($struct);
+        $res = new AetherJSONCommentFilteredResponse($struct);
         $out = $res->get();
         $this->assertTrue(strpos($out, '{"foo":"bar"," bar":"foo"}')!==false);
-        $this->assertFalse(strpos($out, '*/')!==false);
+        $this->assertTrue(preg_match('/\/\*[^\*]+\*\//',$out));
     }
 }
 
 if (testRunMode(__FILE__) == SINGLE) {
-    $test = new testAetherJsonResponse();
+    $test = new testAetherJsonCommentFilteredResponse();
     $test->run($reporter);
 }
 ?>
