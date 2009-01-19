@@ -56,7 +56,7 @@ abstract class AetherCLI {
      * @return 
      */
     public function __construct() {
-        echo "Start time [".date('Y-m-d H:i:s')."]";
+        echo "Start time [".date('Y-m-d H:i:s')."]\n";
         $this->startTime = $this->getMicroTime();
         $this->mixinHelpSupport();
         $this->options = $this->parseOptions($_SERVER['argv']);
