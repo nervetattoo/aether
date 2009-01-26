@@ -158,7 +158,7 @@ if (count($modules['missing']) > 0) {
     foreach ($modules['missing'] as $missing) {
         echo "\033[1;31mCould not locate source file for required module [$missing]\n";
     }
-    echo "\033[0m===== END ERRORS =====\n\n";
+    echo "\033[0m===== END WARNINGS =====\n\n";
     unset($modules['missing']);
 }
 
@@ -182,7 +182,7 @@ function loadConfig($file) {
     $import = new DOMDocument;
     $import->preserveWhiteSpace = false;
 
-    if ($argv[2] == 'nocache') {
+    if (isset($argv[2]) && $argv[2] == 'nocache') {
         $file = file_get_contents($file);
         $file = preg_replace('/cache="[0-9]*"/', '', $file);
         $import->loadXML($file);
