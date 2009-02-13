@@ -154,7 +154,7 @@ abstract class AetherCLI {
     /**
      * Verify CLI job has all options
      *
-     * @access protected
+     * @access public
      * @return boolean
      * @param array $opts As long opts
      */
@@ -164,6 +164,17 @@ abstract class AetherCLI {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Verify CLI job has one option 
+     * 
+     * @param mixed $opt Option to check for
+     * @access public
+     * @return boolean 
+     */
+    public function hasOption($opt) {
+        $this->hasOptions(array($opt));
     }
     
     /**
