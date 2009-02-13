@@ -174,7 +174,7 @@ abstract class AetherCLI {
      * @return boolean 
      */
     public function hasOption($opt) {
-        $this->hasOptions(array($opt));
+        return $this->hasOptions(array($opt));
     }
     
     /**
