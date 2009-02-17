@@ -15,6 +15,10 @@ require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
 require_once(AETHER_PATH . 'lib/AetherExceptions.php');
 
 class testAetherConfig extends UnitTestCase {
+    private function getConfig() {
+        return new AetherConfig(AETHER_PATH . 'lib/tests/aether.config.xml');
+    }
+
     public function testEnvironment() {
         $this->assertTrue(class_exists('AetherConfig'));
     }
@@ -23,7 +27,7 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://raw.no/unittest';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $this->assertEqual($conf->getSection(), 'Generic');
     }
@@ -32,7 +36,7 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://raw.no/fluff';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $opts = $conf->getOptions();
         $this->assertEqual($conf->getSection(), 'Generic');
@@ -43,7 +47,7 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://raw.no/unittest/foo';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $modules = $conf->getModules();
         $module = $modules[0];
@@ -56,7 +60,7 @@ class testAetherConfig extends UnitTestCase {
         $url = 'http://raw.no/tema/Playstation 3';
         $aetherUrl = new AetherUrlParser;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $modules = $conf->getModules();
         // Check options against the first module
@@ -68,14 +72,14 @@ class testAetherConfig extends UnitTestCase {
         // Second
         $url = 'http://raw.no/thisshouldgive404';
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $opts = $conf->getOptions();
         $this->assertEqual($opts['foobar'], 'yes');
         // Third
         $url = 'http://raw.no/unittest/heisann00';
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $opts = $conf->getOptions();
         $this->assertEqual($opts['def'], 'yes');
@@ -85,7 +89,7 @@ class testAetherConfig extends UnitTestCase {
         $aetherUrl = new AetherUrlParser;
         $url = 'http://raw.no/empty/fluff';
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $opts = $conf->getOptions();
         $this->assertEqual($opts['foobar'], 'yes');
@@ -95,7 +99,7 @@ class testAetherConfig extends UnitTestCase {
         $aetherUrl = new AetherUrlParser;
         $url = 'http://raw.no/bar/foo/bar';
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $opts = $conf->getOptions();
         $this->assertEqual($opts['foobar'], 'yes');
@@ -105,7 +109,7 @@ class testAetherConfig extends UnitTestCase {
         $aetherUrl = new AetherUrlParser;
         $url = 'http://raw.no/unittest/foo/a+b';
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $opts = $conf->getOptions();
         $this->assertEqual($opts['plusm'], 'yes');
@@ -116,7 +120,7 @@ class testAetherConfig extends UnitTestCase {
         $cat = "hifi-produkter";
         $url = 'http://raw.no/unittest/' . $cat;
         $aetherUrl->parse($url);
-        $conf = new AetherConfig(AETHER_PATH . 'lib/tests/');
+        $conf = $this->getConfig();
         $conf->matchUrl($aetherUrl);
         $this->assertEqual($conf->getUrlVariable('catName'), $cat);
     }
