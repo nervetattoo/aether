@@ -19,7 +19,9 @@ class testAetherSectionFactory extends UnitTestCase {
 
     public function testCreate() {
         
-        $section = AetherSectionFactory::create('Priceguide', new AetherServiceLocator);
+        $dir = dirname(__FILE__) . '/';
+        AetherSectionFactory::$path = $dir;
+        $section = AetherSectionFactory::create('Test', new AetherServiceLocator);
         $this->assertIsA($section, 'AetherSection');
     }
 }
