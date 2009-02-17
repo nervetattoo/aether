@@ -2,7 +2,6 @@
 
 require_once('/home/lib/libDefines.lib.php');
 require_once('PHPUnit/Framework.php');
-require_once(AETHER_PATH . 'lib/tests/AetherCLITest.php');
 require_once(AETHER_PATH . 'lib/tests/AetherConfigTest.php');
 require_once(AETHER_PATH . 'lib/tests/AetherJsonCommentFilteredResponseTest.php');
 require_once(AETHER_PATH . 'lib/tests/AetherJsonResponseTest.php');
