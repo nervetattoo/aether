@@ -40,9 +40,9 @@ class testAetherServiceLocator extends UnitTestCase {
 
     public function testArray() {
         $asl = new AetherServiceLocator;
-        $arr = $asl->vector('foo');
+        $arr = $asl->getVector('foo');
         $arr['foo'] = 'bar';
-        $arr2 = $asl->vector('foo');
+        $arr2 = $asl->getVector('foo');
         $this->assertEqual($arr['foo'], $arr2['foo']);
     }
 }
