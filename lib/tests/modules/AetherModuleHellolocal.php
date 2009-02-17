@@ -27,7 +27,7 @@ class AetherModuleHellolocal extends AetherModule {
      * @access public
      * @return string
      */
-    public function render() {
+    public function run() {
         return 'Hello local';
     }
 }
