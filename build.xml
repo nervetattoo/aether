@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Aether" default="build" basedir="/home/xinc/projects/aether">
+<project name="Aether" default="build" basedir=".">
     <property name="report.dir" value="${project.basedir}/report"/>
 
     <target name="prepare">
@@ -10,7 +10,7 @@
         <phpunit printsummary="true" haltonfailure="true">
             <formatter todir="${report.dir}" type="xml" outfile="logfile.xml"/>
             <batchtest>
-                <fileset dir="lib/tests">
+                <fileset dir="tests">
                     <include name="*Test.php"/>
                 </fileset>
             </batchtest>
@@ -18,7 +18,7 @@
     </target>
 
     <target name="generate-report">
-  		<phpunitreport infile="${report.dir}/logfile.xml" styledir="resources/xsl" todir="report" format="noframes"/>
+  		<phpunitreport infile="${report.dir}/logfile.xml" styledir="/usr/share/php/data/phing/etc/" todir="report" format="noframes"/>
   	</target>
 
     <target name="build" depends="prepare,tests,generate-report"/>

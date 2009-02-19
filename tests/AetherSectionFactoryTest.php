@@ -22,8 +22,8 @@ class AetherSectionFactoryTest extends PHPUnit_Framework_TestCase {
         $dir = dirname(__FILE__) . '/';
         AetherSectionFactory::$strict = false;
         AetherSectionFactory::$path = $dir;
-        $section = AetherSectionFactory::create('Test', new AetherServiceLocator);
-        $this->assertType('AetherSectionTest', $section);
+        $section = AetherSectionFactory::create('Testsection', new AetherServiceLocator);
+        $this->assertType('AetherSectionTestsection', $section);
     }
 }
 ?>

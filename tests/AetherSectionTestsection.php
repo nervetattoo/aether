@@ -13,7 +13,7 @@ require_once(AETHER_PATH . 'lib/AetherSection.php');
  * @package aether.test
  */
 
-class AetherSectionTest extends AetherSection {
+class AetherSectionTestsection extends AetherSection {
     
     /**
      * Return response
