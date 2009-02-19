@@ -10,9 +10,8 @@
  * @package aether
  */
 
-class AetherNoUrlRuleMatchException extends Exception {
-}
-
-class AetherMissingFileException extends Exception {
-}
+class AetherException extends Exception {}
+class AetherNoUrlRuleMatchException extends AetherException {}
+class AetherMissingFileException extends AetherException {}
+class AetherFinalRuleFoundException extends AetherException {}
 ?>

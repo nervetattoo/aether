@@ -46,13 +46,8 @@ class AetherTextResponse extends AetherResponse {
      * @param AetherServiceLocator $sl
      */
     public function draw($sl) {
-        try {
-            $session = $sl->get('session');
-            $session->set('wasGoingTo', $_SERVER['REQUEST_URI']);
-        }
-        catch (Exception $e) {
-            // Session is not initiated, do nothing
-        }
+        if (!empty(session_id()))
+            $_SESSION['wasGoingTo'] = $_SESSION['REQUEST_URI'];
         try {
             // Timer
             $timer = $sl->get('timer');

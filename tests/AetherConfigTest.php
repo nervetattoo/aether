@@ -104,6 +104,15 @@ class AetherConfigTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($opts['foobar'], 'yes');
     }
 
+    public function testConfigFallbackToDefaultSite() {
+        $aetherUrl = new AetherUrlParser;
+        $url = 'http://foo.no/unittest';
+        $aetherUrl->parse($url);
+        $conf = $this->getConfig();
+        $conf->matchUrl($aetherUrl);
+        $this->assertEquals($conf->getSection(), 'Generic');
+    }
+
     public function testMatchWithPlusInItWorks() {
         $aetherUrl = new AetherUrlParser;
         $url = 'http://raw.no/unittest/foo/a+b';
