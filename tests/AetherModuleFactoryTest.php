@@ -18,6 +18,7 @@ class AetherModuleFactoryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testCreate() {
+        AetherModuleFactory::$strict = true;
         $mod = AetherModuleFactory::create('Helloworld', 
             new AetherServiceLocator,array('foo'=>'bar'));
         $this->assertEquals($mod->run(), 'Hello world');
@@ -25,6 +26,7 @@ class AetherModuleFactoryTest extends PHPUnit_Framework_TestCase {
 
     public function testCreateModuleFromCustomFolder() {
         $dir = dirname(__FILE__) . '/';
+        AetherModuleFactory::$strict = false;
         AetherModuleFactory::$path = $dir;
         $mod = AetherModuleFactory::create('Hellolocal', 
             new AetherServiceLocator,array('foo'=>'bar'));
