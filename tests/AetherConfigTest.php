@@ -15,7 +15,7 @@ require_once(AETHER_PATH . 'lib/AetherExceptions.php');
 
 class AetherConfigTest extends PHPUnit_Framework_TestCase {
     private function getConfig() {
-        return new AetherConfig(AETHER_PATH . 'lib/tests/aether.config.xml');
+        return new AetherConfig(AETHER_PATH . 'tests/aether.config.xml');
     }
 
     public function testEnvironment() {
