@@ -12,7 +12,6 @@ require_once(LIB_PATH . 'Cache.lib.php');
 require_once(LIB_PATH . 'SessionHandler.lib.php');
 require_once(LIB_PATH . 'time/TimeFactory.lib.php');
 require_once(AETHER_PATH . 'lib/AetherExceptions.php');
-require_once(AETHER_PATH . 'lib/AetherUser.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
 require_once(AETHER_PATH . 'lib/AetherConfig.php');
@@ -159,15 +158,8 @@ class Aether {
          * Start session if session switch is turned on in 
          * configuration file
          */
-        if (array_key_exists('session', $options) AND $options['session'] == 'on') {
-            $session = new SessionHandler;
-            $this->sl->set('session', $session);
-            // If a user is associated to the session, create user object
-            if (is_numeric($session->get('userId'))) {
-                $user = new AetherUser($this->sl, $session->get('userId'));
-                $this->sl->set('user', $user);
-            }
-        }
+        if (array_key_exists('session', $options) AND $options['session'] == 'on')
+            session_start();
 
         // Initiate section
         try {

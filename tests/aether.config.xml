@@ -1,4 +1,21 @@
 <config>
+    <site name="*">
+        <urlRules>
+            <rule match="unittest">
+                <section>Generic</section>
+                <option name="foo">bar</option>
+                <rule match="foo">
+                    <module>
+                        HelloWorld
+                        <option name="foo">foobar</option>
+                    </module>
+                    <rule match="a+b">
+                        <option name="plusm">yes</option>
+                    </rule>
+                </rule>
+            </rule>
+        </urlRules>
+    </site>
     <site name="raw.no">
         <urlRules>
             <rule match="unittest">
