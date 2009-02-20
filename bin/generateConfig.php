@@ -54,14 +54,8 @@ if (!in_array($prefix, array("prod", "test"))) {
 $baseConfig = $configFolder . "aether.config.xml";
 
 // Verify that file exists before trying to parse it
-if (!file_exists($baseConfig)) {
-    if (!file_exists('aether.config.xml'))
-        exit("Base config file doesnt exist [config/aether.config.xml].");
-    else {
-        $baseConfig = 'aether.config.xml';
-        $configFolder = '';
-    }
-}
+if (!file_exists($baseConfig))
+    exit("Base config file doesnt exist [config/aether.config.xml].");
 
 $doc = loadConfig($baseConfig);
 $xpath = new DOMXPath($doc);

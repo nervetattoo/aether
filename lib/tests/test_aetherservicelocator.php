@@ -1,17 +1,17 @@
-<?php // vim:set ts=4 sw=4 et:
+<?php
+/*
+HARDWARE.NO EDITORSETTINGS:
+vim:set tabstop=4:
+vim:set shiftwidth=4:
+vim:set smarttab:
+vim:set expandtab:
+*/
 
 require_once('/home/lib/libDefines.lib.php');
-require_once('PHPUnit/Framework.php');
+require_once(LIB_PATH . 'simpletest.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 
-/**
- * 
- * Created: 2009-02-17
- * @author Raymond Julin
- * @package aether.test
- */
-
-class AetherServiceLocatorTest extends PHPUnit_Framework_TestCase {
+class testAetherServiceLocator extends UnitTestCase {
     public function testEnvironment() {
         $this->assertTrue(class_exists('AetherServiceLocator'));
     }
@@ -19,13 +19,13 @@ class AetherServiceLocatorTest extends PHPUnit_Framework_TestCase {
     public function testGetDatabase() {
         $asl = new AetherServiceLocator;
         $db = $asl->getDatabase('neo');
-        $this->assertType('Database', $db);
+        $this->assertIsA($db, 'Database');
     }
 
     public function testGetTemplate() {
         $asl = new AetherServiceLocator;
-        $tpl = $asl->getTemplate(86);
-        $this->assertType('Template',$tpl);
+        $db = $asl->getTemplate(86);
+        $this->assertIsA($db, 'Template');
     }
     
     public function testCustomObjectStorage() {
@@ -35,15 +35,20 @@ class AetherServiceLocatorTest extends PHPUnit_Framework_TestCase {
         $asl = new AetherServiceLocator;
         $asl->saveCustomObject('tester', $obj);
         $tester = $asl->fetchCustomObject('tester');
-        $this->assertSame($tester, $obj);
+        $this->assertIdentical($tester, $obj);
     }
 
     public function testArray() {
         $asl = new AetherServiceLocator;
-        $arr = $asl->getVector('foo');
+        $arr = $asl->vector('foo');
         $arr['foo'] = 'bar';
-        $arr2 = $asl->getVector('foo');
-        $this->assertEquals($arr['foo'], $arr2['foo']);
+        $arr2 = $asl->vector('foo');
+        $this->assertEqual($arr['foo'], $arr2['foo']);
     }
+}
+
+if (testRunMode(__FILE__) == SINGLE) {
+    $test = new testAetherServiceLocator();
+    $test->run($reporter);
 }
 ?>

@@ -1,17 +1,17 @@
-<?php // vim:set ts=4 sw=4 et:
+<?php
+/*
+HARDWARE.NO EDITORSETTINGS:
+vim:set tabstop=4:
+vim:set shiftwidth=4:
+vim:set smarttab:
+vim:set expandtab:
+*/
 
 require_once('/home/lib/libDefines.lib.php');
-require_once('PHPUnit/Framework.php');
+require_once(LIB_PATH . 'simpletest.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
 
-/**
- * 
- * Created: 2009-02-17
- * @author Raymond Julin
- * @package aether.test
- */
-
-class AetherUrlParserTest extends PHPUnit_Framework_TestCase {
+class testAetherUrlParser extends UnitTestCase {
     public function testEnvironment() {
         $this->assertTrue(class_exists('AetherUrlParser'));
     }
@@ -20,19 +20,19 @@ class AetherUrlParserTest extends PHPUnit_Framework_TestCase {
         $url = 'http://aether.raymond.raw.no/foobar/hello?foo';
         $parser = new AetherUrlParser;
         $parser->parse($url);
-        $this->assertEquals($parser->get('scheme'), 'http');
+        $this->assertEqual($parser->get('scheme'), 'http');
         $user = $parser->get('user');
         $this->assertTrue(empty($user));
 
         $url2 = 'ftp://foo:bar@hw.no/world?bar';
         $parser = new AetherUrlParser;
         $parser->parse($url2);
-        $this->assertEquals($parser->get('scheme'), 'ftp');
-        $this->assertEquals($parser->get('user'), 'foo');
-        $this->assertEquals($parser->get('pass'), 'bar');
-        $this->assertEquals($parser->get('path'), '/world');
+        $this->assertEqual($parser->get('scheme'), 'ftp');
+        $this->assertEqual($parser->get('user'), 'foo');
+        $this->assertEqual($parser->get('pass'), 'bar');
+        $this->assertEqual($parser->get('path'), '/world');
 
-        $this->assertEquals($parser->__toString(), preg_replace('/\?.*/', '', $url2));
+        $this->assertEqual($parser->__toString(), preg_replace('/\?.*/', '', $url2));
     }
 
     public function testParseServerArray() {
@@ -51,17 +51,22 @@ class AetherUrlParserTest extends PHPUnit_Framework_TestCase {
         );
         $parser = new AetherUrlParser;
         $parser->parseServerArray($server);
-        $this->assertEquals($parser->get('scheme'), 'http');
-        $this->assertEquals($parser->get('path'), '/foobar/hello');
+        $this->assertEqual($parser->get('scheme'), 'http');
+        $this->assertEqual($parser->get('path'), '/foobar/hello');
 
         $server['PHP_AUTH_USER'] = 'foo';
         $server['PHP_AUTH_PW'] = 'bar';
         $parser->parseServerArray($server);
-        $this->assertEquals($parser->get('user'), 'foo');
-        $this->assertEquals($parser->get('pass'), 'bar');
+        $this->assertEqual($parser->get('user'), 'foo');
+        $this->assertEqual($parser->get('pass'), 'bar');
 
         // Get as string again
-        $this->assertEquals($parser->__toString(), 'http://foo:bar@aether.raymond.raw.no/foobar/hello');
+        $this->assertEqual($parser->__toString(), 'http://foo:bar@aether.raymond.raw.no/foobar/hello');
     }
+}
+
+if (testRunMode(__FILE__) == SINGLE) {
+    $test = new testAetherUrlParser();
+    $test->run($reporter);
 }
 ?>

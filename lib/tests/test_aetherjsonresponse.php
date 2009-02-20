@@ -1,16 +1,10 @@
 <?php // vim:set ts=4 sw=4 et:
 
-require_once('PHPUnit/Framework.php');
+require_once('/home/lib/libDefines.lib.php');
+require_once(LIB_PATH . 'simpletest.php');
 require_once(AETHER_PATH . 'lib/AetherJSONResponse.php');
 
-/**
- * 
- * Created: 2009-02-17
- * @author Raymond Julin
- * @package aether.test
- */
-
-class AetherJsonResponseTest extends PHPUnit_Framework_TestCase {
+class testAetherJsonResponse extends UnitTestCase {
     public function testEnvironment() {
         $this->assertTrue(class_exists('AetherJSONResponse'));
     }
@@ -22,5 +16,10 @@ class AetherJsonResponseTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(strpos($out, '{"foo":"bar"," bar":"foo"}')!==false);
         $this->assertFalse(strpos($out, '*/')!==false);
     }
+}
+
+if (testRunMode(__FILE__) == SINGLE) {
+    $test = new testAetherJsonResponse();
+    $test->run($reporter);
 }
 ?>

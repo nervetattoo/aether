@@ -27,15 +27,6 @@ class AetherSectionFactory {
      * @var 
      */
     static public $path = AETHER_PATH;
-    
-    /**
-     * Have a mode strict that says wether or not the factory
-     * expects all modules to be under $dir/modules
-     * If "false" then $dir will be searched
-     * If "true" then $dir/modules (old school style) will be searched (default)
-     * @var boolean
-     */
-    static public $strict = true;
      
     /**
      * Create an instance of a section/subsection combination
@@ -54,10 +45,7 @@ class AetherSectionFactory {
                 $paths = array_map('trim', explode(';', self::$path));
             }
             foreach ($paths as $path) {
-                if (self::$strict)
-                    $file = $path . 'sections/' . $section . '.php';
-                else
-                    $file = $path . $section . '.php';
+                $file = $path . 'sections/' . $section . '.php';
                 if (file_exists($file)) {
                     include($file);
                     $aetherSection = new $section($sl);

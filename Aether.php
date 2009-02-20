@@ -159,8 +159,15 @@ class Aether {
          * Start session if session switch is turned on in 
          * configuration file
          */
-        if (array_key_exists('session', $options) AND $options['session'] == 'on')
-            session_start();
+        if (array_key_exists('session', $options) AND $options['session'] == 'on') {
+            $session = new SessionHandler;
+            $this->sl->set('session', $session);
+            // If a user is associated to the session, create user object
+            if (is_numeric($session->get('userId'))) {
+                $user = new AetherUser($this->sl, $session->get('userId'));
+                $this->sl->set('user', $user);
+            }
+        }
 
         // Initiate section
         try {

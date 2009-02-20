@@ -1,16 +1,16 @@
 <?php // vim:set ts=4 sw=4 et:
 
-require_once('PHPUnit/Framework.php');
 require_once('/home/lib/libDefines.lib.php');
+require_once(LIB_PATH . 'simpletest.php');
 require_once(AETHER_PATH . 'lib/AetherCLI.php');
 
 /**
  * 
- * Test aether cli
+ * Test AetherCLI
  * 
- * Created: 2009-02-17
+ * Created: 2008-12-12
  * @author Raymond Julin
- * @package aether
+ * @package aether.tests
  */
 
 class TestCLIApp extends AetherCLI {
@@ -31,7 +31,8 @@ class TestCLIApp extends AetherCLI {
 class TestCLIApp2 extends TestCLIApp {
     protected $allowedOptions = array();
 }
-class AetherCLITest extends PHPUnit_Framework_TestCase {
+
+class testAetherCLI extends UnitTestCase {
     public function testParseOptions() {
         $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
 
@@ -42,37 +43,37 @@ class AetherCLITest extends PHPUnit_Framework_TestCase {
         // Pass #0 Long opts with filename.php
         $opts = $app->getOptions(array("filename.php", "--foo=bar"));
         $arr = array('foo'=>'bar');
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
 
         // Pass #1 Long opts
         $opts = $app->getOptions(array("--foo=bar"));
         $arr = array('foo'=>'bar');
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
 
         // Pass #2 Long opts
         $opts = $app->getOptions(array("--foo=bar", "--meh=eh"));
         $arr = array('foo'=>'bar','meh'=>'eh');
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
 
         // Pass #3 Long opts, illegal option 
         $opts = $app->getOptions(array("--foo=bar", "--bleh=eh"));
         $arr = array('foo'=>'bar');
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
 
         // Pass #4 Short opts
         $opts = $app->getOptions(array("-f=bar", "-m=eh"));
         $arr = array('foo'=>'bar', 'meh'=>'eh');
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
 
         // Pass #5 Short opts, illegal options
         $opts = $app->getOptions(array("-t=bar", "-m=eh"));
         $arr = array('meh'=>'eh');
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
 
         // Pass #6 Fetch option one by one
         $app->getOptions(array("--meh=eh"));
         //$arr = array('meh'=>'eh');
-        $this->assertEquals($app->getOption('meh'), 'eh');
+        $this->assertEqual($app->getOption('meh'), 'eh');
     }
 
     public function testHasOptions() {
@@ -81,7 +82,7 @@ class AetherCLITest extends PHPUnit_Framework_TestCase {
         $app = new TestCLIApp;
         $opts = $app->getOptions(array("filename.php", "--foo=bar"));
         $arr = array('foo'=>'bar');
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
         $this->assertTrue($app->hasOptions(array('foo')));
         $this->assertFalse($app->hasOptions(array('foo','bar')));
         $out = ob_get_clean();
@@ -91,11 +92,11 @@ class AetherCLITest extends PHPUnit_Framework_TestCase {
         ob_start();
         $_SERVER['argv'] = array($_SERVER['argv'][0], '--foo=bar');
         $app = new TestCLIApp;
-        $this->assertEquals($app->getOption('h'), '');
+        $this->assertEqual($app->getOption('h'), '');
         $arr = array('help'=>'');
         $opts = $app->getOptions(array("--help"));
         $out = ob_get_clean();
-        $this->assertEquals($arr, $opts);
+        $this->assertEqual($arr, $opts);
     }
 
     public function testDisplayHelp() {
@@ -110,15 +111,19 @@ class AetherCLITest extends PHPUnit_Framework_TestCase {
         $app = new TestCLIApp;
         $app->run();
         $out = ob_get_clean();
-        $this->assertEquals(strpos($out, 'Start time'), 
+        $this->assertEqual(strpos($out, 'Start time'), 
             0, 'Start missing in timing');
-        #$this->assertEquals(strpos($out, 'End time'), 
+        #$this->assertEqual(strpos($out, 'End time'), 
             #0, 'End missing in timing');
         $t1 = $app->getTime();
         sleep(1);
         $t2 = $app->getTime();
         $this->assertTrue($t2 > $ti);
     }
-    
+}
+
+if (testRunMode(__FILE__) == SINGLE) {
+    $test = new testAetherCLI;
+    $test->run($reporter);
 }
 ?>

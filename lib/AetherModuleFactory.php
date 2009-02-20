@@ -13,18 +13,9 @@ class AetherModuleFactory {
     
     /**
      * The path to search for modules in
-     * @var string
+     * @var 
      */
     static public $path = AETHER_PATH;
-    
-    /**
-     * Have a mode strict that says wether or not the factory
-     * expects all modules to be under $dir/modules
-     * If "false" then $dir will be searched
-     * If "true" then $dir/modules (old school style) will be searched (default)
-     * @var boolean
-     */
-    static public $strict = true;
     
     /**
      * Createa instance of module
@@ -43,10 +34,7 @@ class AetherModuleFactory {
             $paths = array_map('trim', explode(';', self::$path));
         }
         foreach ($paths as $path) {
-            if (self::$strict)
-                $file = $path . 'modules/' . $module . '.php';
-            else
-                $file = $path . $module . '.php';
+            $file = $path . 'modules/' . $module . '.php';
             if (file_exists($file)) {
                 include_once($file);
                 $mod = new $module($sl, $options);
