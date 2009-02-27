@@ -119,9 +119,5 @@ class AetherCLITest extends PHPUnit_Framework_TestCase {
         $t2 = $app->getTime();
         $this->assertTrue($t2 > $ti);
     }
-    
-    public function testFail() {
-        $this->assertTrue(false);
-    }
 }
 ?>
