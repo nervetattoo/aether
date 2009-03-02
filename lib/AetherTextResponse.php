@@ -47,7 +47,7 @@ class AetherTextResponse extends AetherResponse {
      */
     public function draw($sl) {
         if (session_id() !== '')
-            $_SESSION['wasGoingTo'] = $_SESSION['REQUEST_URI'];
+            $_SESSION['wasGoingTo'] = $_SERVER['REQUEST_URI'];
         try {
             // Timer
             $timer = $sl->get('timer');
