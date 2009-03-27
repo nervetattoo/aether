@@ -1,15 +1,12 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 /**
  * Provides database access in a platform agnostic way, using simple query building blocks.
  *
- * $Id$
- *
- * @package    Core
  * @author     Kohana Team
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Database_Core {
+class AetherDatabase {
 
 	// Database instances
 	public static $instances = array();
@@ -58,12 +55,11 @@ class Database_Core {
 	 * @param   mixed   configuration array or DSN
 	 * @return  Database_Core
 	 */
-	public static function & instance($name = 'default', $config = NULL)
-	{
-		if ( ! isset(Database::$instances[$name]))
-		{
+	public static function & instance($name = 'default', $config = NULL) {
+		if (!isset(Database::$instances[$name])) {
 			// Create a new instance
-			Database::$instances[$name] = new Database($config === NULL ? $name : $config);
+			Database::$instances[$name] = 
+                new Database($config === NULL ? $name : $config);
 		}
 
 		return Database::$instances[$name];
@@ -75,56 +71,50 @@ class Database_Core {
 	 * @param   Database  instance of Database
 	 * @return  string
 	 */
-	public static function instance_name(Database $db)
-	{
+	public static function instance_name(Database $db) {
 		return array_search($db, Database::$instances, TRUE);
 	}
 
 	/**
-	 * Sets up the database configuration, loads the Database_Driver.
+	 * Sets up the database configuration, loads the DatabaseDriver.
 	 *
-	 * @throws  Kohana_Database_Exception
+	 * @throws  AetherDatabaseException
 	 */
-	public function __construct($config = array())
-	{
-		if (empty($config))
-		{
+	public function __construct($config = array()) {
+		if (empty($config)) {
 			// Load the default group
+            // FIX
 			$config = Kohana::config('database.default');
 		}
-		elseif (is_array($config) AND count($config) > 0)
-		{
-			if ( ! array_key_exists('connection', $config))
-			{
+		elseif (is_array($config) && count($config) > 0) {
+			if (!array_key_exists('connection', $config)) {
 				$config = array('connection' => $config);
 			}
 		}
-		elseif (is_string($config))
-		{
+		elseif (is_string($config)) {
 			// The config is a DSN string
-			if (strpos($config, '://') !== FALSE)
-			{
+			if (strpos($config, '://') !== FALSE) {
 				$config = array('connection' => $config);
 			}
 			// The config is a group name
-			else
-			{
+			else {
 				$name = $config;
 
 				// Test the config group name
+                // FIX
 				if (($config = Kohana::config('database.'.$config)) === NULL)
-					throw new Kohana_Database_Exception('database.undefined_group', $name);
+					throw new AetherDatabaseException('database.undefined_group', $name);
 			}
 		}
 
 		// Merge the default config with the passed config
 		$this->config = array_merge($this->config, $config);
 
-		if (is_string($this->config['connection']))
-		{
+		if (is_string($this->config['connection'])) {
 			// Make sure the connection is valid
 			if (strpos($this->config['connection'], '://') === FALSE)
-				throw new Kohana_Database_Exception('database.invalid_dsn', $this->config['connection']);
+				throw new AetherDatabaseException(
+                    'database.invalid_dsn', $this->config['connection']);
 
 			// Parse the DSN, creating an array to hold the connection parameters
 			$db = array
@@ -139,10 +129,10 @@ class Database_Core {
 			);
 
 			// Get the protocol and arguments
-			list ($db['type'], $connection) = explode('://', $this->config['connection'], 2);
+			list ($db['type'], $connection) = 
+                explode('://', $this->config['connection'], 2);
 
-			if (strpos($connection, '@') !== FALSE)
-			{
+			if (strpos($connection, '@') !== FALSE) {
 				// Get the username and password
 				list ($db['pass'], $connection) = explode('@', $connection, 2);
 				// Check if a password is supplied
@@ -160,19 +150,17 @@ class Database_Core {
 				$connection = implode('/', $connection);
 
 				// Find the socket
-				if (preg_match('/^unix\([^)]++\)/', $connection))
-				{
+				if (preg_match('/^unix\([^)]++\)/', $connection)) {
 					// This one is a little hairy: we explode based on the end of
 					// the socket, removing the 'unix(' from the connection string
-					list ($db['socket'], $connection) = explode(')', substr($connection, 5), 2);
+					list ($db['socket'], $connection) = 
+                        explode(')', substr($connection, 5), 2);
 				}
-				elseif (strpos($connection, ':') !== FALSE)
-				{
+				elseif (strpos($connection, ':') !== FALSE) {
 					// Fetch the host and port name
 					list ($db['host'], $db['port']) = explode(':', $connection, 2);
 				}
-				else
-				{
+				else {
 					$db['host'] = $connection;
 				}
 			}
@@ -192,19 +180,27 @@ class Database_Core {
 			$this->config['connection'] = $db;
 		}
 		// Set driver name
-		$driver = 'Database_'.ucfirst($this->config['connection']['type']).'_Driver';
+		$driver = 
+            'AetherDatabase'.ucfirst($this->config['connection']['type']).'Driver';
 
 		// Load the driver
-		if ( ! Kohana::auto_load($driver))
-			throw new Kohana_Database_Exception('core.driver_not_found', $this->config['connection']['type'], get_class($this));
+        // FIX
+		if (!Kohana::auto_load($driver))
+			throw new AetherDatabaseException(
+                'core.driver_not_found', 
+                $this->config['connection']['type'], get_class($this));
 
 		// Initialize the driver
 		$this->driver = new $driver($this->config);
 
 		// Validate the driver
-		if ( ! ($this->driver instanceof Database_Driver))
-			throw new Kohana_Database_Exception('core.driver_implements', $this->config['connection']['type'], get_class($this), 'Database_Driver');
+		if (!($this->driver instanceof AetherDatabaseDriver))
+			throw new AetherDatabaseException(
+                'core.driver_implements', 
+                $this->config['connection']['type'], get_class($this),
+                'AetherDatabaseDriver');
 
+        // FIX
 		Kohana::log('debug', 'Database Library initialized');
 	}
 
@@ -213,14 +209,13 @@ class Database_Core {
 	 *
 	 * @return  void
 	 */
-	public function connect()
-	{
+	public function connect() {
 		// A link can be a resource or an object
-		if ( ! is_resource($this->link) AND ! is_object($this->link))
-		{
+		if (!is_resource($this->link) AND !is_object($this->link)) {
 			$this->link = $this->driver->connect();
-			if ( ! is_resource($this->link) AND ! is_object($this->link))
-				throw new Kohana_Database_Exception('database.connection', $this->driver->show_error());
+			if (!is_resource($this->link) AND !is_object($this->link))
+				throw new AetherDatabaseException(
+                    'database.connection', $this->driver->show_error());
 
 			// Clear password after successful connect
 			$this->config['connection']['pass'] = NULL;
@@ -233,25 +228,25 @@ class Database_Core {
 	 * @param   string  SQL query to execute
 	 * @return  Database_Result
 	 */
-	public function query($sql = '')
-	{
+	public function query($sql = '') {
 		if ($sql == '') return FALSE;
 
 		// No link? Connect!
-		$this->link or $this->connect();
+        if (!$this->link)
+            $this->connect();
 
 		// Start the benchmark
 		$start = microtime(TRUE);
-
-		if (func_num_args() > 1) //if we have more than one argument ($sql)
-		{
+        
+        //if we have more than one argument ($sql)
+		if (func_num_args() > 1) {
 			$argv = func_get_args();
-			$binds = (is_array(next($argv))) ? current($argv) : array_slice($argv, 1);
+			$binds = (is_array(next($argv))) ? 
+                current($argv) : array_slice($argv, 1);
 		}
 
 		// Compile binds if needed
-		if (isset($binds))
-		{
+		if (isset($binds)) {
 			$sql = $this->compile_binds($sql, $binds);
 		}
 
@@ -261,10 +256,11 @@ class Database_Core {
 		// Stop the benchmark
 		$stop = microtime(TRUE);
 
-		if ($this->config['benchmark'] == TRUE)
-		{
+		if ($this->config['benchmark'] == TRUE) {
 			// Benchmark the query
-			Database::$benchmarks[] = array('query' => $sql, 'time' => $stop - $start, 'rows' => count($result));
+			Database::$benchmarks[] = 
+                array('query' => $sql, 'time' => $stop - $start, 
+                      'rows' => count($result));
 		}
 
 		return $result;
@@ -276,37 +272,31 @@ class Database_Core {
 	 * @param   string  string or array of column names to select
 	 * @return  Database_Core  This Database object.
 	 */
-	public function select($sql = '*')
-	{
-		if (func_num_args() > 1)
-		{
+	public function select($sql = '*') {
+		if (func_num_args() > 1) {
 			$sql = func_get_args();
 		}
-		elseif (is_string($sql))
-		{
+		elseif (is_string($sql)) {
 			$sql = explode(',', $sql);
 		}
-		else
-		{
+		else {
 			$sql = (array) $sql;
 		}
 
-		foreach ($sql as $val)
-		{
+		foreach ($sql as $val) {
 			if (($val = trim($val)) === '') continue;
 
-			if (strpos($val, '(') === FALSE AND $val !== '*')
-			{
-				if (preg_match('/^DISTINCT\s++(.+)$/i', $val, $matches))
-				{
+			if (strpos($val, '(') === FALSE AND $val !== '*') {
+				if (preg_match('/^DISTINCT\s++(.+)$/i', $val, $matches)) {
 					// Only prepend with table prefix if table name is specified
-					$val = (strpos($matches[1], '.') !== FALSE) ? $this->config['table_prefix'].$matches[1] : $matches[1];
+					$val = (strpos($matches[1], '.') !== FALSE) ? 
+                        $this->config['table_prefix'].$matches[1] : $matches[1];
 
 					$this->distinct = TRUE;
 				}
-				else
-				{
-					$val = (strpos($val, '.') !== FALSE) ? $this->config['table_prefix'].$val : $val;
+				else {
+					$val = (strpos($val, '.') !== FALSE) ? 
+                        $this->config['table_prefix'].$val : $val;
 				}
 
 				$val = $this->driver->escape_column($val);
@@ -324,39 +314,34 @@ class Database_Core {
 	 * @param   string  string or array of tables to select
 	 * @return  Database_Core  This Database object.
 	 */
-	public function from($sql)
-	{
-		if (func_num_args() > 1)
-		{
+	public function from($sql) {
+		if (func_num_args() > 1) {
 			$sql = func_get_args();
 		}
-		elseif (is_string($sql))
-		{
+		elseif (is_string($sql)) {
 			$sql = explode(',', $sql);
 		}
-		else
-		{
+		else {
 			$sql = array($sql);
 		}
 
-		foreach ($sql as $val)
-		{
+		foreach ($sql as $val) {
 			if (($val = trim($val)) === '') continue;
 
 			if (is_string($val))
 			{
-				// TODO: Temporary solution, this should be moved to database driver (AS is checked for twice)
-				if (stripos($val, ' AS ') !== FALSE)
-				{
+				// TODO: Temporary solution, 
+                // this should be moved to database driver (AS is checked for twice)
+				if (stripos($val, ' AS ') !== FALSE) {
 					$val = str_ireplace(' AS ', ' AS ', $val);
 
 					list($table, $alias) = explode(' AS ', $val);
 
 					// Attach prefix to both sides of the AS
-					$val = $this->config['table_prefix'].$table.' AS '.$this->config['table_prefix'].$alias;
+					$val = $this->config['table_prefix'].$table.' AS '.
+                        $this->config['table_prefix'].$alias;
 				}
-				else
-				{
+				else {
 					$val = $this->config['table_prefix'].$val;
 				}
 			}
@@ -376,65 +361,58 @@ class Database_Core {
 	 * @param   string        type of join
 	 * @return  Database_Core        This Database object.
 	 */
-	public function join($table, $key, $value = NULL, $type = '')
-	{
+	public function join($table, $key, $value = NULL, $type = '') {
 		$join = array();
 
-		if ( ! empty($type))
-		{
+		if (!empty($type)) {
 			$type = strtoupper(trim($type));
 
-			if ( ! in_array($type, array('LEFT', 'RIGHT', 'OUTER', 'INNER', 'LEFT OUTER', 'RIGHT OUTER'), TRUE))
-			{
+			if (!in_array($type, array('LEFT', 'RIGHT', 'OUTER', 'INNER',
+                                       'LEFT OUTER', 'RIGHT OUTER'), TRUE)) {
 				$type = '';
 			}
-			else
-			{
+			else {
 				$type .= ' ';
 			}
 		}
 
 		$cond = array();
 		$keys  = is_array($key) ? $key : array($key => $value);
-		foreach ($keys as $key => $value)
-		{
-			$key    = (strpos($key, '.') !== FALSE) ? $this->config['table_prefix'].$key : $key;
+		foreach ($keys as $key => $value) {
+			$key    = (strpos($key, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$key : $key;
 
-			if (is_string($value))
-			{
+			if (is_string($value)) {
 				// Only escape if it's a string
-				$value = $this->driver->escape_column($this->config['table_prefix'].$value);
+				$value = 
+                    $this->driver->escape_column($this->config['table_prefix'].$value);
 			}
 
 			$cond[] = $this->driver->where($key, $value, 'AND ', count($cond), FALSE);
 		}
 
-		if ( ! is_array($this->join))
-		{
+		if (!is_array($this->join)) {
 			$this->join = array();
 		}
 
-		if ( ! is_array($table))
-		{
+		if (!is_array($table)) {
 			$table = array($table);
 		}
 
-		foreach ($table as $t)
-		{
-			if (is_string($t))
-			{
-				// TODO: Temporary solution, this should be moved to database driver (AS is checked for twice)
-				if (stripos($t, ' AS ') !== FALSE)
-				{
+		foreach ($table as $t) {
+			if (is_string($t)) {
+				// TODO: Temporary solution, 
+                // this should be moved to database driver (AS is checked for twice)
+				if (stripos($t, ' AS ') !== FALSE) {
 					$t = str_ireplace(' AS ', ' AS ', $t);
 
 					list($table, $alias) = explode(' AS ', $t);
 
 					// Attach prefix to both sides of the AS
-					$t = $this->config['table_prefix'].$table.' AS '.$this->config['table_prefix'].$alias;
+					$t = $this->config['table_prefix'].$table.' AS '.
+                        $this->config['table_prefix'].$alias;
 				}
-				else
-				{
+				else {
 					$t = $this->config['table_prefix'].$t;
 				}
 			}
@@ -459,15 +437,16 @@ class Database_Core {
 	 * @param   boolean       disable quoting of WHERE clause
 	 * @return  Database_Core        This Database object.
 	 */
-	public function where($key, $value = NULL, $quote = TRUE)
-	{
+	public function where($key, $value = NULL, $quote = TRUE) {
 		$quote = (func_num_args() < 2 AND ! is_array($key)) ? -1 : $quote;
 		$keys  = is_array($key) ? $key : array($key => $value);
 
-		foreach ($keys as $key => $value)
-		{
-			$key           = (strpos($key, '.') !== FALSE) ? $this->config['table_prefix'].$key : $key;
-			$this->where[] = $this->driver->where($key, $value, 'AND ', count($this->where), $quote);
+		foreach ($keys as $key => $value) {
+			$key = (strpos($key, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$key : $key;
+
+			$this->where[] = 
+                $this->driver->where($key, $value, 'AND ', count($this->where), $quote);
 		}
 
 		return $this;
@@ -481,15 +460,16 @@ class Database_Core {
 	 * @param   boolean       disable quoting of WHERE clause
 	 * @return  Database_Core        This Database object.
 	 */
-	public function orwhere($key, $value = NULL, $quote = TRUE)
-	{
+	public function orwhere($key, $value = NULL, $quote = TRUE) {
 		$quote = (func_num_args() < 2 AND ! is_array($key)) ? -1 : $quote;
 		$keys  = is_array($key) ? $key : array($key => $value);
 
-		foreach ($keys as $key => $value)
-		{
-			$key           = (strpos($key, '.') !== FALSE) ? $this->config['table_prefix'].$key : $key;
-			$this->where[] = $this->driver->where($key, $value, 'OR ', count($this->where), $quote);
+		foreach ($keys as $key => $value) {
+			$key = (strpos($key, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$key : $key;
+            
+			$this->where[] = 
+                $this->driver->where($key, $value, 'OR ', count($this->where), $quote);
 		}
 
 		return $this;
@@ -503,14 +483,15 @@ class Database_Core {
 	 * @param   boolean       automatically add starting and ending wildcards
 	 * @return  Database_Core        This Database object.
 	 */
-	public function like($field, $match = '', $auto = TRUE)
-	{
+	public function like($field, $match = '', $auto = TRUE) {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->like($field, $match, $auto, 'AND ', count($this->where));
+		foreach ($fields as $field => $match) {
+			$field = (strpos($field, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$field : $field;
+            
+			$this->where[] = 
+                $this->driver->like($field, $match, $auto, 'AND ', count($this->where));
 		}
 
 		return $this;
@@ -524,14 +505,15 @@ class Database_Core {
 	 * @param   boolean       automatically add starting and ending wildcards
 	 * @return  Database_Core        This Database object.
 	 */
-	public function orlike($field, $match = '', $auto = TRUE)
-	{
+	public function orlike($field, $match = '', $auto = TRUE) {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->like($field, $match, $auto, 'OR ', count($this->where));
+		foreach ($fields as $field => $match) {
+			$field = (strpos($field, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$field : $field;
+
+			$this->where[] = 
+                $this->driver->like($field, $match, $auto, 'OR ', count($this->where));
 		}
 
 		return $this;
@@ -545,14 +527,15 @@ class Database_Core {
 	 * @param   boolean       automatically add starting and ending wildcards
 	 * @return  Database_Core        This Database object.
 	 */
-	public function notlike($field, $match = '', $auto = TRUE)
-	{
+	public function notlike($field, $match = '', $auto = TRUE) {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notlike($field, $match, $auto, 'AND ', count($this->where));
+		foreach ($fields as $field => $match) {
+			$field = (strpos($field, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$field : $field;
+
+			$this->where[] = 
+                $this->driver->notlike($field, $match, $auto, 'AND ', count($this->where));
 		}
 
 		return $this;
@@ -565,14 +548,15 @@ class Database_Core {
 	 * @param   string        like value to match with field
 	 * @return  Database_Core        This Database object.
 	 */
-	public function ornotlike($field, $match = '', $auto = TRUE)
-	{
+	public function ornotlike($field, $match = '', $auto = TRUE) {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notlike($field, $match, $auto, 'OR ', count($this->where));
+		foreach ($fields as $field => $match) {
+            $field = (strpos($field, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$field : $field;
+
+			$this->where[] = 
+                $this->driver->notlike($field, $match, $auto, 'OR ', count($this->where));
 		}
 
 		return $this;
@@ -585,14 +569,15 @@ class Database_Core {
 	 * @param   string        like value to match with field
 	 * @return  Database_Core        This Database object.
 	 */
-	public function regex($field, $match = '')
-	{
+	public function regex($field, $match = '') {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->regex($field, $match, 'AND ', count($this->where));
+		foreach ($fields as $field => $match) {
+			$field = (strpos($field, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$field : $field;
+
+			$this->where[] = 
+                $this->driver->regex($field, $match, 'AND ', count($this->where));
 		}
 
 		return $this;
@@ -605,14 +590,15 @@ class Database_Core {
 	 * @param   string        like value to match with field
 	 * @return  Database_Core        This Database object.
 	 */
-	public function orregex($field, $match = '')
-	{
+	public function orregex($field, $match = '') {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->regex($field, $match, 'OR ', count($this->where));
+		foreach ($fields as $field => $match) {
+			$field = (strpos($field, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$field : $field;
+            
+			$this->where[] = 
+                $this->driver->regex($field, $match, 'OR ', count($this->where));
 		}
 
 		return $this;
@@ -625,14 +611,15 @@ class Database_Core {
 	 * @param   string        regex value to match with field
 	 * @return  Database_Core        This Database object.
 	 */
-	public function notregex($field, $match = '')
-	{
+	public function notregex($field, $match = '') {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notregex($field, $match, 'AND ', count($this->where));
+		foreach ($fields as $field => $match) {
+			$field = (strpos($field, '.') !== FALSE) ? 
+                $this->config['table_prefix'].$field : $field;
+
+			$this->where[] = 
+                $this->driver->notregex($field, $match, 'AND ', count($this->where));
 		}
 
 		return $this;
@@ -645,14 +632,15 @@ class Database_Core {
 	 * @param   string        regex value to match with field
 	 * @return  Database_Core        This Database object.
 	 */
-	public function ornotregex($field, $match = '')
-	{
+	public function ornotregex($field, $match = '') {
 		$fields = is_array($field) ? $field : array($field => $match);
 
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notregex($field, $match, 'OR ', count($this->where));
+		foreach ($fields as $field => $match) {
+			$field         = (strpos($field, '.') !== FALSE) 
+                ? $this->config['table_prefix'].$field : $field;
+            
+			$this->where[] = 
+                $this->driver->notregex($field, $match, 'OR ', count($this->where));
 		}
 
 		return $this;
@@ -664,22 +652,17 @@ class Database_Core {
 	 * @param   string  column name to group by
 	 * @return  Database_Core  This Database object.
 	 */
-	public function groupby($by)
-	{
-		if ( ! is_array($by))
-		{
+	public function groupby($by) {
+		if (!is_array($by)) {
 			$by = explode(',', (string) $by);
 		}
 
-		foreach ($by as $val)
-		{
+		foreach ($by as $val) {
 			$val = trim($val);
 
-			if ($val != '')
-			{
+			if ($val != '') {
 				// Add the table prefix if we are using table.column names
-				if(strpos($val, '.'))
-				{
+				if(strpos($val, '.')) {
 					$val = $this->config['table_prefix'].$val;
 				}
 
@@ -698,9 +681,10 @@ class Database_Core {
 	 * @param   boolean       disable quoting of WHERE clause
 	 * @return  Database_Core        This Database object.
 	 */
-	public function having($key, $value = '', $quote = TRUE)
-	{
-		$this->having[] = $this->driver->where($key, $value, 'AND', count($this->having), TRUE);
+	public function having($key, $value = '', $quote = TRUE) {
+		$this->having[] = 
+            $this->driver->where($key, $value, 'AND', count($this->having), TRUE);
+
 		return $this;
 	}
 
@@ -712,9 +696,10 @@ class Database_Core {
 	 * @param   boolean       disable quoting of WHERE clause
 	 * @return  Database_Core        This Database object.
 	 */
-	public function orhaving($key, $value = '', $quote = TRUE)
-	{
-		$this->having[] = $this->driver->where($key, $value, 'OR', count($this->having), TRUE);
+	public function orhaving($key, $value = '', $quote = TRUE) {
+		$this->having[] = 
+            $this->driver->where($key, $value, 'OR', count($this->having), TRUE);
+
 		return $this;
 	}
 
@@ -725,27 +710,24 @@ class Database_Core {
 	 * @param   string        direction of the order
 	 * @return  Database_Core        This Database object.
 	 */
-	public function orderby($orderby, $direction = NULL)
-	{
-		if ( ! is_array($orderby))
-		{
+	public function orderby($orderby, $direction = NULL) {
+		if (!is_array($orderby)) {
 			$orderby = array($orderby => $direction);
 		}
 
-		foreach ($orderby as $column => $direction)
-		{
+		foreach ($orderby as $column => $direction) {
 			$direction = strtoupper(trim($direction));
 
 			// Add a direction if the provided one isn't valid
-			if ( ! in_array($direction, array('ASC', 'DESC', 'RAND()', 'RANDOM()', 'NULL')))
-			{
+			if (!in_array($direction, array('ASC', 'DESC', 'RAND()',
+                                            'RANDOM()', 'NULL'))) {
 				$direction = 'ASC';
 			}
 
 			// Add the table prefix if a table.column was passed
-			if (strpos($column, '.'))
-			{
-				$column = $this->config['table_prefix'].$column;
+			if (strpos($column, '.')) {
+				$column = 
+                    $this->config['table_prefix'].$column;
 			}
 
 			$this->orderby[] = $this->driver->escape_column($column).' '.$direction;
@@ -761,12 +743,10 @@ class Database_Core {
 	 * @param   integer  offset in result to start returning rows from
 	 * @return  Database_Core   This Database object.
 	 */
-	public function limit($limit, $offset = NULL)
-	{
-		$this->limit  = (int) $limit;
+	public function limit($limit, $offset = NULL) {
+		$this->limit = (int) $limit;
 
-		if ($offset !== NULL OR ! is_int($this->offset))
-		{
+		if ($offset !== NULL OR ! is_int($this->offset)) {
 			$this->offset($offset);
 		}
 
@@ -779,8 +759,7 @@ class Database_Core {
 	 * @param   integer  offset value
 	 * @return  Database_Core   This Database object.
 	 */
-	public function offset($value)
-	{
+	public function offset($value) {
 		$this->offset = (int) $value;
 
 		return $this;
@@ -793,15 +772,12 @@ class Database_Core {
 	 * @param   string        value to match with key
 	 * @return  Database_Core        This Database object.
 	 */
-	public function set($key, $value = '')
-	{
-		if ( ! is_array($key))
-		{
+	public function set($key, $value = '') {
+		if (!is_array($key)) {
 			$key = array($key => $value);
 		}
 
-		foreach ($key as $k => $v)
-		{
+		foreach ($key as $k => $v) {
 			// Add a table prefix if the column includes the table.
 			if (strpos($k, '.'))
 				$k = $this->config['table_prefix'].$k;
@@ -813,26 +789,25 @@ class Database_Core {
 	}
 
 	/**
-	 * Compiles the select statement based on the other functions called and runs the query.
+	 * Compiles the select statement based on 
+     * the other functions called and runs the query.
 	 *
 	 * @param   string  table name
 	 * @param   string  limit clause
 	 * @param   string  offset clause
 	 * @return  Database_Result
 	 */
-	public function get($table = '', $limit = NULL, $offset = NULL)
-	{
-		if ($table != '')
-		{
+	public function get($table = '', $limit = NULL, $offset = NULL) {
+		if ($table != '') {
 			$this->from($table);
 		}
 
-		if ( ! is_null($limit))
-		{
+		if (!is_null($limit)) {
 			$this->limit($limit, $offset);
 		}
 
-		$sql = $this->driver->compile_select(get_object_vars($this));
+		$sql = 
+            $this->driver->compile_select(get_object_vars($this));
 
 		$this->reset_select();
 
@@ -844,7 +819,8 @@ class Database_Core {
 	}
 
 	/**
-	 * Compiles the select statement based on the other functions called and runs the query.
+	 * Compiles the select statement based on the other 
+     * functions called and runs the query.
 	 *
 	 * @param   string  table name
 	 * @param   array   where clause
@@ -852,20 +828,17 @@ class Database_Core {
 	 * @param   string  offset clause
 	 * @return  Database_Core  This Database object.
 	 */
-	public function getwhere($table = '', $where = NULL, $limit = NULL, $offset = NULL)
-	{
-		if ($table != '')
-		{
+	public function getwhere($table = '', $where = NULL, $limit = NULL, 
+                             $offset = NULL) {
+		if ($table != '') {
 			$this->from($table);
 		}
 
-		if ( ! is_null($where))
-		{
+		if (!is_null($where)) {
 			$this->where($where);
 		}
 
-		if ( ! is_null($limit))
-		{
+		if (!is_null($limit)) {
 			$this->limit($limit, $offset);
 		}
 
@@ -879,22 +852,20 @@ class Database_Core {
 	}
 
 	/**
-	 * Compiles the select statement based on the other functions called and returns the query string.
+	 * Compiles the select statement based on the other 
+     * functions called and returns the query string.
 	 *
 	 * @param   string  table name
 	 * @param   string  limit clause
 	 * @param   string  offset clause
 	 * @return  string  sql string
 	 */
-	public function compile($table = '', $limit = NULL, $offset = NULL)
-	{
-		if ($table != '')
-		{
+	public function compile($table = '', $limit = NULL, $offset = NULL) {
+		if ($table != '') {
 			$this->from($table);
 		}
 
-		if ( ! is_null($limit))
-		{
+		if (!is_null($limit)) {
 			$this->limit($limit, $offset);
 		}
 
@@ -912,20 +883,17 @@ class Database_Core {
 	 * @param   array   array of key/value pairs to insert
 	 * @return  Database_Result  Query result
 	 */
-	public function insert($table = '', $set = NULL)
-	{
-		if ( ! is_null($set))
-		{
+	public function insert($table = '', $set = NULL) {
+		if (!is_null($set)) {
 			$this->set($set);
 		}
 
 		if ($this->set == NULL)
-			throw new Kohana_Database_Exception('database.must_use_set');
+			throw new AetherDatabaseException('database.must_use_set');
 
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
+		if ($table == '') {
+			if (!isset($this->from[0]))
+				throw new AetherDatabaseException('database.must_use_table');
 
 			$table = $this->from[0];
 		}
@@ -933,7 +901,8 @@ class Database_Core {
 		// If caching is enabled, clear the cache before inserting
 		($this->config['cache'] === TRUE) and $this->clear_cache();
 
-		$sql = $this->driver->insert($this->config['table_prefix'].$table, array_keys($this->set), array_values($this->set));
+		$sql = $this->driver->insert($this->config['table_prefix'].$table, 
+                                     array_keys($this->set), array_values($this->set));
 
 		$this->reset_write();
 
@@ -948,27 +917,29 @@ class Database_Core {
 	 * @param   bool    Generate a NOT IN clause instead
 	 * @return  Database_Core  This Database object.
 	 */
-	public function in($field, $values, $not = FALSE)
-	{
-		if (is_array($values))
-		{
+	public function in($field, $values, $not = FALSE) {
+		if (is_array($values)) {
 			$escaped_values = array();
-			foreach ($values as $v)
-			{
-				if (is_numeric($v))
-				{
+			foreach ($values as $v) {
+				if (is_numeric($v)) {
 					$escaped_values[] = $v;
 				}
-				else
-				{
+				else {
 					$escaped_values[] = "'".$this->driver->escape_str($v)."'";
 				}
 			}
 			$values = implode(",", $escaped_values);
 		}
 
-		$where = $this->driver->escape_column(((strpos($field,'.') !== FALSE) ? $this->config['table_prefix'] : ''). $field).' '.($not === TRUE ? 'NOT ' : '').'IN ('.$values.')';
-		$this->where[] = $this->driver->where($where, '', 'AND ', count($this->where), -1);
+        if (strpos($field, '.') !== false)
+            $where = $this->driver->escape_column($this->config['table_prefix']);
+        else
+            $where = '';
+        $where .= $this->driver->escape_column($field) . 
+            ' ' . ($not === true ? 'NOT ' : '') . 'IN (' . $values . ')';
+
+		$this->where[] = 
+            $this->driver->where($where, '', 'AND ', count($this->where), -1);
 
 		return $this;
 	}
@@ -980,8 +951,7 @@ class Database_Core {
 	 * @param   mixed   An array or string to match against
 	 * @return  Database_Core  This Database object.
 	 */
-	public function notin($field, $values)
-	{
+	public function notin($field, $values) {
 		return $this->in($field, $values, TRUE);
 	}
 
@@ -992,25 +962,23 @@ class Database_Core {
 	 * @param   array   array of key/value pairs to merge
 	 * @return  Database_Result  Query result
 	 */
-	public function merge($table = '', $set = NULL)
-	{
-		if ( ! is_null($set))
-		{
+	public function merge($table = '', $set = NULL) {
+		if (!is_null($set)) {
 			$this->set($set);
 		}
 
 		if ($this->set == NULL)
-			throw new Kohana_Database_Exception('database.must_use_set');
+			throw new AetherDatabaseException('database.must_use_set');
 
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
+		if ($table == '') {
+			if (!isset($this->from[0]))
+				throw new AetherDatabaseException('database.must_use_table');
 
 			$table = $this->from[0];
 		}
 
-		$sql = $this->driver->merge($this->config['table_prefix'].$table, array_keys($this->set), array_values($this->set));
+		$sql = $this->driver->merge($this->config['table_prefix'].$table, 
+                                    array_keys($this->set), array_values($this->set));
 
 		$this->reset_write();
 		return $this->query($sql);
@@ -1024,30 +992,25 @@ class Database_Core {
 	 * @param   array   where clause
 	 * @return  Database_Result  Query result
 	 */
-	public function update($table = '', $set = NULL, $where = NULL)
-	{
-		if ( is_array($set))
-		{
+	public function update($table = '', $set = NULL, $where = NULL) {
+		if (is_array($set))
 			$this->set($set);
-		}
 
-		if ( ! is_null($where))
-		{
+		if (!is_null($where))
 			$this->where($where);
-		}
 
 		if ($this->set == FALSE)
-			throw new Kohana_Database_Exception('database.must_use_set');
+			throw new AetherDatabaseException('database.must_use_set');
 
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
+		if ($table == '') {
+			if (!isset($this->from[0]))
+				throw new AetherDatabaseException('database.must_use_table');
 
 			$table = $this->from[0];
 		}
 
-		$sql = $this->driver->update($this->config['table_prefix'].$table, $this->set, $this->where);
+		$sql = $this->driver->update($this->config['table_prefix'].$table, 
+                                     $this->set, $this->where);
 
 		$this->reset_write();
 		return $this->query($sql);
@@ -1060,27 +1023,22 @@ class Database_Core {
 	 * @param   array   where clause
 	 * @return  Database_Result  Query result
 	 */
-	public function delete($table = '', $where = NULL)
-	{
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
+	public function delete($table = '', $where = NULL) {
+		if ($table == '') {
+			if (!isset($this->from[0]))
+				throw new AetherDatabaseException('database.must_use_table');
 
 			$table = $this->from[0];
 		}
-		else
-		{
+		else {
 			$table = $this->config['table_prefix'].$table;
 		}
 
-		if (! is_null($where))
-		{
+		if (!is_null($where))
 			$this->where($where);
-		}
 
 		if (count($this->where) < 1)
-			throw new Kohana_Database_Exception('database.must_use_where');
+			throw new AetherDatabaseException('database.must_use_where');
 
 		$sql = $this->driver->delete($table, $this->where);
 
@@ -1093,8 +1051,7 @@ class Database_Core {
 	 *
 	 * @return  string SQL
 	 */
-	public function last_query()
-	{
+	public function last_query() {
 	   return $this->last_query;
 	}
 
@@ -1105,22 +1062,19 @@ class Database_Core {
 	 * @param   array    where clause
 	 * @return  integer
 	 */
-	public function count_records($table = FALSE, $where = NULL)
-	{
-		if (count($this->from) < 1)
-		{
+	public function count_records($table = FALSE, $where = NULL) {
+		if (count($this->from) < 1) {
 			if ($table == FALSE)
-				throw new Kohana_Database_Exception('database.must_use_table');
+				throw new AetherDatabaseException('database.must_use_table');
 
 			$this->from($table);
 		}
 
 		if ($where !== NULL)
-		{
 			$this->where($where);
-		}
 
-		$query = $this->select('COUNT(*) AS '.$this->escape_column('records_found'))->get()->result(TRUE);
+		$query = $this->select('COUNT(*) AS '.$this->escape_column('records_found'));
+        $query = $query->get()->result(TRUE);
 
 		return (int) $query->current()->records_found;
 	}
@@ -1130,8 +1084,7 @@ class Database_Core {
 	 *
 	 * @return  void
 	 */
-	protected function reset_select()
-	{
+	protected function reset_select() {
 		$this->select   = array();
 		$this->from     = array();
 		$this->join     = array();
@@ -1149,8 +1102,7 @@ class Database_Core {
 	 *
 	 * @return  void
 	 */
-	protected function reset_write()
-	{
+	protected function reset_write() {
 		$this->set   = array();
 		$this->from  = array();
 		$this->where = array();
@@ -1161,9 +1113,9 @@ class Database_Core {
 	 *
 	 * @return  array
 	 */
-	public function list_tables()
-	{
-		$this->link or $this->connect();
+	public function list_tables() {
+        if (!$this->link)
+            $this->connect();
 
 		return $this->driver->list_tables($this);
 	}
@@ -1175,10 +1127,10 @@ class Database_Core {
 	 * @param   boolean  True to attach table prefix
 	 * @return  boolean
 	 */
-	public function table_exists($table_name, $prefix = TRUE)
-	{
+	public function table_exists($table_name, $prefix = TRUE) {
 		if ($prefix)
-			return in_array($this->config['table_prefix'].$table_name, $this->list_tables());
+			return in_array($this->config['table_prefix'].$table_name, 
+                            $this->list_tables());
 		else
 			return in_array($table_name, $this->list_tables());
 	}
@@ -1190,10 +1142,8 @@ class Database_Core {
 	 * @param   array   array of values to bind to the query
 	 * @return  string
 	 */
-	public function compile_binds($sql, $binds)
-	{
-		foreach ((array) $binds as $val)
-		{
+	public function compile_binds($sql, $binds) {
+		foreach ((array) $binds as $val) {
 			// If the SQL contains no more bind marks ("?"), we're done.
 			if (($next_bind_pos = strpos($sql, '?')) === FALSE)
 				break;
@@ -1201,11 +1151,13 @@ class Database_Core {
 			// Properly escape the bind value.
 			$val = $this->driver->escape($val);
 
-			// Temporarily replace possible bind marks ("?"), in the bind value itself, with a placeholder.
+			// Temporarily replace possible bind marks ("?"), 
+            // in the bind value itself, with a placeholder.
 			$val = str_replace('?', '{%B%}', $val);
 
 			// Replace the first bind mark ("?") with its corresponding value.
-			$sql = substr($sql, 0, $next_bind_pos).$val.substr($sql, $next_bind_pos + 1);
+			$sql = substr($sql, 0, $next_bind_pos).$val.
+                substr($sql, $next_bind_pos + 1);
 		}
 
 		// Restore placeholders.
@@ -1218,9 +1170,9 @@ class Database_Core {
 	 * @param   string  table name
 	 * @return  array
 	 */
-	public function field_data($table = '')
-	{
-		$this->link or $this->connect();
+	public function field_data($table = '') {
+        if (!$this->link)
+            $this->connect();
 
 		return $this->driver->field_data($this->config['table_prefix'].$table);
 	}
@@ -1231,9 +1183,9 @@ class Database_Core {
 	 * @param   string  table name
 	 * @return  array
 	 */
-	public function list_fields($table = '')
-	{
-		$this->link or $this->connect();
+	public function list_fields($table = '') {
+        if (!$this->link)
+            $this->connect();
 
 		return $this->driver->list_fields($this->config['table_prefix'].$table);
 	}
@@ -1244,8 +1196,7 @@ class Database_Core {
 	 * @param   mixed   value to escape
 	 * @return  string
 	 */
-	public function escape($value)
-	{
+	public function escape($value) {
 		return $this->driver->escape($value);
 	}
 
@@ -1255,8 +1206,7 @@ class Database_Core {
 	 * @param   string  string to escape
 	 * @return  string
 	 */
-	public function escape_str($str)
-	{
+	public function escape_str($str) {
 		return $this->driver->escape_str($str);
 	}
 
@@ -1266,8 +1216,7 @@ class Database_Core {
 	 * @param   string  string to escape
 	 * @return  string
 	 */
-	public function escape_table($table)
-	{
+	public function escape_table($table) {
 		return $this->driver->escape_table($table);
 	}
 
@@ -1277,8 +1226,7 @@ class Database_Core {
 	 * @param   string  string to escape
 	 * @return  string
 	 */
-	public function escape_column($table)
-	{
+	public function escape_column($table) {
 		return $this->driver->escape_column($table);
 	}
 
@@ -1287,8 +1235,7 @@ class Database_Core {
 	 *
 	 * @return  string
 	 */
-	public function table_prefix()
-	{
+	public function table_prefix() {
 		return $this->config['table_prefix'];
 	}
 
@@ -1298,18 +1245,14 @@ class Database_Core {
 	 * @param   string|TRUE  clear cache by SQL statement or TRUE for last query
 	 * @return  Database_Core       This Database object.
 	 */
-	public function clear_cache($sql = NULL)
-	{
-		if ($sql === TRUE)
-		{
+	public function clear_cache($sql = NULL) {
+		if ($sql === TRUE) {
 			$this->driver->clear_cache($this->last_query);
 		}
-		elseif (is_string($sql))
-		{
+		elseif (is_string($sql)) {
 			$this->driver->clear_cache($sql);
 		}
-		else
-		{
+		else {
 			$this->driver->clear_cache();
 		}
 
@@ -1322,8 +1265,7 @@ class Database_Core {
 	 * @param   string  SQL query
 	 * @return  object
 	 */
-	public function stmt_prepare($sql)
-	{
+	public function stmt_prepare($sql) {
 		return $this->driver->stmt_prepare($sql, $this->config);
 	}
 
@@ -1334,8 +1276,7 @@ class Database_Core {
 	 *
 	 * @return Database_Core This Databaes object
 	 */
-	public function push()
-	{
+	public function push() {
 		array_push($this->query_history, array(
 			$this->select,
 			$this->from,
@@ -1360,10 +1301,8 @@ class Database_Core {
 	 *
 	 * @return Database_Core This Databaes object
 	 */
-	public function pop()
-	{
-		if (count($this->query_history) == 0)
-		{
+	public function pop() {
+		if (count($this->query_history) == 0) {
 			// No history
 			return $this;
 		}
@@ -1390,28 +1329,23 @@ class Database_Core {
 	 *
 	 * @return  integer
 	 */
-	public function count_last_query()
-	{
-		if ($sql = $this->last_query())
-		{
-			if (stripos($sql, 'LIMIT') !== FALSE)
-			{
+	public function count_last_query() {
+		if ($sql = $this->last_query()) {
+			if (stripos($sql, 'LIMIT') !== FALSE) {
 				// Remove LIMIT from the SQL
 				$sql = preg_replace('/\sLIMIT\s+[^a-z]+/i', ' ', $sql);
 			}
 
-			if (stripos($sql, 'OFFSET') !== FALSE)
-			{
+			if (stripos($sql, 'OFFSET') !== FALSE) {
 				// Remove OFFSET from the SQL
 				$sql = preg_replace('/\sOFFSET\s+\d+/i', '', $sql);
 			}
 
 			// Get the total rows from the last query executed
-			$result = $this->query
-			(
+			$result = $this->query(
 				'SELECT COUNT(*) AS '.$this->escape_column('total_rows').' '.
 				'FROM ('.trim($sql).') AS '.$this->escape_table('counted_results')
-			);
+                );
 
 			// Return the total number of rows from the query
 			return (int) $result->current()->total_rows;
@@ -1426,8 +1360,8 @@ class Database_Core {
 /**
  * Sets the code for a Database exception.
  */
-class Kohana_Database_Exception extends Kohana_Exception {
+class AetherDatabaseException extends Exception {
 
 	protected $code = E_DATABASE_ERROR;
 
-} // End Kohana Database Exception
+}
