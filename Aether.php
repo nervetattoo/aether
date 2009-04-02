@@ -78,6 +78,10 @@ class Aether {
         $parsedUrl = new AetherUrlParser;
         $parsedUrl->parseServerArray($_SERVER);
         $this->sl->set('parsedUrl', $parsedUrl);
+        
+        // Set autoloader
+        spl_autoload_register(array('Aether', 'autoLoad'));
+        
         /**
          * Find config folder for project
          * By convention the config folder is always placed at
@@ -206,6 +210,76 @@ class Aether {
              */
             $this->moduleManager->stop();
         }
+    }
+
+    /**
+     * Used to autoload aether classes
+     *
+     * @access public
+     * @return bool
+     */
+    public static function autoLoad($class) {
+        if (class_exists($class, false))
+            return true;
+
+        // Split up the name of the class by camel case (AetherDriver
+        $matches = preg_split('/([A-Z][^A-Z]+)/', $class, -1,
+                              PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        // We should only autoload aether classes
+        if (empty($matches) || $matches[0] != 'Aether')
+            return false;
+
+        // Find the class location
+        switch ($matches[1]) {
+        case 'Module':
+            break;
+        case 'Section':
+            break;
+        case 'Database':
+            $path = AETHER_PATH . 'lib/';
+            break;
+        case 'ORM':
+            $path = AETHER_PATH . 'lib/ORM';
+            break;
+        case 'Driver':
+            $path = AETHER_PATH . 'lib/drivers';
+            break;
+        default:
+            $path = AETHER_PATH . 'lib/';
+            break;
+        }
+
+
+        $i = 0;
+        foreach ($matches as $match) {
+            // Turn the rest of the array into a string that can be used as a filename
+            $filenameArray = array_slice($matches, $i);
+            $filename = implode('', $filenameArray);
+
+            // Check if there is a file with this name.
+            // Files have precendence over folders
+            $filename = $path . $filename . '.php';
+            if (file_exists($filename)) {
+                $filePath = $filename;
+                break;
+            }
+
+            // If there is a directory with this name add it to the dir path
+            $match = strtolower($match);
+            if (file_exists($path . $match))
+                $path = $path . $match . '/';
+            else
+                break;
+
+            $i++;
+        }
+
+        if (isset($filePath) && !empty($filePath)) {
+            require $filePath;
+            return true;
+        }
+        
+        return false;
     }
 }
 ?>
