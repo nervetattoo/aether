@@ -1,15 +1,12 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 /**
  * Database API driver
  *
- * $Id$
- *
- * @package    Core
  * @author     Kohana Team
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Database_Driver {
+abstract class AetherDatabaseDriver {
 
 	static $query_cache;
 
@@ -36,9 +33,9 @@ abstract class Database_Driver {
 	 * @param   array   where clause
 	 * @return  string
 	 */
-	public function delete($table, $where)
-	{
-		return 'DELETE FROM '.$this->escape_table($table).' WHERE '.implode(' ', $where);
+	public function delete($table, $where) {
+		return 'DELETE FROM '.$this->escape_table($table).
+            ' WHERE '.implode(' ', $where);
 	}
 
 	/**
@@ -49,13 +46,14 @@ abstract class Database_Driver {
 	 * @param   array   where clause
 	 * @return  string
 	 */
-	public function update($table, $values, $where)
-	{
+	public function update($table, $values, $where) {
 		foreach ($values as $key => $val)
 		{
 			$valstr[] = $this->escape_column($key).' = '.$val;
 		}
-		return 'UPDATE '.$this->escape_table($table).' SET '.implode(', ', $valstr).' WHERE '.implode(' ',$where);
+
+		return 'UPDATE '.$this->escape_table($table).' SET '.
+            implode(', ', $valstr).' WHERE '.implode(' ',$where);
 	}
 
 	/**
@@ -63,9 +61,8 @@ abstract class Database_Driver {
 	 *
 	 * @param  string  character set to use
 	 */
-	public function set_charset($charset)
-	{
-		throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+	public function set_charset($charset) {
+		throw new AetherDatabaseException('database.not_implemented', __FUNCTION__);
 	}
 
 	/**
@@ -94,46 +91,36 @@ abstract class Database_Driver {
 	 * @param   boolean  escape the value
 	 * @return  string
 	 */
-	public function where($key, $value, $type, $num_wheres, $quote)
-	{
+	public function where($key, $value, $type, $num_wheres, $quote) {
 		$prefix = ($num_wheres == 0) ? '' : $type;
 
-		if ($quote === -1)
-		{
+		if ($quote === -1) {
 			$value = '';
 		}
-		else
-		{
-			if ($value === NULL)
-			{
-				if ( ! $this->has_operator($key))
-				{
+		else {
+			if ($value === NULL) {
+				if (!$this->has_operator($key)) {
 					$key .= ' IS';
 				}
 
 				$value = ' NULL';
 			}
-			elseif (is_bool($value))
-			{
-				if ( ! $this->has_operator($key))
-				{
+			elseif (is_bool($value)) {
+				if (!$this->has_operator($key)) {
 					$key .= ' =';
 				}
 
 				$value = ($value == TRUE) ? ' 1' : ' 0';
 			}
-			else
-			{
-				if ( ! $this->has_operator($key))
-				{
+			else {
+				if (!$this->has_operator($key)) {
 					$key = $this->escape_column($key).' =';
 				}
-				else
-				{
+				else {
 					preg_match('/^(.+?)([<>!=]+|\bIS(?:\s+NULL))\s*$/i', $key, $matches);
-					if (isset($matches[1]) AND isset($matches[2]))
-					{
-						$key = $this->escape_column(trim($matches[1])).' '.trim($matches[2]);
+					if (isset($matches[1]) AND isset($matches[2])) {
+						$key = $this->escape_column(trim($matches[1])).
+                            ' '.trim($matches[2]);
 					}
 				}
 
@@ -141,7 +128,7 @@ abstract class Database_Driver {
 			}
 		}
 
-		return $prefix.$key.$value;
+		return $prefix . $key . $value;
 	}
 
 	/**
@@ -154,14 +141,12 @@ abstract class Database_Driver {
 	 * @param   int      number of likes
 	 * @return  string
 	 */
-	public function like($field, $match, $auto, $type, $num_likes)
-	{
+	public function like($field, $match, $auto, $type, $num_likes) {
 		$prefix = ($num_likes == 0) ? '' : $type;
 
 		$match = $this->escape_str($match);
 
-		if ($auto === TRUE)
-		{
+		if ($auto === TRUE) {
 			// Add the start and end quotes
 			$match = '%'.str_replace('%', '\\%', $match).'%';
 		}
@@ -178,14 +163,12 @@ abstract class Database_Driver {
 	 * @param   int     number of likes
 	 * @return  string
 	 */
-	public function notlike($field, $match, $auto, $type, $num_likes)
-	{
+	public function notlike($field, $match, $auto, $type, $num_likes) {
 		$prefix = ($num_likes == 0) ? '' : $type;
 
 		$match = $this->escape_str($match);
 
-		if ($auto === TRUE)
-		{
+		if ($auto === TRUE) {
 			// Add the start and end quotes
 			$match = '%'.$match.'%';
 		}
@@ -202,9 +185,8 @@ abstract class Database_Driver {
 	 * @param   integer  number of regexes
 	 * @return  string
 	 */
-	public function regex($field, $match, $type, $num_regexs)
-	{
-		throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+	public function regex($field, $match, $type, $num_regexs) {
+		throw new AetherDatabaseException('database.not_implemented', __FUNCTION__);
 	}
 
 	/**
@@ -216,9 +198,8 @@ abstract class Database_Driver {
 	 * @param   integer  number of regexes
 	 * @return  string
 	 */
-	public function notregex($field, $match, $type, $num_regexs)
-	{
-		throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+	public function notregex($field, $match, $type, $num_regexs) {
+		throw new AetherDatabaseException('database.not_implemented', __FUNCTION__);
 	}
 
 	/**
@@ -229,14 +210,14 @@ abstract class Database_Driver {
 	 * @param   array   values
 	 * @return  string
 	 */
-	public function insert($table, $keys, $values)
-	{
+	public function insert($table, $keys, $values) {
 		// Escape the column names
-		foreach ($keys as $key => $value)
-		{
+		foreach ($keys as $key => $value) {
 			$keys[$key] = $this->escape_column($value);
 		}
-		return 'INSERT INTO '.$this->escape_table($table).' ('.implode(', ', $keys).') VALUES ('.implode(', ', $values).')';
+
+		return 'INSERT INTO '.$this->escape_table($table).
+            ' ('.implode(', ', $keys).') VALUES ('.implode(', ', $values).')';
 	}
 
 	/**
@@ -247,9 +228,8 @@ abstract class Database_Driver {
 	 * @param   array   values
 	 * @return  string
 	 */
-	public function merge($table, $keys, $values)
-	{
-		throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+	public function merge($table, $keys, $values) {
+		throw new AetherDatabaseException('database.not_implemented', __FUNCTION__);
 	}
 
 	/**
@@ -267,9 +247,8 @@ abstract class Database_Driver {
 	 * @param   string  SQL query
 	 * @return  Database_Stmt
 	 */
-	public function stmt_prepare($sql = '')
-	{
-		throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+	public function stmt_prepare($sql = '') {
+		throw new AetherDatabaseException('database.not_implemented', __FUNCTION__);
 	}
 
 	/**
@@ -288,8 +267,7 @@ abstract class Database_Driver {
 	 * @param   string   string to check
 	 * @return  boolean
 	 */
-	public function has_operator($str)
-	{
+	public function has_operator($str) {
 		return (bool) preg_match('/[<>!=]|\sIS(?:\s+NOT\s+)?\b/i', trim($str));
 	}
 
@@ -299,23 +277,21 @@ abstract class Database_Driver {
 	 * @param   mixed   value to escape
 	 * @return  string
 	 */
-	public function escape($value)
-	{
-		if ( ! $this->db_config['escape'])
+	public function escape($value) {
+		if (!$this->db_config['escape'])
 			return $value;
 
-		switch (gettype($value))
-		{
+		switch (gettype($value)) {
 			case 'string':
 				$value = '\''.$this->escape_str($value).'\'';
-			break;
+                break;
 			case 'boolean':
 				$value = (int) $value;
-			break;
+                break;
 			case 'double':
 				// Convert to non-locale aware float to prevent possible commas
 				$value = sprintf('%F', $value);
-			break;
+                break;
 			default:
 				$value = ($value === NULL) ? 'NULL' : $value;
 			break;
@@ -368,47 +344,41 @@ abstract class Database_Driver {
 	 * @param   string  field datatype
 	 * @return  array
 	 */
-	protected function sql_type($str)
-	{
+	protected function sql_type($str) {
 		static $sql_types;
 
-		if ($sql_types === NULL)
-		{
+		if ($sql_types === NULL) {
 			// Load SQL data types
+            // FIX
 			$sql_types = Kohana::config('sql_types');
 		}
 
 		$str = strtolower(trim($str));
 
-		if (($open  = strpos($str, '(')) !== FALSE)
-		{
+		if (($open  = strpos($str, '(')) !== FALSE) {
 			// Find closing bracket
 			$close = strpos($str, ')', $open) - 1;
 
 			// Find the type without the size
 			$type = substr($str, 0, $open);
 		}
-		else
-		{
+		else {
 			// No length
 			$type = $str;
 		}
 
-		empty($sql_types[$type]) and exit
-		(
-			'Unknown field type: '.$type.'. '.
-			'Please report this: http://trac.kohanaphp.com/newticket'
-		);
+        if (empty($sql_types[$type])) {
+            exit('Unknown field type: '.$type.'. '.
+                 'Please report this: http://trac.kohanaphp.com/newticket');
+        }
 
 		// Fetch the field definition
 		$field = $sql_types[$type];
 
-		switch ($field['type'])
-		{
+		switch ($field['type']) {
 			case 'string':
 			case 'float':
-				if (isset($close))
-				{
+				if (isset($close)) {
 					// Add the length to the field info
 					$field['length'] = substr($str, $open + 1, $close - $open);
 				}
@@ -427,17 +397,15 @@ abstract class Database_Driver {
 	 *
 	 * @param  string  SQL query
 	 */
-	public function clear_cache($sql = NULL)
-	{
-		if (empty($sql))
-		{
+	public function clear_cache($sql = NULL) {
+		if (empty($sql)) {
 			self::$query_cache = array();
 		}
-		else
-		{
+		else {
 			unset(self::$query_cache[$this->query_hash($sql)]);
 		}
 
+        // FIX
 		Kohana::log('debug', 'Database cache cleared: '.get_class($this));
 	}
 
@@ -448,8 +416,7 @@ abstract class Database_Driver {
 	 * @param   string  SQL query
 	 * @return  string
 	 */
-	protected function query_hash($sql)
-	{
+	protected function query_hash($sql) {
 		return sha1(str_replace("\n", ' ', trim($sql)));
 	}
 
@@ -459,7 +426,7 @@ abstract class Database_Driver {
  * Database_Result
  *
  */
-abstract class Database_Result implements ArrayAccess, Iterator, Countable {
+abstract class AetherDatabaseResult implements ArrayAccess, Iterator, Countable {
 
 	// Result resource, insert id, and SQL
 	protected $result;
@@ -479,8 +446,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return  string
 	 */
-	public function sql()
-	{
+	public function sql() {
 		return $this->sql;
 	}
 
@@ -489,8 +455,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @return  mixed
 	 */
-	public function insert_id()
-	{
+	public function insert_id() {
 		return $this->insert_id;
 	}
 
@@ -529,18 +494,15 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Countable: count
 	 */
-	public function count()
-	{
+	public function count() {
 		return $this->total_rows;
 	}
 
 	/**
 	 * ArrayAccess: offsetExists
 	 */
-	public function offsetExists($offset)
-	{
-		if ($this->total_rows > 0)
-		{
+	public function offsetExists($offset) {
+		if ($this->total_rows > 0) {
 			$min = 0;
 			$max = $this->total_rows - 1;
 
@@ -553,9 +515,8 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	/**
 	 * ArrayAccess: offsetGet
 	 */
-	public function offsetGet($offset)
-	{
-		if ( ! $this->seek($offset))
+	public function offsetGet($offset) {
+		if (!$this->seek($offset))
 			return FALSE;
 
 		// Return the row by calling the defined fetching callback
@@ -567,9 +528,8 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
-	final public function offsetSet($offset, $value)
-	{
-		throw new Kohana_Database_Exception('database.result_read_only');
+	final public function offsetSet($offset, $value) {
+		throw new AetherDatabaseException('database.result_read_only');
 	}
 
 	/**
@@ -577,32 +537,28 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
-	final public function offsetUnset($offset)
-	{
-		throw new Kohana_Database_Exception('database.result_read_only');
+	final public function offsetUnset($offset) {
+		throw new AetherDatabaseException('database.result_read_only');
 	}
 
 	/**
 	 * Iterator: current
 	 */
-	public function current()
-	{
+	public function current() {
 		return $this->offsetGet($this->current_row);
 	}
 
 	/**
 	 * Iterator: key
 	 */
-	public function key()
-	{
+	public function key() {
 		return $this->current_row;
 	}
 
 	/**
 	 * Iterator: next
 	 */
-	public function next()
-	{
+	public function next() {
 		++$this->current_row;
 		return $this;
 	}
@@ -610,8 +566,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Iterator: prev
 	 */
-	public function prev()
-	{
+	public function prev() {
 		--$this->current_row;
 		return $this;
 	}
@@ -619,8 +574,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Iterator: rewind
 	 */
-	public function rewind()
-	{
+	public function rewind() {
 		$this->current_row = 0;
 		return $this;
 	}
@@ -628,8 +582,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Iterator: valid
 	 */
-	public function valid()
-	{
+	public function valid() {
 		return $this->offsetExists($this->current_row);
 	}
 
