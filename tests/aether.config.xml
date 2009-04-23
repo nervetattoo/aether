@@ -41,7 +41,7 @@
                 <rule pattern="/^[a-z\-]+$/" store="catName">
                     <rule match="$productId">
                         <section>PriceguideProduct</section>
-                        <template id="98">prisguide_product_default</template>
+                        <template>prisguide_product_default.tpl</template>
                         <module>PriceguideProductTop</module>
                     </rule>
                     <rule match="">
