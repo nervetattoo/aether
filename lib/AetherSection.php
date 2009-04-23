@@ -128,11 +128,11 @@ abstract class AetherSection {
              * and have internal wrapping html for this section
              */
             $tplInfo = $config->getTemplate();
-            $tpl = $this->sl->getTemplate($tplInfo['setId']);
+            $tpl = $this->sl->getTemplate();
             if (is_array($modules)) {
-                $tpl->selectTemplate($tplInfo['name']);
+                //$tpl->selectTemplate($tplInfo['name']);
                 // Make tplVars sent in available
-                $tpl->setVar("extras", $tplVars);
+                $tpl->set("extras", $tplVars);
                 $modulesOut = array();
                 foreach ($modules as $module) {
                     // If module should be cached, handle it
@@ -225,14 +225,14 @@ abstract class AetherSection {
                 // Export rendered modules to template
                 foreach ($modulesOut as $name => $mod) {
                     if (count($mod) > 1) {
-                        $tpl->setVar($name, $mod);
+                        $tpl->set($name, $mod);
                     }
                     else {
-                        $tpl->setVar($name, current($mod));
+                        $tpl->set($name, current($mod));
                     }
                 }
             }
-            $output = $tpl->returnPage();
+            $output = $tpl->fetch($tplInfo['name']);
             if (is_numeric($cachetime))
                 $cache->saveObject($cacheName, $output, $cachetime);
         }

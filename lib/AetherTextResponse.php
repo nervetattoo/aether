@@ -53,8 +53,8 @@ class AetherTextResponse extends AetherResponse {
             $timer = $sl->get('timer');
             $timer->timerEnd('aether_main');
             // Replace into out content
-            $tpl = $sl->getTemplate(98);
-            $tpl->selectTemplate('debugBar');
+            $tpl = $sl->getTemplate();
+            //$tpl->selectTemplate('debugBar');
             $timers = $timer->getAllTimers();
             foreach ($timers as $key => $tr) {
                 foreach ($tr as $k => $t) {
@@ -63,8 +63,8 @@ class AetherTextResponse extends AetherResponse {
                     $timers[$key][$k]['elapsed'] = number_format($t['elapsed'], 4);
                 }
             }
-            $tpl->setVar('timers', $timers);
-            $out = $tpl->returnPage();
+            $tpl->set('timers', $timers);
+            $out = $tpl->fetch('debugBar.tpl');
             $out = str_replace(
                 "<!--INSERTIONPOINT-->",
                 $out, $this->out);
