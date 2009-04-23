@@ -33,7 +33,7 @@ abstract class AetherModuleHeader extends AetherModule {
         if (!$options) 
             $options = $config->getOptions();
 
-        $tpl->setVar('urlbase', $config->getBase()); 
+        $tpl->set('urlbase', $config->getBase()); 
         // Stylesheets. Read from config and code
         $styles = array();
         if (array_key_exists('styles', $options)) {
@@ -44,7 +44,7 @@ abstract class AetherModuleHeader extends AetherModule {
         }
         $styles = array_map('trim', $styles);
         $styles = array_unique($styles);
-        $tpl->setVar('pageStylesheets', $styles);
+        $tpl->set('pageStylesheets', $styles);
         // Scripts
         $scripts = array();
         if (array_key_exists('javascripts', $options)) {
@@ -55,7 +55,7 @@ abstract class AetherModuleHeader extends AetherModule {
         }
         $scripts = array_map('trim', $scripts);
         $scripts = array_unique($scripts);
-        $tpl->setVar('pageJavascripts', $scripts);
+        $tpl->set('pageJavascripts', $scripts);
     }
 }
 ?>
