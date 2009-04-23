@@ -1,7 +1,6 @@
 <?php // 
 require_once('PHPUnit/Framework.php');
 require_once('/home/lib/libDefines.lib.php');
-require_once(AETHER_PATH . 'lib/AetherTemplate.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 /**
  * 

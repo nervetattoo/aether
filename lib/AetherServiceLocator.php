@@ -10,7 +10,7 @@ vim:set expandtab:
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'Vector.php');
 require_once(LIB_PATH . 'Database.lib.php');
-require_once(AETHER_PATH . 'lib/AetherTemplate.php');
+require_once(AETHER_PATH . 'lib/templating/AetherTemplate.php');
 
 /**
  * 
