@@ -21,20 +21,14 @@ class AetherServiceLocatorTest extends PHPUnit_Framework_TestCase {
         $db = $asl->getDatabase('neo');
         $this->assertType('Database', $db);
     }
-
-    public function testGetTemplate() {
-        $asl = new AetherServiceLocator;
-        $tpl = $asl->getTemplate(86);
-        $this->assertType('Template',$tpl);
-    }
     
     public function testCustomObjectStorage() {
         // Create a small class for testing
         $obj = new stdClass;
         $obj->foo = 'bar';
         $asl = new AetherServiceLocator;
-        $asl->saveCustomObject('tester', $obj);
-        $tester = $asl->fetchCustomObject('tester');
+        $asl->set('tester', $obj);
+        $tester = $asl->get('tester');
         $this->assertSame($tester, $obj);
     }
 

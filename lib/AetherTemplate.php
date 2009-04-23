@@ -8,14 +8,16 @@
  * @package aether
  */
 abstract class AetherTemplate {
+    private $sl = null;
     
     /**
      * Return template object for selected engine
      *
      * @return AetherTemplate
      * @param string $engine Name of engine to use
+     * @param string AetherServiceLocator $sl
      */
-    public static function get($engine) {
+    public static function get($engine,AetherServiceLocator $sl) {
         if ($engine == 'smarty') {
             $class = 'AetherTemplateSmarty';
             require_once(AETHER_PATH . 'lib/templating/AetherTemplateSmarty.php');
@@ -25,7 +27,7 @@ abstract class AetherTemplate {
             $class = 'AetherTemplateSmarty';
             require_once(AETHER_PATH . 'lib/templating/AetherTemplateSmarty.php');
         }
-        return new $class;
+        return new $class($sl);
     }
     
     /**
@@ -36,5 +38,13 @@ abstract class AetherTemplate {
      * @param mixed $value
      */
     abstract public function set($key, $value);
+
+    /**
+     * Fetch rendered template
+     *
+     * @return string
+     * @param string $name
+     */
+    abstract public function fetch($name);
 }
 ?>

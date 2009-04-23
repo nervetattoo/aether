@@ -8,8 +8,9 @@ vim:set expandtab:
 */
 
 require_once('/home/lib/libDefines.lib.php');
-require_once(LIB_PATH . 'ServiceLocator.php');
 require_once(LIB_PATH . 'Vector.php');
+require_once(LIB_PATH . 'Database.lib.php');
+require_once(AETHER_PATH . 'lib/AetherTemplate.php');
 
 /**
  * 
@@ -21,7 +22,7 @@ require_once(LIB_PATH . 'Vector.php');
  * @package aether
  */
 
-class AetherServiceLocator extends ServiceLocator {
+class AetherServiceLocator {
     /**
      * Hold custom objects
      * @var array
@@ -35,26 +36,52 @@ class AetherServiceLocator extends ServiceLocator {
     public $vectors = array();
     
     /**
-     * Returns a reference to a template object
-     * This is defined in the base class, but aether needs
-     * to always make sure a special array $aether is
-     * put into the mix
+     * Hold template object
+     * @var object
+     */
+    private $template = null;
+
+    /**
+     * Database objects
+     * @var array
+     */
+    protected $databases = array();
+    
+    /**
+     * Fetch a reference to the templating object
+     * thats floating around in Aether
      *
      * @access public
-     * @return template A template object
-     * @param integer $id Template set id
+     * @return AetherTemplate A template object
      */
-    public function getTemplate($id) {
-        if (!array_key_exists($id, $this->templates))
-            $this->templates[$id] = new Template($id);
-        $tpl = $this->templates[$id];
+    public function getTemplate() {
+        if ($this->template == null)
+            $this->template = AetherTemplate::get('smarty',$this);
         // Add global stuff
         $providers = $this->getVector('aetherProviders');
-        $tpl->setVar('aether', array_merge(
+        $this->template->set('aether', array_merge(
             array('providers' => $providers),
             $this->getVector('templateGlobals')->getAsArray())
         );
-        return $tpl;
+        return $this->template;
+    }
+
+    /**
+     * Returns a reference to a database object
+     *
+     * @access public
+     * @return Database Requested database object
+     * @param string $name database name
+     */
+    public function getDatabase($name) {
+        if (array_key_exists($name, $this->databases)) {
+            if (!$this->databases[$name]->isValid()) {
+                $this->databases[$name] = new Database($name, true);
+            }
+            return $this->databases[$name];
+        } else {
+           return $this->databases[$name] = new Database($name);
+        }
     }
 
     /**
@@ -68,9 +95,6 @@ class AetherServiceLocator extends ServiceLocator {
      * @param string $name Name to use as lookup for object
      * @param object $object The actual object
      */
-    public function saveCustomObject($name, $object) {
-        return $this->set($name, $object);
-    }
     public function set($name, $object) {
         if (!$this->hasObject($name)) {
             $this->custom[$name] = $object;
@@ -88,9 +112,6 @@ class AetherServiceLocator extends ServiceLocator {
      * @return object
      * @param string $name
      */
-    public function fetchCustomObject($name) {
-        return $this->get($name);
-    }
     public function get($name) {
         if ($this->hasObject($name))
             return $this->custom[$name];
@@ -109,17 +130,6 @@ class AetherServiceLocator extends ServiceLocator {
         if (!isset($this->vectors[$name]))
             $this->vectors[$name] = new Vector;
         return $this->vectors[$name];
-    }
-    
-    /**
-     * Check if custom object exists
-     *
-     * @access public
-     * @return bool
-     * @param string $name
-     */
-    public function hasCustomObject($name) {
-        return $this->hasObject($name);
     }
 
     public function hasObject($name) {
