@@ -10,6 +10,8 @@ require_once(AETHER_PATH . 'tests/ModuleFactoryTest.php');
 require_once(AETHER_PATH . 'tests/SectionFactoryTest.php');
 require_once(AETHER_PATH . 'tests/ServiceLocatorTest.php');
 require_once(AETHER_PATH . 'tests/UrlParserTest.php');
+require_once(AETHER_PATH . 'tests/templating/SmartyTest.php');
+require_once(AETHER_PATH . 'tests/templating/TemplateTest.php');
 
 /**
  * 
@@ -31,6 +33,8 @@ class Framework_AllTests {
         $suite->addTestSuite('AetherSectionFactoryTest');
         $suite->addTestSuite('AetherServiceLocatorTest');
         $suite->addTestSuite('AetherUrlParserTest');
+        $suite->addTestSuite('SmartyIntegratesWithAetherTest');
+        $suite->addTestSuite('AetherTemplateTest');
         return $suite;
     }
 }
