@@ -18,8 +18,8 @@ class TestCLIApp extends AetherCLI {
         'f' => 'foo',
         'm' => 'meh'
     );
-    public function getOptions($str) {
-        $this->options = $this->parseOptions($str);
+    public function getOptions($args) {
+        $this->options = $this->parseOptions($args);
         return $this->options;
     }
     public function run() {
@@ -117,7 +117,7 @@ class AetherCLITest extends PHPUnit_Framework_TestCase {
         $t1 = $app->getTime();
         sleep(1);
         $t2 = $app->getTime();
-        $this->assertTrue($t2 > $ti);
+        $this->assertTrue($t2 > $t1);
     }
 }
 ?>

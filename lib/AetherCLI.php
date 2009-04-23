@@ -58,9 +58,10 @@ abstract class AetherCLI {
     public function __construct() {
         echo "Start time [".date('Y-m-d H:i:s')."]\n";
         $this->startTime = $this->getMicroTime();
-        $this->mixinHelpSupport();
         $this->options = $this->parseOptions($_SERVER['argv']);
+        $this->mixinHelpSupport();
         // Run help file if help required
+        var_dump($this->options);
         if (($this->hasOptions(array('help')) AND count($this->options) == 1)
             OR count($this->options) == 0) {
             $this->displayHelpFile();
@@ -86,8 +87,10 @@ abstract class AetherCLI {
      * @return void
      */
     protected function mixinHelpSupport() {
-        if (!array_key_exists('h', $this->allowedOptions))
+        if (array_key_exists('h', $this->allowedOptions) == false)
             $this->allowedOptions['h'] = 'help';
+        if (array_key_exists('h', $this->options) == false)
+            $this->options['help'] = '';
     }
     
     /**
@@ -115,6 +118,7 @@ abstract class AetherCLI {
      * consideration. All others supplied info will be overlooked
      *
      * @access private
+     * @param array $args
      * @return array
      */
     protected function parseOptions($args) {
@@ -127,12 +131,18 @@ abstract class AetherCLI {
                     $name = preg_replace('/[-]{1,2}/', '', $parts[0]);
 
                     // Always use long name in returned array
-                    if (strlen($name) == 1)
+                    if (strlen($name) == 1 AND 
+                        array_key_exists($name,$this->allowedOptions)) {
+                        // Translate to long name for short option
                         $name = $this->allowedOptions[$name];
-
+                    }
                     // Only use allowed options
-                    if (in_array($name, $this->allowedOptions))
-                        $options[$name] = $parts[1];
+                    if (in_array($name, $this->allowedOptions)) {
+                        if (array_key_exists(1, $parts))
+                            $options[$name] = $parts[1];
+                        else
+                            $options[$name] = '';
+                    }
                 }
             }
         }
