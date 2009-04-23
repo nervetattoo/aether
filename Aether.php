@@ -25,6 +25,8 @@ require_once(AETHER_PATH . 'lib/AetherJSONCommentFilteredResponse.php');
 require_once(AETHER_PATH . 'lib/AetherModule.php');
 require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
 require_once(AETHER_PATH . 'lib/AetherModuleManager.php');
+// Default to only smarty support for now
+require_once(AETHER_PATH . 'lib/templating/smarty/libs/Smarty.class.php');
 
 /**
  * 
