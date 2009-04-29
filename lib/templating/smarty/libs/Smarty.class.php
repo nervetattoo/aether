@@ -204,7 +204,17 @@ class Smarty extends Smarty_Internal_TemplateBase {
         $this->loadPlugin('Smarty_Internal_Run_Filter');
         $this->filter_handler = new Smarty_Internal_Run_Filter;
         if (!$this->debugging && $this->debugging_ctrl == 'URL') {
-            $_query_string = $this->request_use_auto_globals ? isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING']:'' : isset($GLOBALS['HTTP_SERVER_VARS']['QUERY_STRING']) ? $GLOBALS['HTTP_SERVER_VARS']['QUERY_STRING']:'';
+            /**
+             * This was a rather nasty part.
+             * Removed some shit depending on GLOBALS
+             */
+            $_query_string = $this->request_use_auto_globals 
+                ? isset($_SERVER['QUERY_STRING']) 
+                    ? $_SERVER['QUERY_STRING']
+                    :'' 
+                : false
+                    ?''
+                    :'';
             if (false !== strpos($_query_string, $this->smarty_debug_id)) {
                 if (false !== strpos($_query_string, $this->smarty_debug_id . '=on')) {
                     // enable debugging for this browser session
