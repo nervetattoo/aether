@@ -23,6 +23,7 @@ require_once(AETHER_PATH . 'lib/AetherXMLResponse.php');
 require_once(AETHER_PATH . 'lib/AetherJSONResponse.php');
 require_once(AETHER_PATH . 'lib/AetherJSONCommentFilteredResponse.php');
 require_once(AETHER_PATH . 'lib/AetherModule.php');
+require_once(AETHER_PATH . 'lib/AetherModuleHeader.php');
 require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
 require_once(AETHER_PATH . 'lib/AetherModuleManager.php');
 // Default to only smarty support for now
@@ -234,22 +235,22 @@ class Aether {
 
         // Find the class location
         switch ($matches[1]) {
-        case 'Module':
-            break;
-        case 'Section':
-            break;
-        case 'Database':
-            $path = AETHER_PATH . 'lib/';
-            break;
-        case 'ORM':
-            $path = AETHER_PATH . 'lib/ORM';
-            break;
-        case 'Driver':
-            $path = AETHER_PATH . 'lib/drivers';
-            break;
-        default:
-            $path = AETHER_PATH . 'lib/';
-            break;
+            case 'Module':
+                break;
+            case 'Section':
+                break;
+            case 'Database':
+                $path = AETHER_PATH . 'lib/';
+                break;
+            case 'ORM':
+                $path = AETHER_PATH . 'lib/ORM';
+                break;
+            case 'Driver':
+                $path = AETHER_PATH . 'lib/drivers';
+                break;
+            default:
+                $path = AETHER_PATH . 'lib/';
+                break;
         }
 
 
