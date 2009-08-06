@@ -14,12 +14,6 @@ class AetherServiceLocatorTest extends PHPUnit_Framework_TestCase {
     public function testEnvironment() {
         $this->assertTrue(class_exists('AetherServiceLocator'));
     }
-
-    public function testGetDatabase() {
-        $asl = new AetherServiceLocator;
-        $db = $asl->getDatabase('neo');
-        $this->assertType('Database', $db);
-    }
     
     public function testCustomObjectStorage() {
         // Create a small class for testing

@@ -42,12 +42,6 @@ class AetherServiceLocator {
     private $template = null;
 
     /**
-     * Database objects
-     * @var array
-     */
-    protected $databases = array();
-    
-    /**
      * Fetch a reference to the templating object
      * thats floating around in Aether
      *
@@ -74,14 +68,7 @@ class AetherServiceLocator {
      * @param string $name database name
      */
     public function getDatabase($name) {
-        if (array_key_exists($name, $this->databases)) {
-            if (!$this->databases[$name]->isValid()) {
-                $this->databases[$name] = new Database($name, true);
-            }
-            return $this->databases[$name];
-        } else {
-           return $this->databases[$name] = new Database($name);
-        }
+        throw new Exception("AetherServiceLocator::getDatabase() is deprecated");
     }
 
     /**
