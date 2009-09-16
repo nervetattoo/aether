@@ -491,6 +491,8 @@ class AetherConfig {
                     if (!isset($cache)) {
                         if ($child->hasAttribute('cache'))
                             $module['cache'] = $child->getAttribute('cache');
+                        if ($child->hasAttribute('cacheas'))
+                            $module['cacheas'] = $child->getAttribute('cacheas');
                     }
                     /**
                      * A module could provide itself under a fake name
