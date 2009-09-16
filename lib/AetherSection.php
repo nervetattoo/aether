@@ -143,7 +143,6 @@ abstract class AetherSection {
                             $mCacheName .= $module['provides'];
                         if (array_key_exists('cacheas', $module)) {
                             $mCacheName = $url->get('host') . $module['cacheas'];
-                            print $mCacheName . "\n";
                         }
                         // Try to read from cache, else generate and cache
                         if (($mOut = $cache->getObject($mCacheName)) == false) {
