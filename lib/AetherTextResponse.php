@@ -51,16 +51,28 @@ class AetherTextResponse extends AetherResponse {
         try {
             // Timer
             $timer = $sl->get('timer');
-            $timer->timerEnd('aether_main');
+            $timer->end('aether_main');
             // Replace into out content
             $tpl = $sl->getTemplate();
             //$tpl->selectTemplate('debugBar');
-            $timers = $timer->getAllTimers();
+            $timers = $timer->all();
             foreach ($timers as $key => $tr) {
                 foreach ($tr as $k => $t) {
                     if (!array_key_exists('elapsed', $t))
                         $t['elapsed'] = 0;
                     $timers[$key][$k]['elapsed'] = number_format($t['elapsed'], 4);
+                    // Format memory
+                    if (isset($t['memory'])) {
+                        $memLen = strlen($t['memory']);
+                        $memUse = $t['memory'];
+                        if ($memLen > 9)
+                            $memUse = round($memUse / (1000*1000*1000),1) . "GB";
+                        if ($memLen > 6)
+                            $memUse = round($memUse / (1000*1000),1) . "MB";
+                        elseif ($memLen > 3)
+                            $memUse = round($memUse / (1000),1) . "KB";
+                        $timers[$key][$k]['mem_use'] = $memUse;
+                    }
                 }
             }
             $tpl->set('timers', $timers);

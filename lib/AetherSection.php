@@ -54,7 +54,7 @@ abstract class AetherSection {
         try {
             // Timer
             $timer = $this->sl->get('timer');
-            $timer->timerStart('module_run');
+            $timer->start('module_run');
         }
         catch (Exception $e) {
             // No timing, we're in prod
@@ -114,7 +114,7 @@ abstract class AetherSection {
          * information
          */
         if (isset($timer) AND is_object($timer))
-            $timer->timerTick('module_run', 'read_config');
+            $timer->tick('module_run', 'read_config');
 
 
         $saveCache = true;
@@ -222,7 +222,7 @@ abstract class AetherSection {
                             $timerMsg = $module['provides'];
                         else
                             $timerMsg = $modName;
-                        $timer->timerTick('module_run', $timerMsg);
+                        $timer->tick('module_run', $timerMsg);
                     }
                 }
                 // Export rendered modules to template
@@ -248,7 +248,7 @@ abstract class AetherSection {
          * information
          */
         if (isset($timer) AND is_object($timer))
-            $timer->timerEnd('module_run');
+            $timer->end('module_run');
         // Return output
         return $output;
     }

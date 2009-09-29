@@ -26,6 +26,7 @@ require_once(AETHER_PATH . 'lib/AetherModule.php');
 require_once(AETHER_PATH . 'lib/AetherModuleHeader.php');
 require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
 require_once(AETHER_PATH . 'lib/AetherModuleManager.php');
+require_once(AETHER_PATH . 'lib/AetherTimer.php');
 // Default to only smarty support for now
 require_once(AETHER_PATH . 'lib/templating/smarty/libs/Smarty.class.php');
 
@@ -159,7 +160,8 @@ class Aether {
         if ($options['AetherRunningMode'] == 'test') {
             // Prepare timer
             $timer = TimeFactory::create('norwegian');
-            $timer->timerStart('aether_main');
+            $timer = new AetherTimer;
+            $timer->start('aether_main');
             $this->sl->set('timer', $timer);
         }
         /**
@@ -180,7 +182,7 @@ class Aether {
             );
             $this->sl->set('section', $this->section);
             if (isset($timer)) 
-                $timer->timerTick('aether_main', 'section_initiate');
+                $timer->tick('aether_main', 'section_initiate');
         }
         catch (Exception $e) {
             // Failed to load section, what to do?
