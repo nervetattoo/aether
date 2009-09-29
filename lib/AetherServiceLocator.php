@@ -83,7 +83,7 @@ class AetherServiceLocator {
      * @param object $object The actual object
      */
     public function set($name, $object) {
-        if (!$this->hasObject($name)) {
+        if (!$this->has($name)) {
             $this->custom[$name] = $object;
         }
         else {
@@ -100,7 +100,7 @@ class AetherServiceLocator {
      * @param string $name
      */
     public function get($name) {
-        if ($this->hasObject($name))
+        if ($this->has($name))
             return $this->custom[$name];
         else
             throw new Exception('Custom object ['.$name.'] does not exist');
@@ -120,6 +120,9 @@ class AetherServiceLocator {
     }
 
     public function hasObject($name) {
+        return $this->has($name);
+    }
+    public function has($name) {
         return array_key_exists($name, $this->custom);
     }
 }
