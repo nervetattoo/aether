@@ -240,6 +240,7 @@ class AetherConfig {
                 $notFound = array_unique($notFound);
             }
         }
+        $modMap['searchPath'] = $paths;
         $modMap['missing'] = $notFound;
         return $modMap;
     }

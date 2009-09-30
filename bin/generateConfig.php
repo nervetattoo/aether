@@ -161,6 +161,8 @@ $modules = $config->listUsedModules();
  */
 if (count($modules['missing']) > 0) {
     echo "\n===== WARNINGS =====\n";
+    echo "Missing modules [searchpath: \"" . 
+            join("\", \"", $modules['searchPath']) . "\"]\n";
     foreach ($modules['missing'] as $missing) {
         echo "\033[1;31mCould not locate source file for required module [$missing]\n";
     }
