@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php // vim:set ts=4 sw=4 et:
 
+require_once("/home/lib/Autoload.php");
 require_once("/home/lib/libDefines.lib.php");
 require_once(AETHER_PATH . 'lib/AetherConfig.php');
 require_once(AETHER_PATH . 'Aether.php');
