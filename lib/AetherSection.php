@@ -61,6 +61,7 @@ abstract class AetherSection {
         }
         $config = $this->sl->get('aetherConfig');
         $cache = new Cache(false, true, true);
+        $cacheable = true;
         /** 
          * Decide cache name for rule based cache
          * If the option cacheas is set, we will use the cache name
@@ -73,6 +74,9 @@ abstract class AetherSection {
         else
             $cacheName = $url->cacheName();
         $cachetime = $config->getCacheTime();
+
+        if ($url->get('query') != "")
+            $cacheable = false;
         /**
          * If one object requests no cache of this request
          * then we need to take that into consideration.
@@ -122,7 +126,7 @@ abstract class AetherSection {
         /**
          * Render page
          */
-        if (!is_numeric($cachetime) OR ($output = $cache->getObject($cacheName) == false)) {
+        if (!is_numeric($cachetime) OR !$cacheable OR ($output = $cache->getObject($cacheName) == false)) {
             /* Load controller template
              * This template knows where all modules should be placed
              * and have internal wrapping html for this section
@@ -236,7 +240,7 @@ abstract class AetherSection {
                 }
             }
             $output = $tpl->fetch($tplInfo['name']);
-            if (is_numeric($cachetime))
+            if (is_numeric($cachetime) && $cacheable)
                 $cache->saveObject($cacheName, $output, $cachetime);
         }
         else {

@@ -94,6 +94,7 @@ class AetherUrlParser {
         if (!$qsa)
             $qsa = strlen($path);
         $this->path = substr($path, 0, $qsa);
+        $this->query = substr($path, $qsa + 1);
         if (!empty($server['PHP_AUTH_USER']))
             $this->user = $server['PHP_AUTH_USER'];
         if (!empty($server['PHP_AUTH_PW']))
