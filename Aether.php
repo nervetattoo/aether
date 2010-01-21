@@ -206,7 +206,12 @@ class Aether {
         if (isset($_GET['service']) AND isset($_GET['module'])) {
             $response = $this->section->service(
                 $_GET['module'], $_GET['service']);
-            $response->draw($this->sl);
+            if (!is_object($response) || !is_subclass_of($response, 'AetherResponse')) {
+                trigger_error("Expected " . preg_replace("/[^A-z0-9]+/", "", $_GET['module']) . "::service() to return an AetherResponse object", E_USER_WARNING);
+            }
+            else {
+                $response->draw($this->sl);
+            }
         }
         else {
             $response = $this->section->response();
