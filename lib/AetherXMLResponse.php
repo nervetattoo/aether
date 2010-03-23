@@ -1,8 +1,5 @@
 <?php // vim:set tabstop=4 shiftwidth=4 smarttab expandtab:
 
-require_once('/home/lib/libDefines.lib.php');
-require_once(AETHER_PATH . 'lib/AetherResponse.php');
-
 /**
  * 
  * XML Response

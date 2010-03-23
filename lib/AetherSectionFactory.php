@@ -1,12 +1,4 @@
-<?php
-/*
-HARDWARE.NO EDITORSETTINGS:
-vim:set tabstop=4:
-vim:set shiftwidth=4:
-vim:set smarttab:
-vim:set expandtab:
-*/
-
+<?php // vim:set ts=4 sw=4 et:
 /**
  * 
  * Factory for creating instances of section objects

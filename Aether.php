@@ -1,22 +1,17 @@
-<?php
-/*
-HARDWARE.NO EDITORSETTINGS:
-vim:set tabstop=4:
-vim:set shiftwidth=4:
-vim:set smarttab:
-vim:set expandtab:
-*/
-
+<?php // vim:set ts=4 sw=4 et:
+// TODO Remove dependency on commonlibs
 require_once('/home/lib/libDefines.lib.php');
 require_once(LIB_PATH . 'Cache.lib.php');
 require_once(LIB_PATH . 'SessionHandler.lib.php');
 require_once(LIB_PATH . 'time/TimeFactory.lib.php');
+// TODO Replace with Autoload
 require_once(AETHER_PATH . 'lib/AetherExceptions.php');
 require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
 require_once(AETHER_PATH . 'lib/AetherUrlParser.php');
 require_once(AETHER_PATH . 'lib/AetherConfig.php');
 require_once(AETHER_PATH . 'lib/AetherSectionFactory.php');
 require_once(AETHER_PATH . 'lib/AetherSection.php');
+require_once(AETHER_PATH . 'lib/AetherResponse.php');
 require_once(AETHER_PATH . 'lib/AetherActionResponse.php');
 require_once(AETHER_PATH . 'lib/AetherTextResponse.php');
 require_once(AETHER_PATH . 'lib/AetherXMLResponse.php');
@@ -31,11 +26,26 @@ require_once(AETHER_PATH . 'lib/AetherTimer.php');
 require_once(AETHER_PATH . 'lib/templating/smarty/libs/Smarty.class.php');
 
 /**
+ * The Aether web framework
+ *
+ * Aether is a rule driven modularized web framework for PHP.
+ * Instead of following a more traditional MVC pattern
+ * it helps you connect a resource (an url) to a set of modules
+ * that each provide a part of the page
+ *
+ * A "module" can be thought of as a Controller, except you can, and will,
+ * have multiple of them for each page as normaly a page requires
+ * functionality that doesnt logicaly connect to just one component.
+ * Viewing an article? Then you probably need links to more articles,
+ * maybe some forum integration, maybe a gallery etc etc
+ * All these things should in Aether be handled as separate modules
+ * instead of trying to jam it into one controller.
  * 
- * Main class for Aether.
- * Fires up the Aether system and delegates down to
- * section that is requested based on the
- * rules.
+ * Instead of bringing in a huge package of thousands of thousands of lines of code
+ * containing everything from the framework, to models (orm) to templating to helpers
+ * Aether focusing merely on the issue of delegating urls/resources to code
+ * and in their communication in between.
+ * 
  * 
  * Created: 2007-01-31
  * @author Raymond Julin
@@ -64,17 +74,23 @@ class Aether {
     
     /**
      * Module manager
+     * The ModuleManager holds a mapping over all modules in the
+     * project and offers some functionality for working with them
      * @var AetherModuleManager
      */
     private $moduleManager;
     
     /**
-     * Constructor. 
-     * Parses url, prepares everything
+     * Start Aether.
+     * On start it will parse the projects configuration file,
+     * it will try to match the presented http request to a rule
+     * in the project configuration and create some overview
+     * over which modules it will need to render once
+     * a request to render them comes
      *
      * @access public
      * @return Aether
-     * @param string $configPath
+     * @param string $configPath Optional path to the configuration file for the project
      */
     public function __construct($configPath=false) {
         $this->sl = new AetherServiceLocator;
@@ -84,6 +100,7 @@ class Aether {
         $this->sl->set('parsedUrl', $parsedUrl);
         
         // Set autoloader
+        // TODO Make this more uesable
         spl_autoload_register(array('Aether', 'autoLoad'));
         
         /**
@@ -159,7 +176,6 @@ class Aether {
          */
         if ($options['AetherRunningMode'] == 'test') {
             // Prepare timer
-            $timer = TimeFactory::create('norwegian');
             $timer = new AetherTimer;
             $timer->start('aether_main');
             $this->sl->set('timer', $timer);
@@ -191,10 +207,8 @@ class Aether {
     }
     
     /**
-     * Render aether system
-     * Initialization point. When render() is called
-     * everything in the chain of actions is performed one by one
-     * untill we have a response to serve the user
+     * Ask the AetherSection to render itself,
+     * or if a service is requested it will try to load that service
      *
      * @access public
      * @return string
