@@ -82,14 +82,8 @@ class AetherServiceLocator {
      * @param string $name Name to use as lookup for object
      * @param object $object The actual object
      */
-    public function set($name, $object,$force=false) {
-        if (!$this->has($name) OR $force) {
-            $this->custom[$name] = $object;
-        }
-        else {
-            // Throw exception
-            throw new Exception('Object name is already in use ['.$name.']');
-        }
+    public function set($name, $object) {
+        $this->custom[$name] = $object;
     }
     
     /**
