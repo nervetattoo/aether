@@ -28,8 +28,9 @@ mkdir($rootdir . "/config");
 mkdir($rootdir . "/www");
 mkdir($rootdir . "/static");
 mkdir($rootdir . "/aether");
-mkdir($rootdir . "/aether/modules");
-mkdir($rootdir . "/aether/sections");
+mkdir($rootdir . "/modules");
+mkdir($rootdir . "/sections");
+mkdir($rootdir . "/templates");
 
 // Copy in starter config
 copy($aether . "config/aether.config.xml", $rootdir . "/config/aether.config.xml");
