@@ -1,8 +1,4 @@
 <?php // vim:set ts=4 sw=4 et:
-// TODO Remove dependency on commonlibs
-require_once('/home/lib/libDefines.lib.php');
-require_once(LIB_PATH . 'Cache.lib.php');
-require_once(LIB_PATH . 'SessionHandler.lib.php');
 // Default to only smarty support for now
 // The autoload fails to handle this because its smarty naming
 require_once(AETHER_PATH . 'lib/templating/smarty/libs/Smarty.class.php');
@@ -136,6 +132,12 @@ class Aether {
         $this->moduleManager->start();
 
         $options = $config->getOptions();
+        if (array_key_exists("cache", $options) && $options['cache'] == 'on') {
+            if (isset($options['cacheClass']) && isset($options['cacheOptions'])) {
+                $cache = $this->getCacheObject($options['cacheClass'], $options['cacheOptions']);
+                $this->sl->set("cache", $cache);
+            }
+        }
 
         /**
          * Make sure base and root for this request is stored
@@ -278,6 +280,15 @@ class Aether {
             return true;
         }
         
+        return false;
+    }
+
+    private function getCacheObject($class, $options) {
+        if (class_exists($class)) {
+            $obj = new $class($options);
+            if ($obj instanceof AetherCacheInterface)
+                return $obj;
+        }
         return false;
     }
 }

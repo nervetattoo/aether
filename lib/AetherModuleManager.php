@@ -47,28 +47,33 @@ class AetherModuleManager {
         $config = $this->sl->get('aetherConfig');
         $options = $config->getOptions();
         $modmapCache = $options['ModuleMap'];
-        $cache = new Cache(false, true, true);
-        $modMap = $cache->getObject($modmapCache, 131400000);
-        // If there are stop instructions, run them
-        if (count($modMap['stop']) > 0) {
-            $options = $config->getOptions();
-            // Support custom searchpaths
-            $searchPath = (isset($options['searchpath'])) 
-                ? $options['searchpath'] : AETHER_PATH;
-            AetherModuleFactory::$path = $searchPath;
-            $mods = $config->getModules();
-            $modules = array(); // Final array over modules
-            foreach ($mods as $mod) {
-                $modName = 'AetherModule' . $mod['name'];
-                if (!in_array($modName, $modMap['stop']))
-                    continue;
-                if (!isset($mod['options']))
-                    $mod['options'] = array();
-                // Get module object
-                $module = AetherModuleFactory::create($mod['name'], 
-                        $this->sl, $mod['options']);
-                // Run module->stop
-                $module->stop();
+        if ($this->sl->has("cache"))
+            $cache = $this->sl->get("cache");
+        else
+            $cache = false;
+        if ($cache) {
+            $modMap = $cache->get($modmapCache, 131400000);
+            // If there are stop instructions, run them
+            if (count($modMap['stop']) > 0) {
+                $options = $config->getOptions();
+                // Support custom searchpaths
+                $searchPath = (isset($options['searchpath'])) 
+                    ? $options['searchpath'] : AETHER_PATH;
+                AetherModuleFactory::$path = $searchPath;
+                $mods = $config->getModules();
+                $modules = array(); // Final array over modules
+                foreach ($mods as $mod) {
+                    $modName = 'AetherModule' . $mod['name'];
+                    if (!in_array($modName, $modMap['stop']))
+                        continue;
+                    if (!isset($mod['options']))
+                        $mod['options'] = array();
+                    // Get module object
+                    $module = AetherModuleFactory::create($mod['name'], 
+                            $this->sl, $mod['options']);
+                    // Run module->stop
+                    $module->stop();
+                }
             }
         }
     }

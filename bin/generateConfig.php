@@ -1,11 +1,11 @@
 #!/usr/bin/php
 <?php // vim:set ts=4 sw=4 et:
-
-require_once("/home/lib/Autoload.php");
-require_once("/home/lib/libDefines.lib.php");
-require_once(AETHER_PATH . 'lib/AetherConfig.php');
-require_once(AETHER_PATH . 'Aether.php');
-require_once(LIB_PATH . 'Cache.lib.php');
+$path = split("/",pathinfo(__FILE__, PATHINFO_DIRNAME));
+array_pop($path);
+$path = join("/", $path) . "/";
+require_once($path . "Aether.php");
+Aether::$aetherPath = $path;
+spl_autoload_register(array('Aether', 'autoLoad'));
 
 /**
  * 
@@ -173,8 +173,8 @@ if (count($modules['missing']) > 0) {
 
 
 echo "Module map written to cachename: $modmapCache\n";
-$cache = new Cache(false, true, true);
-$cache->saveObject($modmapCache, $modules);
+//$cache = new Cache(false, true, true);
+//$cache->saveObject($modmapCache, $modules);
 echo "Done\n\n";
 
 /**
