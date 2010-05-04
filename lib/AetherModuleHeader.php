@@ -1,7 +1,4 @@
 <?php // vim:set tabstop=4 shiftwidth=4 smarttab expandtab:
-
-require_once("AetherModule.php");
-
 /**
  * 
  * Base definition of a header module

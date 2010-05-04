@@ -1,5 +1,4 @@
 <?php // vim:set tabstop=4 shiftwidth=4 smarttab expandtab:
-
 /**
  * 
  * Factory for loading modules

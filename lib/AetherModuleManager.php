@@ -1,7 +1,4 @@
 <?php // vim:set ts=4 sw=4 et:
-
-require_once(LIB_PATH . 'Cache.lib.php');
-
 /**
  * Keep track over all loaded modules and make sure every
  * module gets called at the stage theyre supposed to 

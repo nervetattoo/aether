@@ -31,7 +31,7 @@ class AetherModuleHelloworld extends AetherModule {
         return 'Hello world';
     }
     public function stop() {
-        echo 'Fooooooo';
+        //echo 'Fooooooo';
     }
 }
 ?>

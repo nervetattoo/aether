@@ -1,43 +1,9 @@
 <config>
     <site name="*">
-        <option name="searchpath">/home/raymond/aether-free/</option>
-        <option name="version">1.0</option>
-        <option name="additive">foo;bar</option>
+        <option name="searchpath">/home/raymond/sites/aether/</option>
         <urlRules>
             <rule match="foo">
                 <rule match="">
-                    <option name="additive" mode="add">ugh;agh</option>
-                    <option name="additive" mode="del">agh</option>
-                    <template>splash_controller.tpl</template>
-                    <section>Generic</section>
-                    <module provides="title">Helloworld</module>
-                    <module>AetherSplashScreen</module>
-                </rule>
-            </rule>
-            <rule match="bar">
-                <rule match="">
-                    <option name="additive" mode="add">ugh;agh</option>
-                    <option name="additive" mode="del">agh</option>
-                    <template>splash_controller.tpl</template>
-                    <section>Generic</section>
-                    <module provides="title">Helloworld</module>
-                    <module>AetherSplashScreen</module>
-                </rule>
-            </rule>
-            <rule match="moo">
-                <rule match="">
-                    <option name="additive" mode="add">ugh;agh</option>
-                    <option name="additive" mode="del">agh</option>
-                    <template>splash_controller.tpl</template>
-                    <section>Generic</section>
-                    <module provides="title">Helloworld</module>
-                    <module>AetherSplashScreen</module>
-                </rule>
-            </rule>
-            <rule match="goo">
-                <rule match="">
-                    <option name="additive" mode="add">ugh;agh</option>
-                    <option name="additive" mode="del">agh</option>
                     <template>splash_controller.tpl</template>
                     <section>Generic</section>
                     <module provides="title">Helloworld</module>
@@ -45,8 +11,6 @@
                 </rule>
             </rule>
             <rule match="">
-                <option name="additive" mode="add">ugh;agh</option>
-                <option name="additive" mode="del">agh</option>
                 <template>splash_controller.tpl</template>
                 <section>Generic</section>
                 <module provides="title">Helloworld</module>
