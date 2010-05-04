@@ -1,7 +1,6 @@
 <?php // vim:set ts=4 sw=4 et:
 // Default to only smarty support for now
 // The autoload fails to handle this because its smarty naming
-require_once(AETHER_PATH . 'lib/templating/smarty/libs/Smarty.class.php');
 
 /**
  * The Aether web framework
@@ -233,6 +232,8 @@ class Aether {
     public static function autoLoad($class) {
         if (class_exists($class, false))
             return true;
+        if ($class == "Smarty")
+            require_once(self::$aetherPath . 'lib/templating/smarty/libs/Smarty.class.php');
 
         // Split up the name of the class by camel case (AetherDriver
         $matches = preg_split('/([A-Z][^A-Z]+)/', $class, -1,

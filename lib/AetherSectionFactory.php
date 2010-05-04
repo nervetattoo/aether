@@ -18,7 +18,7 @@ class AetherSectionFactory {
      * The path to search for sections in
      * @var 
      */
-    static public $path = AETHER_PATH;
+    static public $path = '';
     
     /**
      * Have a mode strict that says wether or not the factory

@@ -88,7 +88,7 @@ abstract class AetherSection {
 
         // Support custom searchpaths
         $searchPath = (isset($options['searchpath'])) 
-            ? $options['searchpath'] : AETHER_PATH;
+            ? $options['searchpath'] : $this->sl->get("aetherPath");
         AetherModuleFactory::$path = $searchPath;
         $mods = $config->getModules();
         $modules = array(); // Final array over modules
@@ -279,7 +279,7 @@ abstract class AetherSection {
         $options = $config->getOptions();
         // Support custom searchpaths
         $searchPath = (isset($options['searchpath'])) 
-            ? $options['searchpath'] : AETHER_PATH;
+            ? $options['searchpath'] : $this->sl->get("aetherPath");
         AetherModuleFactory::$path = $searchPath;
 
         // Create module

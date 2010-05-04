@@ -13,7 +13,7 @@
                     <module>AetherSplashScreen</module>
                 </rule>
             </rule>
-            <rule match="" cache="600">
+            <rule match="">
                 <template>splash_controller.tpl</template>
                 <section>Generic</section>
                 <module provides="title">Helloworld</module>

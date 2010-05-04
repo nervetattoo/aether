@@ -107,7 +107,8 @@ abstract class AetherCLI {
         }
         else {
             // Use default help file for AetherCLI
-            $content = file_get_contents(AETHER_PATH . 'lib/AetherCLI.help');
+            $path = pathinfo(__FILE__, PATHINFO_DIRNAME);
+            $content = file_get_contents($path . '/lib/AetherCLI.help');
         }
         echo $content;
     }

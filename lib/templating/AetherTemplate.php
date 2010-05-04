@@ -20,12 +20,10 @@ abstract class AetherTemplate {
     public static function get($engine,AetherServiceLocator $sl) {
         if ($engine == 'smarty') {
             $class = 'AetherTemplateSmarty';
-            require_once(AETHER_PATH . 'lib/templating/AetherTemplateSmarty.php');
         }
         else {
             // Default template engine
             $class = 'AetherTemplateSmarty';
-            require_once(AETHER_PATH . 'lib/templating/AetherTemplateSmarty.php');
         }
         return new $class($sl);
     }

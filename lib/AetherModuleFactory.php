@@ -14,7 +14,7 @@ class AetherModuleFactory {
      * The path to search for modules in
      * @var string
      */
-    static public $path = AETHER_PATH;
+    static public $path = '';
     
     /**
      * Have a mode strict that says wether or not the factory
