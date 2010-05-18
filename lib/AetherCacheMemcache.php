@@ -27,13 +27,11 @@ class AetherCacheMemcache implements AetherCacheInterface {
     private $con = null;
 
     /**
-     * Constructor function, connects to the database (if wanted) and prints debug info
+     * Setup memcache servers as supplied
      *
      * @access public
      * @return bool
-     * @param string $database (pubsys)
-     * @param bool $dontConnectToDB (false)
-     * @param bool $useGlobal (false) - Use global cachePool as default or not
+     * @param string $serversString (list of memcache hosts <host1>:<port>;<host2>:<port>;...)
      */
     public function __construct($serversString="") {
         if ($serversString != "") {
@@ -73,7 +71,7 @@ class AetherCacheMemcache implements AetherCacheInterface {
      * Fetch something from cache
      *
      * @access public
-     * @return bool
+     * @return mixed
      * @param string $name Name of object to save as
      * @param int $maxAge
      */
