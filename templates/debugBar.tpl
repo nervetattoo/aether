@@ -3,20 +3,20 @@
 <div style="display: none; padding: 2px 12px 40px 12px;">
 <ul>
 {foreach from=$timers key=$name item=$timer}
-    <li style="width:100%; clear: both; padding-top: 15px; font-size: 9pt; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; border-bottom: 1px solid #847864">{{$name}}:</li>
+    <li style="width:100%; clear: both; padding-top: 15px; font-size: 9pt; letter-spacing: 1px; text-transform: uppercase; font-weight: bold; border-bottom: 1px solid #847864">{$name}:</li>
     <li>
     <ul>
     {foreach from=$timer key=$point item=$data}
-        {{if $point != "start"}}
+        {if $point != "start"}
         <li style="clear:left; padding: 3px 0; float: left; width: 100%;">
-        <span style="font-weight: bold; float:left; overflow:hidden;">{{$point}}</span>
-        <span style="float:right;">{{$data.elapsed}} seconds</span>
+        <span style="font-weight: bold; float:left; overflow:hidden;">{$point}</span>
+        <span style="float:right;">{$data.elapsed} seconds</span>
         </li>
-        {{/if}}
-    {{/foreach}}
+        {/if}
+    {/foreach}
     </ul>
     </li>
-{{/foreach}}
+{/foreach}
 </ul>
 </div>
 </div>
