@@ -1,8 +1,4 @@
 <?php // vim:set ts=4 sw=4 et:
-require_once('/home/lib/libDefines.lib.php');
-require_once(LIB_PATH . 'Cache.lib.php');
-require_once(AETHER_PATH . 'lib/AetherResponse.php');
-
 /**
  * 
  * Base class definition of aether sections
@@ -30,6 +26,50 @@ abstract class AetherSection {
     public function __construct(AetherServiceLocator $sl) {
         $this->sl = $sl;
     }
+
+    /**
+     * Render one module based on its provider name.
+     * Adds headers for cache time if cache attribute is specified.
+     *
+     * @access public
+     * @param string $providerName
+     */
+    public function renderProviderWithCacheHeaders($providerName) {
+        $config = $this->sl->get('aetherConfig');
+        $options = $config->getOptions();
+
+        // Support custom searchpaths
+        $searchPath = (isset($options['searchpath'])) 
+            ? $options['searchpath'] : $this->sl->get("aetherPath");
+        AetherModuleFactory::$path = $searchPath;
+        $mods = $config->getModules();
+
+        foreach ($mods as $m) {
+            if ($m['provides'] === $providerName) {
+                $module = $m;
+                break;
+            }
+        }
+
+        if (isset($module)) {
+            if (!isset($module['options']))
+                $module['options'] = array();
+            // Get module object
+            $object = AetherModuleFactory::create($module['name'], 
+                    $this->sl, $module['options']);
+
+            // If the module, in this setting, blocks caching, accept
+            if ($object->denyCache()) {
+                $module['noCache'] = true;
+                $cachetime = false;
+            } 
+            else if (isset($module['cache'])) {
+                header("Cache-Control: max-age={$module['cache']}");
+            }
+
+            print $object->run();
+        }
+    }
     
     /**
      * Render content from modules
@@ -52,7 +92,10 @@ abstract class AetherSection {
             // No timing, we're in prod
         }
         $config = $this->sl->get('aetherConfig');
-        $cache = new Cache(false, true, true);
+        if ($this->sl->has("cache"))
+            $cache = $this->sl->get("cache");
+        else
+            $cache = false;
         $cacheable = true;
         /** 
          * Decide cache name for rule based cache
@@ -60,15 +103,18 @@ abstract class AetherSection {
          * $domainname_$cacheas
          */
         $url = $this->sl->get('parsedUrl');
-        $cacheas = $config->getCacheName();
-        if ($cacheas != false)
-            $cacheName = $url->get('host') . '_' . $cacheas;
-        else
-            $cacheName = $url->cacheName();
-        $cachetime = $config->getCacheTime();
+        if ($cache) {
+            $cacheas = $config->getCacheName();
+            if ($cacheas != false)
+                $cacheName = $url->get('host') . '_' . $cacheas;
+            else
+                $cacheName = $url->cacheName();
+            $cachetime = $config->getCacheTime();
 
-        if ($url->get('query') != "")
-            $cacheable = false;
+            if ($url->get('query') != "")
+                $cacheable = false;
+        }
+
         /**
          * If one object requests no cache of this request
          * then we need to take that into consideration.
@@ -86,7 +132,7 @@ abstract class AetherSection {
 
         // Support custom searchpaths
         $searchPath = (isset($options['searchpath'])) 
-            ? $options['searchpath'] : AETHER_PATH;
+            ? $options['searchpath'] : $this->sl->get("aetherPath");
         AetherModuleFactory::$path = $searchPath;
         $mods = $config->getModules();
         $modules = array(); // Final array over modules
@@ -97,7 +143,7 @@ abstract class AetherSection {
             $object = AetherModuleFactory::create($module['name'], 
                     $this->sl, $module['options']);
             // If the module, in this setting, blocks caching, accept
-            if ($object->denyCache()) {
+            if (!$cache || $object->denyCache()) {
                 $module['noCache'] = true;
                 $cachetime = false;
             }
@@ -118,7 +164,8 @@ abstract class AetherSection {
         /**
          * Render page
          */
-        if (!is_numeric($cachetime) OR !$cacheable OR ($output = $cache->getObject($cacheName) == false)) {
+        $cacheable = ($cacheable && is_object($cache));
+        if (!is_numeric($cachetime) || !$cacheable || ($output = $cache->get($cacheName) == false)) {
             /* Load controller template
              * This template knows where all modules should be placed
              * and have internal wrapping html for this section
@@ -132,7 +179,7 @@ abstract class AetherSection {
                 $modulesOut = array();
                 foreach ($modules as $module) {
                     // If module should be cached, handle it
-                    if (array_key_exists('cache', $module) AND !isset($module['noCache'])) {
+                    if ($cache && array_key_exists('cache', $module) && !isset($module['noCache'])) {
                         $mCacheName = 
                             $cacheName . $module['name'] ;
                         if ($module['provides'])
@@ -141,7 +188,7 @@ abstract class AetherSection {
                             $mCacheName = $url->get('host') . $module['cacheas'];
                         }
                         // Try to read from cache, else generate and cache
-                        if (($mOut = $cache->getObject($mCacheName)) == false) {
+                        if (($mOut = $cache->get($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
                             $mod = $module['obj'];
                             try {
@@ -151,7 +198,7 @@ abstract class AetherSection {
                                 // logic has marked this not to be cached 
                                 // while rendering the module
                                 if (!$mod->denyCache()) {
-                                    $cache->saveObject($mCacheName, $mOut, $mCacheTime);
+                                    $cache->set($mCacheName, $mOut, $mCacheTime);
                                 }
                                 else {
                                     $saveCache = false;
@@ -161,7 +208,7 @@ abstract class AetherSection {
                                 // TODO: Make a special exception for when a 
                                 // module fails so terribly that it needs to 
                                 // be replaced by an old cached one.
-                                $mOut = $cache->getObject($mCacheName, 86400);
+                                $mOut = $cache->get($mCacheName, 86400);
 
                                 $saveCache = false;
                                 $this->logerror($e);
@@ -175,7 +222,7 @@ abstract class AetherSection {
                         $mod = $module['obj'];
                         try {
                             $mOut = $mod->run();
-                            if ($mod->denyCache())
+                            if (!$cache || $mod->denyCache())
                                 $saveCache = false;
                         }
                         catch (Exception $e) {
@@ -233,10 +280,10 @@ abstract class AetherSection {
             }
             $output = $tpl->fetch($tplInfo['name']);
             if (is_numeric($cachetime) && $cacheable)
-                $cache->saveObject($cacheName, $output, $cachetime);
+                $cache->set($cacheName, $output, $cachetime);
         }
         else {
-            $output = $cache->getObject($cacheName);
+            $output = $cache->get($cacheName);
         }
         /**
          * If we have a timer, end this timing
@@ -276,7 +323,7 @@ abstract class AetherSection {
         $options = $config->getOptions();
         // Support custom searchpaths
         $searchPath = (isset($options['searchpath'])) 
-            ? $options['searchpath'] : AETHER_PATH;
+            ? $options['searchpath'] : $this->sl->get("aetherPath");
         AetherModuleFactory::$path = $searchPath;
 
         // Create module

@@ -7,9 +7,6 @@ vim:set smarttab:
 vim:set expandtab:
 */
 
-require_once('/home/lib/libDefines.lib.php');
-require_once(AETHER_PATH . 'lib/AetherModule.php');
-
 /**
  * 
  * Simple helloworld module, just a test module
@@ -31,7 +28,7 @@ class AetherModuleHelloworld extends AetherModule {
         return 'Hello world';
     }
     public function stop() {
-        echo 'Fooooooo';
+        //echo 'Fooooooo';
     }
 }
 ?>

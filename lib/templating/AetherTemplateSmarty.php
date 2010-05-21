@@ -1,6 +1,4 @@
 <?php // 
-require_once('/home/lib/libDefines.lib.php');
-require_once(AETHER_PATH . 'lib/templating/smarty/libs/Smarty.class.php');
 /**
  * 
  * Facade over Smarty templating engine

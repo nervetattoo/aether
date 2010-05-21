@@ -1,10 +1,4 @@
 <?php // vim:set ts=4 sw=4 et:
-
-require_once('/home/lib/libDefines.lib.php');
-require_once(LIB_PATH . 'XMLHelper.php');
-require_once(AETHER_PATH . 'lib/AetherModuleFactory.php');
-require_once(AETHER_PATH . 'lib/AetherServiceLocator.php');
-
 /**
  * 
  * Read in config file for aether and make its options

@@ -1,5 +1,4 @@
 <?php // vim:set ts=4 sw=4 et:
-
 /**
  * 
  * Provide a timing and measuring system to aether.

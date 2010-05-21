@@ -1,8 +1,4 @@
 <?php // vim:set ts=4 sw=4 et:
-require_once('/home/lib/libDefines.lib.php');
-require_once(LIB_PATH . 'Vector.php');
-require_once(LIB_PATH . 'Database.lib.php');
-require_once(AETHER_PATH . 'lib/templating/AetherTemplate.php');
 
 /**
  * 
@@ -101,7 +97,7 @@ class AetherServiceLocator {
      */
     public function getVector($name) {
         if (!isset($this->vectors[$name]))
-            $this->vectors[$name] = new Vector;
+            $this->vectors[$name] = new AetherVector;
         return $this->vectors[$name];
     }
 
