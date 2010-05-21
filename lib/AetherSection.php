@@ -26,6 +26,50 @@ abstract class AetherSection {
     public function __construct(AetherServiceLocator $sl) {
         $this->sl = $sl;
     }
+
+    /**
+     * Render one module based on its provider name.
+     * Adds headers for cache time if cache attribute is specified.
+     *
+     * @access public
+     * @param string $providerName
+     */
+    public function renderProviderWithCacheHeaders($providerName) {
+        $config = $this->sl->get('aetherConfig');
+        $options = $config->getOptions();
+
+        // Support custom searchpaths
+        $searchPath = (isset($options['searchpath'])) 
+            ? $options['searchpath'] : $this->sl->get("aetherPath");
+        AetherModuleFactory::$path = $searchPath;
+        $mods = $config->getModules();
+
+        foreach ($mods as $m) {
+            if ($m['provides'] === $providerName) {
+                $module = $m;
+                break;
+            }
+        }
+
+        if (isset($module)) {
+            if (!isset($module['options']))
+                $module['options'] = array();
+            // Get module object
+            $object = AetherModuleFactory::create($module['name'], 
+                    $this->sl, $module['options']);
+
+            // If the module, in this setting, blocks caching, accept
+            if ($object->denyCache()) {
+                $module['noCache'] = true;
+                $cachetime = false;
+            } 
+            else if (isset($module['cache'])) {
+                header("Cache-Control: max-age={$module['cache']}");
+            }
+
+            print $object->run();
+        }
+    }
     
     /**
      * Render content from modules

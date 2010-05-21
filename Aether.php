@@ -203,13 +203,36 @@ class Aether {
         /**
          * If a service is requested simply render the service
          */
-        if (isset($_GET['service']) AND isset($_GET['module'])) {
+        if (isset($_GET['module']) && isset($_GET['service'])) {
             $response = $this->section->service(
                 $_GET['module'], $_GET['service']);
             if (!is_object($response) || !($response instanceof AetherResponse)) {
                 trigger_error("Expected " . preg_replace("/[^A-z0-9]+/", "", $_GET['module']) . "::service() to return an AetherResponse object", E_USER_WARNING);
             }
             else {
+                $response->draw($this->sl);
+            }
+        }
+        else if (isset($_GET['_esi'])) {
+            /**
+             * ESI support and rendering of only one module by provider name
+             * # _esi to list
+             * # _esi=<providerName> to render one module with settings of the url path
+             */
+            $config = $this->sl->get('aetherConfig');
+            if (strlen($_GET['_esi']) > 0) {
+                $this->section->renderProviderWithCacheHeaders($_GET['_esi']);
+            }
+            else {
+                $modules = $config->getModules();
+                $providers = array();
+                foreach ($modules as $m) {
+                    $providers[] = array(
+                        'provides' => $m['provides'],
+                        'cache' => isset($m['cache']) ? $m['cache'] : false
+                    );
+                }
+                $response = new AetherJSONResponse(array('providers' => $providers));
                 $response->draw($this->sl);
             }
         }
