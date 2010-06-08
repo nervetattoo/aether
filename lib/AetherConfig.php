@@ -644,12 +644,20 @@ class AetherConfig {
      * which are stored with the store="name"-attribute
      */
     public function getUrlVar($key) {
-        if (array_key_exists($key, $this->urlVariables)) {
+        if ($this->hasUrlVar($key)) 
             return $this->urlVariables[$key];
-        }
-        else {
+        else
             throw new Exception("[$key] is not an existing variable");
-        }
+    }
+    
+    /**
+     * Check if url var exists
+     *
+     * @return bool
+     * @param string $key
+     */
+    public function hasUrlVar($key) {
+        return array_key_exists($key, $this->urlVariables);
     }
 
     /**

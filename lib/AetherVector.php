@@ -54,7 +54,8 @@ class AetherVector implements ArrayAccess,Iterator {
         return in_array($object, $this->data);
     }
     public function append($element) {
-        return $this->data[] = $element;
+        $this->data[] = $element;
+        return $this;
     }
     
     
