@@ -119,4 +119,3 @@ class AetherCLITest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($t2 > $t1);
     }
 }
-?>

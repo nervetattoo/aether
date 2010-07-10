@@ -32,4 +32,3 @@ class AetherModuleFactoryTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($mod->run(), 'Hello local');
     }
 }
-?>

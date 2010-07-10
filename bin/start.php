@@ -37,5 +37,3 @@ copy($aether . "config/aether.config.xml", $rootdir . "/config/aether.config.xml
 copy($aether . "www/deployer.php", $rootdir . "/www/deployer.php");
 
 exit("Project [$name] succesfully created\nExiting\n");
-
-?>

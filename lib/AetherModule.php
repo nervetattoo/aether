@@ -67,4 +67,3 @@ abstract class AetherModule {
     public function service($name) {
     }
 }
-?>

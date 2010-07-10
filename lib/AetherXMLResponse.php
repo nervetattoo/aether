@@ -87,4 +87,3 @@ class AetherXMLResponse extends AetherResponse {
         return $element;
     }
 }
-?>

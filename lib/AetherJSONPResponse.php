@@ -57,5 +57,3 @@ class AetherJSONPResponse extends AetherResponse {
         return $this->callback . "(" . json_encode($this->struct) .")";
     }
 }
-
-?>

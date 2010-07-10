@@ -55,4 +55,3 @@ class AetherModuleFactory {
         throw new Exception("Module '$module' does not exist in path [" . join(", ", $paths) . "]");
     }
 }
-?>

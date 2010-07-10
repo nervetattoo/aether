@@ -55,4 +55,3 @@ abstract class AetherModuleHeader extends AetherModule {
         $tpl->set('pageJavascripts', $scripts);
     }
 }
-?>

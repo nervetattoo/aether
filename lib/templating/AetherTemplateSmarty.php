@@ -46,4 +46,3 @@ class AetherTemplateSmarty extends AetherTemplate {
         return $this->engine->fetch($name);
     }
 }
-?>

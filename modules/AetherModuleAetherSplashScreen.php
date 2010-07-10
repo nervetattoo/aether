@@ -24,4 +24,3 @@ class AetherModuleAetherSplashScreen extends AetherModule {
         return $tpl->fetch('splashscreen.tpl');
     }
 }
-?>

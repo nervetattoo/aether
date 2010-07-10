@@ -1,12 +1,4 @@
 <?php
-/*
-HARDWARE.NO EDITORSETTINGS:
-vim:set tabstop=4:
-vim:set shiftwidth=4:
-vim:set smarttab:
-vim:set expandtab:
-*/
-
 require_once('/home/lib/libDefines.lib.php');
 require_once(AETHER_PATH . 'lib/AetherModule.php');
 
@@ -31,4 +23,3 @@ class AetherModuleHellolocal extends AetherModule {
         return 'Hello local';
     }
 }
-?>

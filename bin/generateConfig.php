@@ -201,4 +201,3 @@ function loadConfig($file) {
 
     return $import;
 }
-?>

@@ -1,14 +1,4 @@
 <?php
-/*
-HARDWARE.NO EDITORSETTINGS:
-vim:set tabstop=4:
-vim:set shiftwidth=4:
-vim:set smarttab:
-vim:set expandtab:
-*/
-
-require_once('/home/lib/libDefines.lib.php');
-
 /**
  * 
  * Generic section, only serves up modules and does nothing.
@@ -33,4 +23,3 @@ class AetherSectionGeneric extends AetherSection {
         return new AetherTextResponse($this->renderModules());
     }
 }
-?>

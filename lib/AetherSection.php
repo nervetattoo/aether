@@ -370,5 +370,3 @@ abstract class AetherSection {
         trigger_error("Caught exception at " . $e->getFile() . ":" . $e->getLine() . ": " . $e->getMessage() . ", trace: " . $e->getTraceAsString());
     }
 }
-
-?>

@@ -25,4 +25,3 @@ class AetherSectionTestsection extends AetherSection {
         return new AetherTextResponse($this->renderModules());
     }
 }
-?>

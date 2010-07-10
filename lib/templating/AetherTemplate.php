@@ -45,4 +45,3 @@ abstract class AetherTemplate {
      */
     abstract public function fetch($name);
 }
-?>

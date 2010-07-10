@@ -132,4 +132,3 @@ class AetherConfigTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($conf->getUrlVariable('catName'), $cat);
     }
 }
-?>

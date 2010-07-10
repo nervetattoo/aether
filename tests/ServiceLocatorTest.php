@@ -33,4 +33,3 @@ class AetherServiceLocatorTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($arr['foo'], $arr2['foo']);
     }
 }
-?>

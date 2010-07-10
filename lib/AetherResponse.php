@@ -19,4 +19,3 @@ abstract class AetherResponse {
      */
     abstract public function draw($sl);
 }
-?>

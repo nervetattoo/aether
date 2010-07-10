@@ -65,4 +65,4 @@ class AetherActionResponse extends AetherResponse {
         return $this->data;
     }
 }
-?>
+

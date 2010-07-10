@@ -87,4 +87,3 @@ class AetherTextResponse extends AetherResponse {
         return $this->out;
     }
 }
-?>

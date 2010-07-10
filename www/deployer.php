@@ -20,4 +20,3 @@ try {
 catch (Exception $e) {
     trigger_error("Uncaught error: " . $e);
 }
-?>

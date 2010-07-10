@@ -64,4 +64,3 @@ class AetherUrlParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($parser->__toString(), 'http://foo:bar@aether.raymond.raw.no/foobar/hello');
     }
 }
-?>

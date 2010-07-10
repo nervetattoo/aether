@@ -718,4 +718,3 @@ class AetherConfig {
         return $this->configFilePath;
     }
 }
-?>

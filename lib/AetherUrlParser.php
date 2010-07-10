@@ -138,4 +138,3 @@ class AetherUrlParser {
         return str_replace('/', '_', $this->host . $path);
     }
 }
-?>

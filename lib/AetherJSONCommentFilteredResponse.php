@@ -54,4 +54,3 @@ class AetherJSONCommentFilteredResponse extends AetherResponse {
         return "/* " . json_encode($this->struct) . " */";
     }
 }
-?>

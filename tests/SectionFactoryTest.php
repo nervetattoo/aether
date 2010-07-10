@@ -25,4 +25,3 @@ class AetherSectionFactoryTest extends PHPUnit_Framework_TestCase {
         $this->assertType('AetherSectionTestsection', $section);
     }
 }
-?>

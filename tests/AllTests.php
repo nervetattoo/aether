@@ -42,4 +42,3 @@ class Framework_AllTests {
         return $suite;
     }
 }
-?>

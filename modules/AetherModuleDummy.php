@@ -22,5 +22,3 @@ class AetherModuleDummy extends AetherModule {
         return false;
      }
 }
-
-?>

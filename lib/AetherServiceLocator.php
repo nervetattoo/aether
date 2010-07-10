@@ -108,4 +108,3 @@ class AetherServiceLocator {
         return array_key_exists($name, $this->custom);
     }
 }
-?>

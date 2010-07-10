@@ -18,5 +18,3 @@ class AetherTemplateTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($tpl instanceof AetherTemplateSmarty);
     }
 }
-
-?>

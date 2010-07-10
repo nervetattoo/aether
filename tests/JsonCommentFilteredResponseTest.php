@@ -23,5 +23,3 @@ class AetherJsonCommentFilteredResponseTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(preg_match('/\/\*[^\*]+\*\//',$out)==true);
     }
 }
-
-?>

@@ -25,4 +25,3 @@ class SmartyIntegratesWithAetherTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(substr_count($out,'hello world') > 0);
     }
 }
-?>

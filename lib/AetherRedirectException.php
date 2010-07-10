@@ -56,4 +56,3 @@ class AetherRedirectException extends Exception {
         return $this->url;
     }
 }
-?>

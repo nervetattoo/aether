@@ -18,7 +18,7 @@ else
 
 $arg = $argv[1];
 // See if install or update is wanted
-if (preg_match('/(--prefix|-p)=\/[a-z\/]+/', $arg)) 
+if (preg_match('/(--prefix|-p)=\/[a-z-_.\/]+/i', $arg)) 
     install($arg);
 elseif (preg_match('/--update|-u/', $arg))
     update();
@@ -33,7 +33,7 @@ else
  * @return void
  */
 function install($arg) {
-    if (preg_match('/^--prefix|-p=(\/{1}[a-z-_\/]+[a-z-_]+)$/', $arg, $m)) {
+    if (preg_match('/^--prefix|-p=(\/{1}[a-z-_.\/]+[a-z-_.]+)$/i', $arg, $m)) {
         $path = $m[1];
         echo "Trying to install to {$path}/aether\n";
         // Path must exist(?)
@@ -74,4 +74,3 @@ function printHelp() {
     echo "\t--update OR -u\tUpdate existing install with new version\n";
     echo "\t--help OR -h\tDisplay this menu\n";
 }
-?>
