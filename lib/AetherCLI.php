@@ -61,7 +61,6 @@ abstract class AetherCLI {
         $this->options = $this->parseOptions($_SERVER['argv']);
         $this->mixinHelpSupport();
         // Run help file if help required
-        var_dump($this->options);
         if (($this->hasOptions(array('help')) AND count($this->options) == 1)
             OR count($this->options) == 0) {
             $this->displayHelpFile();

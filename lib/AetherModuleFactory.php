@@ -35,20 +35,25 @@ class AetherModuleFactory {
      * @param array $options
      */
     public static function create($module, AetherServiceLocator $sl, $options=array()) {
-        $module = 'AetherModule' . ucfirst($module);
+        //$module = 'AetherModule' . ucfirst($module);
         if (!strpos(self::$path, ';'))
             $paths = array(self::$path);
         else {
             $paths = array_map('trim', explode(';', self::$path));
         }
         foreach ($paths as $path) {
+            if (substr($path, -1) != '/')
+                $path .= '/';
+
             if (self::$strict)
                 $file = $path . 'modules/' . $module . '.php';
             else
                 $file = $path . $module . '.php';
             if (file_exists($file)) {
                 include_once($file);
-                $mod = new $module($sl, $options);
+                $class = pathinfo($file, PATHINFO_FILENAME);
+                $class = ucfirst($class);
+                $mod = new $class($sl, $options);
                 return $mod;
             }
         }

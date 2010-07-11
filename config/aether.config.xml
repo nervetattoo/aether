@@ -10,14 +10,19 @@
                     <template>splash_controller.tpl</template>
                     <section>Generic</section>
                     <module provides="title">Helloworld</module>
-                    <module>AetherSplashScreen</module>
+                    <module>SplashScreen</module>
                 </rule>
             </rule>
             <rule match="">
                 <template>splash_controller.tpl</template>
                 <section>Generic</section>
                 <module provides="title">Helloworld</module>
-                <module>AetherSplashScreen</module>
+                <module>SplashScreen</module>
+            </rule>
+            <rule default="true">
+                <section>Generic</section>
+                <module>Site/Status404</module>
+                <template>404.tpl</template>
             </rule>
         </urlRules>
     </site>

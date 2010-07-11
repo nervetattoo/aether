@@ -270,6 +270,7 @@ abstract class AetherSection {
                 }
                 // Export rendered modules to template
                 foreach ($modulesOut as $name => $mod) {
+                    $name = str_replace('/', '_', $name);
                     if (count($mod) > 1) {
                         $tpl->set($name, $mod);
                     }

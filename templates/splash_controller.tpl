@@ -1,1 +1,1 @@
-{$AetherSplashScreen}
+{$SplashScreen}

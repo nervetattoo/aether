@@ -39,20 +39,26 @@ class AetherSectionFactory {
      */
     public static function create($section, AetherServiceLocator $sl) {
         if (!empty($section)) {
-            $section = 'AetherSection' . ucfirst($section);
+            //$section = 'AetherSection' . ucfirst($section);
             if (!strpos(self::$path, ';'))
                 $paths = array(self::$path);
             else {
                 $paths = array_map('trim', explode(';', self::$path));
             }
             foreach ($paths as $path) {
+                if (substr($path, -1) != '/')
+                    $path .= '/';
+
                 if (self::$strict)
                     $file = $path . 'sections/' . $section . '.php';
                 else
                     $file = $path . $section . '.php';
+
                 if (file_exists($file)) {
-                    include($file);
-                    $aetherSection = new $section($sl);
+                    require_once($file);
+                    $class = pathinfo($file, PATHINFO_FILENAME);
+                    $class = ucfirst($class);
+                    $aetherSection = new $class($sl);
                     return $aetherSection;
                 }
             }

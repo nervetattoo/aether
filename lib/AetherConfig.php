@@ -186,6 +186,11 @@ class AetherConfig {
         $xquery = "//option[@name='searchpath']";
         $searchPath = trim($xpath->query($xquery)->item(0)->firstChild->nodeValue);
         $searchPath = str_replace(" ", "", $searchPath);
+
+        // If missing ending slash in searchpath, add it!
+        if (substr($searchPath, -1) != '/')
+            $searchPath .= '/';
+
         //AetherModuleFactory::$path = $searchPath;
         // Build array
         $modMap = array('start'=>array(),'run'=>array(),
@@ -198,7 +203,7 @@ class AetherConfig {
                     $name = trim($option->nodeValue);
             }
             // Load modules file so we can examine the module
-            $name = 'AetherModule' . ucfirst($name);
+            //$name = 'AetherModule' . $name;
             if (!strpos($searchPath, ';'))
                 $paths = array($searchPath);
             else {
