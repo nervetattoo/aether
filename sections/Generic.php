@@ -11,7 +11,7 @@
  * @package aether.sections
  */
 
-class AetherSectionGeneric extends AetherSection {
+class Generic extends AetherSection {
     
     /**
      * Return response

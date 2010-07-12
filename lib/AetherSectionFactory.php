@@ -39,7 +39,6 @@ class AetherSectionFactory {
      */
     public static function create($section, AetherServiceLocator $sl) {
         if (!empty($section)) {
-            //$section = 'AetherSection' . ucfirst($section);
             if (!strpos(self::$path, ';'))
                 $paths = array(self::$path);
             else {

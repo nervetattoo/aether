@@ -35,7 +35,6 @@ class AetherModuleFactory {
      * @param array $options
      */
     public static function create($module, AetherServiceLocator $sl, $options=array()) {
-        //$module = 'AetherModule' . ucfirst($module);
         if (!strpos(self::$path, ';'))
             $paths = array(self::$path);
         else {
