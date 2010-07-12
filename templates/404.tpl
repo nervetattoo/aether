@@ -1,2 +1,1 @@
-{$admin_Login}
-haithar, yet again
+{$Site_Status404}
