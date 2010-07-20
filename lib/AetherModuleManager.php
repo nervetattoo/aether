@@ -46,6 +46,8 @@ class AetherModuleManager {
         // Read module map to find what modules to run by here
         $config = $this->sl->get('aetherConfig');
         $options = $config->getOptions();
+        if (!array_key_exists('ModuleMap', $options))
+            return;
         $modmapCache = $options['ModuleMap'];
         if ($this->sl->has("cache"))
             $cache = $this->sl->get("cache");

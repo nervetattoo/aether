@@ -130,8 +130,11 @@ class Aether {
         $this->moduleManager = new AetherModuleManager($this->sl);
         $this->moduleManager->start();
 
-        $options = $config->getOptions();
-        if (array_key_exists("cache", $options) && $options['cache'] == 'on') {
+        $options = $config->getOptions(array(
+            'AetherRunningMode' => 'prod',
+            'cache' => 'off'
+        ));
+        if ($options['cache'] == 'on') {
             if (isset($options['cacheClass']) && isset($options['cacheOptions'])) {
                 $cache = $this->getCacheObject($options['cacheClass'], $options['cacheOptions']);
                 $this->sl->set("cache", $cache);

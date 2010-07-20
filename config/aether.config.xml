@@ -1,6 +1,6 @@
 <config>
     <site name="*">
-        <option name="searchpath">/path/to/aether/here</option>
+        <import>searchpath.xml</import>
         <option name="cache">on</option>
         <option name="cacheClass">AetherCacheMemcache</option>
         <option name="cacheOptions">localhost:11211</option>

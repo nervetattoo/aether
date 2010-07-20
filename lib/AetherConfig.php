@@ -617,9 +617,10 @@ class AetherConfig {
      *
      * @access public
      * @return array
+     * @param array $defaults Provide a set of defaults to use if no value is set
      */
-    public function getOptions() {
-        return $this->options;
+    public function getOptions($defaults=array()) {
+        return array_merge($defaults, $this->options);
     }
 
     /**
