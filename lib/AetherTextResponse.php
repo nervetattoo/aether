@@ -65,7 +65,12 @@ class AetherTextResponse extends AetherResponse {
                 }
             }
             $tpl->set('timers', $timers);
-            $out = $tpl->fetch('debugBar.tpl');
+            try {
+                $out = $tpl->fetch('debugBar.tpl');
+            }
+            catch (Exception $e) {
+                echo $e;
+            }
             $out = str_replace(
                 "<!--INSERTIONPOINT-->",
                 $out, $this->out);
