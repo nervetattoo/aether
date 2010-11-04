@@ -1,38 +1,38 @@
 <?php
 /**
-* Smarty plugin
-* 
-* @package Smarty
-* @subpackage PluginsFunction
-*/
+ * Smarty plugin
+ * 
+ * @package Smarty
+ * @subpackage PluginsFunction
+ */
 
 /**
-* Smarty {html_options} function plugin
-* 
-* Type:     function<br>
-* Name:     html_options<br>
-* Purpose:  Prints the list of <option> tags generated from
-*            the passed parameters
-* 
-* @link http://smarty.php.net/manual/en/language.function.html.options.php {html_image}
-      (Smarty online manual)
-* @author Monte Ohrt <monte at ohrt dot com> 
-* @param array $params parameters
-* Input:<br>
-*            - name       (optional) - string default "select"
-*            - values     (required if no options supplied) - array
-*            - options    (required if no values supplied) - associative array
-*            - selected   (optional) - string default not set
-*            - output     (required if not options supplied) - array
-* @param object $smarty Smarty object
-* @param object $template template object
-* @return string 
-* @uses smarty_function_escape_special_chars()
-*/
-
+ * Smarty {html_options} function plugin
+ * 
+ * Type:     function<br>
+ * Name:     html_options<br>
+ * Purpose:  Prints the list of <option> tags generated from
+ *            the passed parameters
+ * 
+ * @link http://smarty.php.net/manual/en/language.function.html.options.php {html_image}
+ *      (Smarty online manual)
+ * @author Monte Ohrt <monte at ohrt dot com> 
+ * @param array $params parameters
+ * Input:<br>
+ *            - name       (optional) - string default "select"
+ *            - values     (required if no options supplied) - array
+ *            - options    (required if no values supplied) - associative array
+ *            - selected   (optional) - string default not set
+ *            - output     (required if not options supplied) - array
+ * @param object $smarty Smarty object
+ * @param object $template template object
+ * @return string 
+ * @uses smarty_function_escape_special_chars()
+ */
 function smarty_function_html_options($params, $smarty, $template)
 {
-    $smarty->loadPlugin('Smarty_shared_escape_special_chars');
+    require_once(SMARTY_PLUGINS_DIR . 'shared.escape_special_chars.php');
+    //$smarty->loadPlugin('Smarty_shared_escape_special_chars');
 
     $name = null;
     $values = null;
@@ -65,7 +65,7 @@ function smarty_function_html_options($params, $smarty, $template)
                 if (!is_array($_val)) {
                     $extra .= ' ' . $_key . '="' . smarty_function_escape_special_chars($_val) . '"';
                 } else {
-                    throw new Exception ("html_options: extra attribute '$_key' cannot be an array", E_USER_NOTICE);
+                    trigger_error("html_options: extra attribute '$_key' cannot be an array", E_USER_NOTICE);
                 } 
                 break;
         } 
@@ -97,7 +97,7 @@ function smarty_function_html_options($params, $smarty, $template)
 function smarty_function_html_options_optoutput($key, $value, $selected)
 {
     if (!is_array($value)) {
-        $_html_result = '<option label="' . smarty_function_escape_special_chars($value) . '" value="' .
+        $_html_result = '<option value="' .
         smarty_function_escape_special_chars($key) . '"';
         if (in_array((string)$key, $selected))
             $_html_result .= ' selected="selected"';

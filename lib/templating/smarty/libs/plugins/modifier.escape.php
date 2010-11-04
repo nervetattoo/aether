@@ -1,31 +1,45 @@
 <?php
-
 /**
-* Smarty plugin
-* 
-* @package Smarty
-* @subpackage PluginsModifier
-*/
-
+ * Smarty plugin
+ * 
+ * @package Smarty
+ * @subpackage PluginsModifier
+ */
+ 
 /**
-* Smarty escape modifier plugin
-* 
-* Type:     modifier<br>
-* Name:     escape<br>
-* Purpose:  escape string for output
-* 
-* @link http://smarty.php.net/manual/en/language.modifier.count.characters.php count_characters (Smarty online manual)
-* @author Monte Ohrt <monte at ohrt dot com> 
-* @param string $string input string
-* @param string $esc_type escape type
-* @param string $char_set character set
-* @return string escaped input string
-*/
-function smarty_modifier_escape($string, $esc_type = 'html', $char_set = null)
+ * Smarty escape modifier plugin
+ * 
+ * Type:     modifier<br>
+ * Name:     escape<br>
+ * Purpose:  escape string for output
+ * 
+ * @link http://smarty.php.net/manual/en/language.modifier.count.characters.php count_characters (Smarty online manual)
+ * @author Monte Ohrt <monte at ohrt dot com> 
+ * @param string $string input string
+ * @param string $esc_type escape type
+ * @param string $char_set character set
+ * @return string escaped input string
+ */
+function smarty_modifier_escape($string, $esc_type = 'html', $char_set = SMARTY_RESOURCE_CHAR_SET)
 {
-    if ($char_set === null) {
-        $smarty = Smarty::instance();
-        $char_set = $smarty->resource_char_set;
+    if (!function_exists('mb_str_replace')) {
+        // simulate the missing PHP mb_str_replace function
+        function mb_str_replace($needles, $replacements, $haystack)
+        {
+            $rep = (array)$replacements;
+            foreach ((array)$needles as $key => $needle) {
+                $replacement = $rep[$key];
+                $needle_len = mb_strlen($needle);
+                $replacement_len = mb_strlen($replacement);
+                $pos = mb_strpos($haystack, $needle, 0);
+                while ($pos !== false) {
+                    $haystack = mb_substr($haystack, 0, $pos) . $replacement
+                     . mb_substr($haystack, $pos + $needle_len);
+                    $pos = mb_strpos($haystack, $needle, $pos + $replacement_len);
+                } 
+            } 
+            return $haystack;
+        } 
     } 
     switch ($esc_type) {
         case 'html':
@@ -72,7 +86,7 @@ function smarty_modifier_escape($string, $esc_type = 'html', $char_set = null)
 
         case 'mail': 
             // safe way to display e-mail address on a web page
-            if ($smarty->has_mb) {
+            if (function_exists('mb_substr')) {
                 return mb_str_replace(array('@', '.'), array(' [AT] ', ' [DOT] '), $string);
             } else {
                 return str_replace(array('@', '.'), array(' [AT] ', ' [DOT] '), $string);
@@ -94,21 +108,6 @@ function smarty_modifier_escape($string, $esc_type = 'html', $char_set = null)
 
         default:
             return $string;
-    } 
-    if (!function_exists("mb_str_replace")) {
-        // simulate the missing PHP mb_str_replace function
-        function mb_str_replace($needle, $replacement, $haystack)
-        {
-            $needle_len = mb_strlen($needle);
-            $replacement_len = mb_strlen($replacement);
-            $pos = mb_strpos($haystack, $needle, 0);
-            while ($pos !== false) {
-                $haystack = mb_substr($haystack, 0, $pos) . $replacement
-                 . mb_substr($haystack, $pos + $needle_len);
-                $pos = mb_strpos($haystack, $needle, $pos + $replacement_len);
-            } 
-            return $haystack;
-        } 
     } 
 } 
 
