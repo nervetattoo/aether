@@ -17,7 +17,7 @@ abstract class AetherTemplate {
      * @param string $engine Name of engine to use
      * @param string AetherServiceLocator $sl
      */
-    public static function get($engine,AetherServiceLocator $sl) {
+    public static function get($engine, AetherServiceLocator $sl) {
         if ($engine == 'smarty') {
             $class = 'AetherTemplateSmarty';
         }

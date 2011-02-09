@@ -38,8 +38,12 @@ class AetherCacheMemcache implements AetherCacheInterface {
             $this->con = new Memcache;
             $tmp = explode(";", $serversString);
             foreach ($tmp as $s) {
-                list($host,$port) = explode(":",$s);
-                $this->con->addServer($host, $port, true, 1);
+                $hostInfo = explode(":",$s);
+                // Assume default port
+                if (count($hostInfo) == 1)
+                    $hostInfo[] = 11211;
+
+                $this->con->addServer($hostInfo[0], $hostInfo[1], true, 1);
             }
         }
         else {
@@ -76,7 +80,6 @@ class AetherCacheMemcache implements AetherCacheInterface {
      * @param int $maxAge
      */
     public function get($name, $maxAge = false) {
-        
         //Get data from cache
         $cache = $this->con->get($name);
 
