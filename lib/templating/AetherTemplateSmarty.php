@@ -18,11 +18,21 @@ class AetherTemplateSmarty extends AetherTemplate {
     public function __construct(AetherServiceLocator $sl) {
         $this->engine = new Smarty;
         $this->sl = $sl;
-        $base = $this->sl->get('projectRoot') . 'templates';
-        $this->engine->template_dir = $base . '/';
-        $this->engine->compile_dir = $base . '/compiled/';
-        $this->engine->config_dir = $base . '/configs/';
-        $this->engine->cache_dir = $base . '/cache/';
+        $options = $this->sl->get('aetherConfig')->getOptions();
+
+        $base = $this->sl->get('projectRoot') . 'templates/';
+        // Add project root first in template search path
+        $templateDirs[] =  $base;
+        if (isset($options['searchpath'])) {
+            $search = array_map("trim", explode(";", $options['searchpath']));
+            foreach ($search as $dir) {
+                $templateDirs[] = $dir . "templates/";
+            }
+        }
+        $this->engine->template_dir = $templateDirs;
+        $this->engine->compile_dir = $base . 'compiled/';
+        $this->engine->config_dir = $base . 'configs/';
+        $this->engine->cache_dir = $base . 'cache/';
     }
 
     /**
