@@ -72,25 +72,33 @@ class AetherUrlParser {
      * @param array $server
      */
     public function parseServerArray($server) {
-        // Scheme
-        switch ($server['SERVER_PROTOCOL']) {
-            case 'HTTP/1.1':
-                $this->scheme = 'http';
-                break;
-        }
-        // Host
+        if (isset($server['HTTPS'])) 
+            $this->scheme = 'https';
+        else
+            $this->scheme = 'http';
+
         $this->port = $server['SERVER_PORT'];
         $this->host = str_replace(":" . $this->port, '', $server['HTTP_HOST']);
-        $path = urldecode($server['REQUEST_URI']);
-        $qsa = strpos($path, '?');
-        if (!$qsa)
-            $qsa = strlen($path);
-        $this->path = substr($path, 0, $qsa);
-        $this->query = substr($path, $qsa + 1);
         if (!empty($server['PHP_AUTH_USER']))
             $this->user = $server['PHP_AUTH_USER'];
         if (!empty($server['PHP_AUTH_PW']))
             $this->pass = $server['PHP_AUTH_PW'];
+
+        // Some browsers send the complete url as REQUEST_URI (galaxy tab)
+        if (strpos($server['REQUEST_URI'], 'http://') === 0 ||
+                strpos($server['REQUEST_URI'], 'https://') === 0) {
+            $parts = parse_url($server['REQUEST_URI']);
+            $this->path = $parts['path'];
+            $this->query = (isset($parts['query']) ? $parts['query'] : '') . (isset($parts['fragment']) ? '#' . $parts['fragment'] : '');
+        }
+        else {
+            $path = urldecode($server['REQUEST_URI']);
+            $qsa = strpos($path, '?');
+            if (!$qsa)
+                $qsa = strlen($path);
+            $this->path = substr($path, 0, $qsa);
+            $this->query = substr($path, $qsa + 1);
+        }
     }
     
     /**
