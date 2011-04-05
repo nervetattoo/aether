@@ -165,7 +165,7 @@ abstract class AetherSection {
          * Render page
          */
         $cacheable = ($cacheable && is_object($cache));
-        if (!is_numeric($cachetime) || !$cacheable || ($output = $cache->get($cacheName) == false)) {
+        if (!$cacheable || !is_numeric($cachetime) || ($output = $cache->get($cacheName) == false)) {
             /* Load controller template
              * This template knows where all modules should be placed
              * and have internal wrapping html for this section
@@ -280,7 +280,7 @@ abstract class AetherSection {
                 }
             }
             $output = $tpl->fetch($tplInfo['name']);
-            if (is_numeric($cachetime) && $cacheable)
+            if ($cacheable && is_numeric($cachetime))
                 $cache->set($cacheName, $output, $cachetime);
         }
         else {
