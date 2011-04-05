@@ -29,7 +29,7 @@ class AetherTemplateSmarty extends AetherTemplate {
                 $templateDirs[] = $dir . "templates/";
             }
         }
-        // $this->engine->error_reporting = E_ALL ^ E_NOTICE ^ E_WARNING;
+        $this->engine->error_reporting = E_ALL ^ E_NOTICE;
         $this->engine->template_dir = $templateDirs;
         $this->engine->compile_dir = $base . 'compiled/';
         $this->engine->config_dir = $base . 'configs/';
