@@ -56,4 +56,19 @@ class AetherTemplateSmarty extends AetherTemplate {
     public function fetch($name) {
         return $this->engine->fetch($name);
     }
+
+    /**
+     * Register plugins to be used in smarty templates
+     * Type is smarty's "block" or "function"
+     * Name is template tag name
+     * Function is callback to be run
+     * http://www.smarty.net/docs/en/api.register.plugin.tpl
+     *
+     * @param string $type
+     * @param string $name
+     * @param mixed $function
+     */
+    public function registerPlugin($type, $name, $function) {
+        $this->engine->registerPlugin($type, $name, $function);
+    }
 }
