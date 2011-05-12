@@ -205,14 +205,14 @@ abstract class AetherSection {
                                 }
                             }
                             catch (Exception $e) {
-                                // TODO: Make a special exception for when a 
-                                // module fails so terribly that it needs to 
-                                // be replaced by an old cached one.
-                                $mOut = $cache->get($mCacheName, 86400);
-
                                 $saveCache = false;
                                 $this->logerror($e);
-                                continue;
+                                // Try to find an old version from cache to
+                                // serve in case this is a temporary failure
+                                // with the module
+                                $mOut = $cache->get($mCacheName, 86400);
+                                if (!$mOut)
+                                    continue;
                             }
                         }
                     }
@@ -284,6 +284,7 @@ abstract class AetherSection {
                 $cache->set($cacheName, $output, $cachetime);
         }
         else {
+            header("Cache-Control: max-age={$cachetime}");
             $output = $cache->get($cacheName);
         }
         /**
