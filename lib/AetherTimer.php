@@ -38,10 +38,8 @@ class AetherTimer {
         $this->timers[$name] = array();
         $this->timers[$name]['start'] = array(
             'time' => $time,
-            'memory' => memory_get_usage(),
-            'last' => $this->lastTime);
-        $this->lastTime = $time;
-
+            'memory' => memory_get_usage()
+        );
     }
     public function timerEnd($name) {
         $this->end($name);
@@ -51,12 +49,11 @@ class AetherTimer {
         $ranFor = $time - $this->timers[$name]['start']['time'];
         $mem = memory_get_usage() - $this->timers[$name]['start']['memory'];
         //$mem = memory_get_usage();
-        $this->timers[$name]['end'] = array(
+        $this->timers[$name]['total'] = array(
             'time' => $time,
-            'last' => $this->lastTime,
             'memory' => $mem,
-            'elapsed' => $ranFor);
-        $this->lastTime = $time;
+            'elapsed' => $ranFor
+        );
     }
     public function timerTick($name, $point) {
         $this->tick($name, $point);
@@ -64,13 +61,11 @@ class AetherTimer {
     public function tick($name, $point) {
         $time = $this->getMicroTime();
         $mem = memory_get_usage();
+        $lastTime = current(array_slice($this->timers[$name],-1,1));
         $this->timers[$name][$point] = array(
             'time' => $time,
-            'last' => $this->lastTime,
-            'memory' => $mem - $this->lastMem,
-            'elapsed' => $time - $this->lastTime);
-        $this->lastTime = $time;
-        $this->lastMem = $mem;
+            'memory' => $mem,
+            'elapsed' => $time - $lastTime['time']);
     }
     public function all() {
         return $this->timers;
