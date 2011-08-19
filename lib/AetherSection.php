@@ -222,8 +222,9 @@ abstract class AetherSection {
                         $mod = $module['obj'];
                         try {
                             $mOut = $mod->run();
-                            if (!$cache || $mod->denyCache())
+                            if (!$cache || $mod->denyCache()) {
                                 $saveCache = false;
+                            }
                         }
                         catch (Exception $e) {
                             // Make sure page cache isn't saved if a module fails
@@ -280,13 +281,18 @@ abstract class AetherSection {
                 }
             }
             $output = $tpl->fetch($tplInfo['name']);
-            if ($cacheable && is_numeric($cachetime))
+            if ($cacheable && is_numeric($cachetime)) {
                 $cache->set($cacheName, $output, $cachetime);
+            }
         }
         else {
-            header("Cache-Control: max-age={$cachetime}");
             $output = $cache->get($cacheName);
         }
+
+        if ($cacheable && is_numeric($cachetime)) {
+            header("Cache-Control: max-age={$cachetime}");
+        }
+
         /**
          * If we have a timer, end this timing
          * we're in test mode and thus showing timing
