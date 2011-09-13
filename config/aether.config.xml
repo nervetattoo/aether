@@ -1,7 +1,7 @@
 <config>
     <site name="*">
         <import>searchpath.xml</import>
-        <option name="cache">on</option>
+        <option name="cache">off</option>
         <option name="cacheClass">AetherCacheMemcache</option>
         <option name="cacheOptions">localhost:11211</option>
         <urlRules>
