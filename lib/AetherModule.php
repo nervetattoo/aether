@@ -51,11 +51,24 @@ abstract class AetherModule {
      * that deliver highly dynamic data based on each request
      * but where it is generic in certain cases
      *
+     * Use getCacheTime() instead.
+     *
+     * @deprecated
      * @access public
      * @return bool
      */
     public function denyCache() {
         return false;
+    }
+    
+    /**
+     * Allow each module to decide their cache time (in seconds)
+     *
+     * @access public
+     * @return bool
+     */
+    public function getCacheTime() {
+        return $this->denyCache() ? 0 : null;
     }
     
     /**

@@ -58,10 +58,9 @@ abstract class AetherSection {
             $object = AetherModuleFactory::create($module['name'], 
                     $this->sl, $module['options']);
 
-            // If the module, in this setting, blocks caching, accept
-            if ($object->denyCache()) {
-                $module['noCache'] = true;
-                $cachetime = false;
+            // Check if module overrides cache time
+            if (($cachetime = $object->getCacheTime()) !== null) {
+                header("Cache-Control: max-age={$cacheTime}");
             } 
             else if (isset($module['cache'])) {
                 header("Cache-Control: max-age={$module['cache']}");
@@ -109,10 +108,16 @@ abstract class AetherSection {
                 $cacheName = $url->get('host') . '_' . $cacheas;
             else
                 $cacheName = $url->cacheName();
-            $cachetime = $config->getCacheTime();
+
+            $pageCacheTime = $config->getCacheTime();
+            if ($pageCacheTime === false) 
+                $pageCacheTime = 0;
 
             if ($url->get('query') != "")
                 $cacheable = false;
+        }
+        else {
+            $pageCacheTime = 0;
         }
 
         /**
@@ -134,21 +139,23 @@ abstract class AetherSection {
         $searchPath = (isset($options['searchpath'])) 
             ? $options['searchpath'] : $this->sl->get("aetherPath");
         AetherModuleFactory::$path = $searchPath;
-        $mods = $config->getModules();
-        $modules = array(); // Final array over modules
-        foreach ($mods as $module) {
+        $modules = $config->getModules();
+        foreach ($modules as &$module) {
             if (!isset($module['options']))
                 $module['options'] = array();
             // Get module object
             $object = AetherModuleFactory::create($module['name'], 
                     $this->sl, $module['options']);
             // If the module, in this setting, blocks caching, accept
-            if (!$cache || $object->denyCache()) {
-                $module['noCache'] = true;
-                $cachetime = false;
+            if (!$cache || ($cachetime = $object->getCacheTime()) !== null) {
+                $module['cache'] = $cachetime;
+
+                // Reset page cache time to module since we ask for stuff
+                // to be updated at an earlier interval
+                $pageCacheTime = min($pageCacheTime, $module['cache']);
             }
+
             $module['obj'] = $object;
-            $modules[] = $module;
         }
         /**
          * If we have a timer, end this timing
@@ -159,13 +166,11 @@ abstract class AetherSection {
             $timer->tick('module_run', 'read_config');
 
 
-        $saveCache = true;
-
         /**
          * Render page
          */
         $cacheable = ($cacheable && is_object($cache));
-        if (!$cacheable || !is_numeric($cachetime) || ($output = $cache->get($cacheName) == false)) {
+        if (!$cacheable || !is_numeric($cachetime) || $cachetime === 0 || ($cache->get($cacheName) == false)) {
             /* Load controller template
              * This template knows where all modules should be placed
              * and have internal wrapping html for this section
@@ -173,46 +178,37 @@ abstract class AetherSection {
             $tplInfo = $config->getTemplate();
             $tpl = $this->sl->getTemplate();
             if (is_array($modules)) {
-                //$tpl->selectTemplate($tplInfo['name']);
-                // Make tplVars sent in available
                 $tpl->set("extras", $tplVars);
                 $modulesOut = array();
-                foreach ($modules as $module) {
+                foreach ($modules as &$module) {
                     // If module should be cached, handle it
-                    if ($cache && array_key_exists('cache', $module) && !isset($module['noCache'])) {
-                        $mCacheName = 
-                            $cacheName . $module['name'] ;
+                    if ($cache && array_key_exists('cache', $module) && $module['cache'] > 0) {
+                        $mCacheName = $cacheName . $module['name'] ;
+
                         if ($module['provides'])
                             $mCacheName .= $module['provides'];
+
                         if (array_key_exists('cacheas', $module)) {
                             $mCacheName = $url->get('host') . $module['cacheas'];
                         }
+
                         // Try to read from cache, else generate and cache
                         if (($mOut = $cache->get($mCacheName)) == false) {
                             $mCacheTime = $module['cache'];
                             $mod = $module['obj'];
+
                             try {
                                 $mOut = $mod->run();
-                                // Run the function 
-                                // denyCache to check if some internal module
-                                // logic has marked this not to be cached 
-                                // while rendering the module
-                                if (!$mod->denyCache()) {
+                                if (is_numeric($mCacheTime) && $mCacheTime > 0) {
                                     $cache->set($mCacheName, $mOut, $mCacheTime);
                                 }
                                 else {
-                                    $saveCache = false;
+                                    $pageCacheTime = 0;
                                 }
                             }
                             catch (Exception $e) {
-                                $saveCache = false;
+                                $pageCacheTime = 0;
                                 $this->logerror($e);
-                                // Try to find an old version from cache to
-                                // serve in case this is a temporary failure
-                                // with the module
-                                $mOut = $cache->get($mCacheName, 86400);
-                                if (!$mOut)
-                                    continue;
                             }
                         }
                     }
@@ -220,15 +216,12 @@ abstract class AetherSection {
                         // Module shouldn't be cached, just render it without
                         // saving to cache
                         $mod = $module['obj'];
+
                         try {
                             $mOut = $mod->run();
-                            if (!$cache || $mod->denyCache()) {
-                                $saveCache = false;
-                            }
                         }
                         catch (Exception $e) {
-                            // Make sure page cache isn't saved if a module fails
-                            $saveCache = false;
+                            $pageCacheTime = 0;
                             $this->logerror($e);
                             continue;
                         }
@@ -247,15 +240,18 @@ abstract class AetherSection {
                      * duplicates are encountered
                      */
                     $modName = $module['name'];
+
                     if (!isset($modulesOut[$modName])) {
                         $modulesOut[$modName] = array();
                     }
+
                     if (array_key_exists('provides', $module)) {
                         $modulesOut[$modName][$module['provides']] = $mOut;
                     }
                     else {
                         $modulesOut[$modName][] = $mOut;
                     }
+
                     /**
                      * If we have a timer, end this timing
                      * we're in test mode and thus showing timing
@@ -266,12 +262,14 @@ abstract class AetherSection {
                             $timerMsg = $module['provides'];
                         else
                             $timerMsg = $modName;
+
                         $timer->tick('module_run', $timerMsg);
                     }
                 }
                 // Export rendered modules to template
                 foreach ($modulesOut as $name => $mod) {
                     $name = str_replace('/', '_', $name);
+
                     if (count($mod) > 1) {
                         $tpl->set($name, $mod);
                     }
@@ -281,16 +279,17 @@ abstract class AetherSection {
                 }
             }
             $output = $tpl->fetch($tplInfo['name']);
-            if ($cacheable && is_numeric($cachetime)) {
-                $cache->set($cacheName, $output, $cachetime);
+
+            if ($cacheable) {
+                $cache->set($cacheName, $output, $pageCacheTime);
             }
         }
         else {
             $output = $cache->get($cacheName);
         }
 
-        if ($cacheable && is_numeric($cachetime)) {
-            header("Cache-Control: max-age={$cachetime}");
+        if ($cacheable) {
+            header("Cache-Control: max-age={$pageCacheTime}");
         }
 
         /**
