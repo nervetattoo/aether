@@ -143,7 +143,7 @@ class AetherConfig {
         $xquery .= $ruleBase . 'option';
         $optionList = $xpath->query($xquery);
         if ($optionList->length > 0)
-            $this->subtractNodeConfiguration($optionList);
+            $this->readNodeConfiguration($optionList);
         $path = $url->get('path');
         $explodedPath = explode('/', substr($path,1));
         /**
@@ -296,7 +296,7 @@ class AetherConfig {
                          * Options can be set on any level and
                          * overridden on deeper levels if set there
                          */
-                        $this->subtractNodeConfiguration($node);
+                        $this->readNodeConfiguration($node);
                         // Search children for next match
                         try {
                             $match = $this->findMatchingConfigNode(
@@ -311,7 +311,7 @@ class AetherConfig {
                         /**
                          * No children found for rule
                          */
-                        $this->subtractNodeConfiguration($node);
+                        $this->readNodeConfiguration($node);
                         $this->path = $path;
                         /**
                          * If this is the last fragment
@@ -333,11 +333,12 @@ class AetherConfig {
         if ($last AND $match instanceof DOMElement) {
             return $match;
         }
+
         /**
          * No rules matched so far, use default rule if one exists
          */
         if ($this->defaultRule !== false) {
-            $this->subtractNodeConfiguration($this->defaultRule);
+            $this->readNodeConfiguration($this->defaultRule);
             $this->path = $path;
             return $this->defaultRule;
         }
@@ -437,14 +438,14 @@ class AetherConfig {
     }
     
     /**
-     * Given a nodelist, subtract section, subsection and other data
+     * Given a nodelist, read section, subsection and other data
      * from that node and store it in self
      *
      * @access private
      * @return void
      * @param DOMNode $node
      */
-     private function subtractNodeConfiguration($node) {
+     private function readNodeConfiguration($node) {
         if ($node instanceof DOMNode) {
             if ($node->hasAttribute('cache'))
                 $this->cache = $node->getAttribute('cache');
@@ -465,7 +466,6 @@ class AetherConfig {
 
                 case 'template':
                     $tpl = array();
-                    $tpl['setId'] = $child->getAttribute('id');
                     $tpl['name'] = $child->nodeValue;
                     $this->template = $tpl;
                     break;
