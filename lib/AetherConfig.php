@@ -324,16 +324,8 @@ class AetherConfig {
             return true;
         }
 
-        /**
-         * If we reach this point it means NO rules truly matched
-         * not even a default rule. Damn bastard developer who doesnt
-         * provide a default rule in your app!!!
-         */
-        if (count($this->path) > 0) {
-            throw new AetherNoUrlRuleMatchException(
+        throw new AetherNoUrlRuleMatchException(
                 "No rules matches this url. App.config error");
-        }
-        return false;
     }
     
     /**
@@ -366,7 +358,7 @@ class AetherConfig {
             }
             $store = $check;
         }
-        elseif ($node->hasAttribute('pattern')) {
+        elseif ($node->hasAttribute('pattern') && $check !== '') {
             $matches = preg_match(
                 $node->getAttribute('pattern'), $check, $captures);
             /**
