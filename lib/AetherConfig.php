@@ -1,4 +1,7 @@
 <?php // vim:set ts=4 sw=4 et:
+
+require_once("AetherExceptions.php");
+
 /**
  * 
  * Read in config file for aether and make its options
@@ -85,6 +88,8 @@ class AetherConfig {
      * @var string
      */
     private $configFilePath;
+
+    private $matchedNodes = array();
     
     /**
      * Constructor.
@@ -160,7 +165,7 @@ class AetherConfig {
         }
         catch (AetherNoUrlRuleMatchException $e) {
             // No match found :(
-            throw new Exception("Technical error. No resource found on this url");
+            throw new Exception("Technical error. No resource found on this url: " . $e);
         }
         catch (Exception $e) {
             // This is expected
@@ -244,6 +249,38 @@ class AetherConfig {
         return $modMap;
     }
 
+    private function containsRules($node) {
+        foreach ($node->childNodes as $c) {
+            if ($c->nodeName === 'rule')
+                return true;
+        }
+        return false;
+    }
+
+    private function findRecursive($nodeList, $path) {
+        $current = array_shift($path);
+
+        foreach ($nodeList as $node) {
+            // This have to be a DOMElement
+            if ($node instanceof DOMElement && $node->nodeName == 'rule') {
+                if ($this->matches($current, $node)) {
+                    $this->matchedNodes[] = $node;
+                    /**
+                     * If this node is a match, and has child nodes
+                     * then try to crawl the next level aswell, see
+                     * if a more exact match is possible
+                     */
+                    if ($this->containsRules($node)) 
+                        return $this->findRecursive($node->childNodes, $path);
+                    else
+                        return $node;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Find matching config node from nodelist and path
      *
@@ -255,136 +292,48 @@ class AetherConfig {
      * else "fragment" will be used when matching nodes.
      */
     private function findMatchingConfigNode($nodeList, $path) {
-        $match = false;
-        // Find first non empty part in path
-        $current = "";
-        $last = false;
-        if (is_array($path) AND count($path) > 0) {
-            $current = $path[0];
-            $path = array_slice($path, 1);
-            if (count($path) == 0)
-                $last = true;
-        }
-        else
-            $last = true;
         // Crawl the config hierarchy till the right node is found
-        foreach ($nodeList as $node) {
-            // This have to be a DOMElement
-            if ($node instanceof DOMElement and $node->nodeName == 'rule') {
-                /**
-                 * When a matching rule is found,
-                 * search this level for a default rule ahead
-                 * incase no matching rule is found.
-                 */
-                if ($node->hasAttribute('default')) {
-                    $this->defaultRule = $node;
-                }
-                /* If the attribute match is not set theres no point
-                 * in searching through this path
-                 * Check if this actually matches the current part
-                 * of the path we are examining ($current)
-                 */
-                if ($this->matches($current, $node)) {
-                    $match = $node;
-                    /* If this node is a match, and has child nodes
-                     * then try to crawl the next level aswell, see
-                     * if a more exact match is possible
-                     */
-                    if ($this->hasChildRules($node)) {
-                        /**
-                         * Fetch global options from this scope
-                         * Options can be set on any level and
-                         * overridden on deeper levels if set there
-                         */
-                        $this->readNodeConfiguration($node);
-                        // Search children for next match
-                        try {
-                            $match = $this->findMatchingConfigNode(
-                                $node->childNodes, $path);
-                        }
-                        catch (Exception $e) {
-                            throw new Exception('Final matching rule found');
-                            break;
-                        }
-                    }
-                    else {
-                        /**
-                         * No children found for rule
-                         */
-                        $this->readNodeConfiguration($node);
-                        $this->path = $path;
-                        /**
-                         * If this is the last fragment
-                         * and a match, throw an exception to notify
-                         * that further searching can be stopped
-                         */
-                        if ($last) {
-                            throw new Exception('Final matching rule found');
-                        }
+
+        $this->path = $path;
+
+        $match = $this->findRecursive($nodeList, $path);
+
+        /**
+         * No rules matched so far, look for a default rule in the matched
+         * nodes starting at the deepest match
+         */
+        if (!$match) {
+            while ($n = array_pop($this->matchedNodes)) {
+                foreach ($n->parentNode->childNodes as $cn) {
+                    if ($cn->nodeName == 'rule' && $cn->getAttribute("default")) {
+                        $match = $cn;
                     }
                 }
             }
         }
-        
-        /**
-         * If this is the last fragment of $path AND
-         * a matching node is found, return that node
-         */
-        if ($last AND $match instanceof DOMElement) {
-            return $match;
+
+        if ($match) {
+            $n = $match;
+            do {
+                if ($n->nodeName == 'rule') {
+                    $this->readNodeConfiguration($n);
+                }
+            }
+            while (($n = $n->parentNode) && $n->nodeName != "#document");
+
+            return true;
         }
 
-        /**
-         * No rules matched so far, use default rule if one exists
-         */
-        if ($this->defaultRule !== false) {
-            $this->readNodeConfiguration($this->defaultRule);
-            $this->path = $path;
-            return $this->defaultRule;
-        }
-
-        /**
-         * If this is not the last rule and we have gotten this far it
-         * means:
-         * No matching node is found
-         * No default rule is found
-         * So the search should continue until the last rule is processed
-         */
-        if (!$last)
-            return false;
         /**
          * If we reach this point it means NO rules truly matched
          * not even a default rule. Damn bastard developer who doesnt
          * provide a default rule in your app!!!
          */
-        if (count($path) > 0) {
+        if (count($this->path) > 0) {
             throw new AetherNoUrlRuleMatchException(
                 "No rules matches this url. App.config error");
         }
         return false;
-    }
-    
-    /**
-     * Test if a <rule> node have other <rule>s below it
-     * cause if it does we need to search further down
-     * for a match, if not we can simply stop.
-     *
-     * @access private
-     * @return bool
-     * @param object $node
-     */
-    private function hasChildRules($node) {
-        if ($node->hasChildNodes()) {
-            foreach ($node->childNodes as $child) {
-                if ($child->nodeName == 'rule') {
-                    return true;
-                }
-            }
-            return false;
-        }
-        else {
-            return false;
-        }
     }
     
     /**
@@ -408,7 +357,13 @@ class AetherConfig {
     private function matches($check, $node) {
         $matches = false;
         if ($node->hasAttribute('match')) {
-            $matches = ($node->getAttribute('match') == $check);
+            if ($node->getAttribute('match') == $check || 
+                    ($node->getAttribute('match') === '' && $check === null)) {
+                $matches = true;
+            }
+            else {
+                $matches = false;
+            }
             $store = $check;
         }
         elseif ($node->hasAttribute('pattern')) {
