@@ -128,17 +128,19 @@ class AetherConfig {
          */
         $sitename = $url->get('host');
         $xquery = "/config/site[@name='$sitename']";
-        $xquery .= '/urlRules/*';
+        $xquery .= '/urlRules';
         $nodelist = $xpath->query($xquery);
         // Fallback to the "any" site qualifier
         if ($nodelist->length == 0) {
             $sitename = '*';
-            $xquery = "/config/site[@name='$sitename']/urlRules/*";
+            $xquery = "/config/site[@name='$sitename']/urlRules";
             $nodelist = $xpath->query($xquery);
         }
         if ($nodelist->length == 0) {
             throw new AetherNoUrlRuleMatchException("No config entry matched site: $sitename");
         }
+        $urlRules = $nodelist->item(0);
+
         // Subtract global options
         $ruleBase = " | /config/site[@name='$sitename']/urlRules/";
         $xquery = "/config/site[@name='$sitename']/option";
@@ -161,7 +163,7 @@ class AetherConfig {
             }
         }
         try {
-            $node = $this->findMatchingConfigNode($nodelist, $explodedPath);
+            $node = $this->findMatchingConfigNode($urlRules, $explodedPath);
         }
         catch (AetherNoUrlRuleMatchException $e) {
             // No match found :(
@@ -291,12 +293,15 @@ class AetherConfig {
      * if AetherSlashMode is "keep", then "/fragment" will be used, 
      * else "fragment" will be used when matching nodes.
      */
-    private function findMatchingConfigNode($nodeList, $path) {
+    private function findMatchingConfigNode($urlRules, $path) {
         // Crawl the config hierarchy till the right node is found
 
         $this->path = $path;
 
-        $match = $this->findRecursive($nodeList, $path);
+        // First node is urlRules xml tag
+        $this->matchedNodes[] = $urlRules;
+
+        $match = $this->findRecursive($urlRules->childNodes, $path);
 
         /**
          * No rules matched so far, look for a default rule in the matched
@@ -304,7 +309,7 @@ class AetherConfig {
          */
         if (!$match) {
             while ($n = array_pop($this->matchedNodes)) {
-                foreach ($n->parentNode->childNodes as $cn) {
+                foreach ($n->childNodes as $cn) {
                     if ($cn->nodeName == 'rule' && $cn->getAttribute("default")) {
                         $match = $cn;
                     }
