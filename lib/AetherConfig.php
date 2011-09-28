@@ -324,8 +324,7 @@ class AetherConfig {
             return true;
         }
 
-        throw new AetherNoUrlRuleMatchException(
-                "No rules matches this url. App.config error");
+        throw new AetherNoUrlRuleMatchException("\"" . $_SERVER['REQUEST_URI'] . "\" does not match any rule, and no default rule was found");
     }
     
     /**
