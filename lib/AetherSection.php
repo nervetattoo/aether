@@ -147,8 +147,8 @@ abstract class AetherSection {
             $object = AetherModuleFactory::create($module['name'], 
                     $this->sl, $module['options']);
             // If the module, in this setting, blocks caching, accept
-            if (!$cache || ($cachetime = $object->getCacheTime()) !== null) {
-                $module['cache'] = $object->getCacheTime();
+            if ($cache && ($cachetime = $object->getCacheTime()) !== null) {
+                $module['cache'] = $cachetime;
 
                 // Reset page cache time to module since we ask for stuff
                 // to be updated at an earlier interval
