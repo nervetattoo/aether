@@ -148,7 +148,7 @@ abstract class AetherSection {
                     $this->sl, $module['options']);
             // If the module, in this setting, blocks caching, accept
             if (!$cache || ($cachetime = $object->getCacheTime()) !== null) {
-                $module['cache'] = $cachetime;
+                $module['cache'] = $object->getCacheTime();
 
                 // Reset page cache time to module since we ask for stuff
                 // to be updated at an earlier interval
