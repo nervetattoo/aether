@@ -355,7 +355,7 @@ abstract class AetherSection {
             // Run service
             return $mod->service($serviceName);
         }
-        throw new Exception("Service run error: Failed to locate module [$moduleName] using searchpath \"{$searchPath}\"");
+        throw new Exception("Service run error: Failed to locate module [$moduleName] using searchpath \"{$searchPath}\", url: " . $_SERVER['SCRIPT_URI']);
     }
     
     /**
