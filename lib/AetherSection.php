@@ -278,7 +278,12 @@ abstract class AetherSection {
                     }
                 }
             }
-            $output = $tpl->fetch($tplInfo['name']);
+            if (!isset($tplInfo['name']) || strlen($tplInfo['name']) === 0) {
+                throw new AetherConfigErrorException("Template not specified for url: " . (string)$url);
+            }
+            else {
+                $output = $tpl->fetch($tplInfo['name']);
+            }
 
             if ($cacheable) {
                 $cache->set($cacheName, $output, $pageCacheTime);
@@ -350,7 +355,7 @@ abstract class AetherSection {
             // Run service
             return $mod->service($serviceName);
         }
-        throw new Exception("Failed to locate module [$moduleName]");
+        throw new Exception("Service run error: Failed to locate module [$moduleName] using searchpath \"{$searchPath}\"");
     }
     
     /**

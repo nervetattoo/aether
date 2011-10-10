@@ -167,10 +167,11 @@ class AetherConfig {
         }
         catch (AetherNoUrlRuleMatchException $e) {
             // No match found :(
-            throw new Exception("Technical error. No resource found on this url: " . $e);
+            throw new Exception("Technical error. No resource found on this url: " . (string)$url . ", " . $e);
         }
         catch (Exception $e) {
             // This is expected
+            // Comment above was exceptionally not expected -- simeng 2011-10-10
         }
     }
     

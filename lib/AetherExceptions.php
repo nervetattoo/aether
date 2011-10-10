@@ -14,3 +14,4 @@ class AetherException extends Exception {}
 class AetherNoUrlRuleMatchException extends AetherException {}
 class AetherMissingFileException extends AetherException {}
 class AetherFinalRuleFoundException extends AetherException {}
+class AetherConfigErrorException extends AetherException {}
