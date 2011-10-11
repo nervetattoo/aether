@@ -169,12 +169,6 @@ class Aether {
             $timer->start('aether_main');
             $this->sl->set('timer', $timer);
         }
-        /**
-         * Start session if session switch is turned on in 
-         * configuration file
-         */
-        if (array_key_exists('session', $options) AND $options['session'] == 'on')
-            session_start();
 
         // Initiate section
         try {

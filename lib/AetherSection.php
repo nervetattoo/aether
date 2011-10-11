@@ -139,6 +139,16 @@ abstract class AetherSection {
         $searchPath = (isset($options['searchpath'])) 
             ? $options['searchpath'] : $this->sl->get("aetherPath");
         AetherModuleFactory::$path = $searchPath;
+
+        /**
+         * Start session if session switch is turned on in 
+         * configuration file
+         */
+        if (array_key_exists('session', $options) 
+                AND $options['session'] == 'on') {
+            session_start();
+        }
+
         $modules = $config->getModules();
         foreach ($modules as &$module) {
             if (!isset($module['options']))
@@ -345,6 +355,11 @@ abstract class AetherSection {
                 continue;
             if (!isset($module['options']))
                 $module['options'] = array();
+            $options = $module['options'] + $options;
+            if (array_key_exists('session', $options) 
+                        AND $options['session'] == 'on') {
+                session_start();
+            }
             // Get module object
             $mod = AetherModuleFactory::create($module['name'], 
                     $this->sl, $module['options']);
