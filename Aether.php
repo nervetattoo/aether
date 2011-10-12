@@ -170,13 +170,6 @@ class Aether {
             $this->sl->set('timer', $timer);
         }
 
-        /**
-         * Start session if session switch is turned on in 
-         * configuration file
-         */
-        if (array_key_exists('session', $options) AND $options['session'] == 'on')
-            session_start();
-
         // Initiate section
         try {
             $searchPath = (isset($options['searchpath'])) 
@@ -204,6 +197,9 @@ class Aether {
      * @return string
      */
     public function render() {
+        $config = $this->sl->get('aetherConfig');
+        $options = $config->getOptions();
+
         /**
          * If a service is requested simply render the service
          */
@@ -223,7 +219,6 @@ class Aether {
              * # _esi to list
              * # _esi=<providerName> to render one module with settings of the url path
              */
-            $config = $this->sl->get('aetherConfig');
             if (strlen($_GET['_esi']) > 0) {
                 $this->section->renderProviderWithCacheHeaders($_GET['_esi']);
             }
@@ -241,6 +236,15 @@ class Aether {
             }
         }
         else {
+            /**
+             * Start session if session switch is turned on in 
+             * configuration file
+             */
+            if (array_key_exists('session', $options) 
+                    AND $options['session'] == 'on') {
+                session_start();
+            }
+
             $response = $this->section->response();
             $response->draw($this->sl);
             /**
