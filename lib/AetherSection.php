@@ -346,8 +346,8 @@ abstract class AetherSection {
                 continue;
             if (!isset($module['options']))
                 $module['options'] = array();
-            $options = $module['options'] + $options;
-            if (array_key_exists('session', $options) 
+            $opts = $module['options'] + $options;
+            if (array_key_exists('session', $opts) 
                         AND $options['session'] == 'on') {
                 session_start();
             }
