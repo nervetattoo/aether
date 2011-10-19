@@ -166,7 +166,10 @@ class AetherConfig {
             $node = $this->findMatchingConfigNode($urlRules, $explodedPath);
         }
         catch (AetherNoUrlRuleMatchException $e) {
-            // No match found :(
+            // No match found :( Send 404 and throw exception to logs
+            header("Status: 404 Not Found");
+            echo "<html><body><h1>404 Not found</h1></body></html>";
+
             throw new Exception("Technical error. No resource found on this url: " . (string)$url . ", " . $e);
         }
         catch (Exception $e) {
