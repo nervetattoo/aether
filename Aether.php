@@ -177,6 +177,9 @@ class Aether {
         if (array_key_exists('session', $options) AND $options['session'] == 'on')
             session_start();
 
+        if (isset($_SESSION)) {
+            $magic['session'] = $_SESSION;
+        }
         // Initiate section
         try {
             $searchPath = (isset($options['searchpath'])) 
