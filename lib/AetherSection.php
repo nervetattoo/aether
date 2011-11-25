@@ -348,7 +348,7 @@ abstract class AetherSection {
                 $module['options'] = array();
             $opts = $module['options'] + $options;
             if (array_key_exists('session', $opts) 
-                        AND $options['session'] == 'on') {
+                        AND $opts['session'] == 'on') {
                 session_start();
             }
             // Get module object
