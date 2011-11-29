@@ -170,17 +170,6 @@ class Aether {
             $this->sl->set('timer', $timer);
         }
 
-        /**
-         * Start session if session switch is turned on in 
-         * configuration file
-         */
-        if (array_key_exists('session', $options) AND $options['session'] == 'on')
-            session_start();
-
-        if (isset($_SESSION)) {
-            $magic['session'] = $_SESSION;
-        }
-
         // Initiate section
         try {
             $searchPath = (isset($options['searchpath'])) 
