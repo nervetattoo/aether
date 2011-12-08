@@ -568,6 +568,16 @@ class AetherConfig {
     }
     
     /**
+     * Set modules that should be used when rendering page
+     *
+     * @access public
+     * @return void
+     */
+    public function setModules($modules) {
+        $this->modules = $modules;    
+    }
+    
+    /**
      * Get all options set for section
      *
      * @access public
