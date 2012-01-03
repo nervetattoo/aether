@@ -152,7 +152,7 @@ class Aether {
         $magic['urlVars'] = $config->getUrlVars();
         $magic['runningMode'] = $options['AetherRunningMode'];
         $magic['requestUri'] = $_SERVER['REQUEST_URI'];
-        $magic['domain'] = $_SERVER['SERVER_NAME'];
+        $magic['domain'] = $_SERVER['HTTP_HOST'];
         if (isset($_SERVER['HTTP_REFERER']))
             $magic['referer'] = $_SERVER['HTTP_REFERER'];
         if ($_SERVER['SERVER_PORT'] != 80)
