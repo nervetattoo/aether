@@ -155,8 +155,6 @@ class Aether {
         $magic['domain'] = $_SERVER['HTTP_HOST'];
         if (isset($_SERVER['HTTP_REFERER']))
             $magic['referer'] = $_SERVER['HTTP_REFERER'];
-        if ($_SERVER['SERVER_PORT'] != 80)
-            $magic['domain'] .= ":" . $_SERVER['SERVER_PORT'];
         $magic['options'] = $options;
 
         /**
