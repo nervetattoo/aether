@@ -224,6 +224,7 @@ class AetherConfig {
             foreach ($paths as $path) {
                 $file = $path . 'modules/' . trim($name) . '.php';
                 if (file_exists($file)) {
+echo $file . "\n";
                     include_once($file);
                     $found = true;
                     break;

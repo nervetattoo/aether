@@ -22,15 +22,18 @@ class AetherTemplateSmarty extends AetherTemplate {
 
         $base = $this->sl->get('projectRoot') . 'templates/';
         // Add project root first in template search path
-        $templateDirs[] =  $base;
+        $templateDirs[] = $base;
+        $pluginDirs = array(SMARTY_SYSPLUGINS_DIR, SMARTY_PLUGINS_DIR, $base);
         if (isset($options['searchpath'])) {
             $search = array_map("trim", explode(";", $options['searchpath']));
             foreach ($search as $dir) {
                 $templateDirs[] = $dir . "templates/";
+                $pluginDirs[] = $dir . "templates/plugins/";
             }
         }
         $this->engine->error_reporting = E_ALL ^ E_NOTICE;
         $this->engine->template_dir = $templateDirs;
+        $this->engine->plugins_dir = $pluginDirs;
         $this->engine->compile_dir = $base . 'compiled/';
         $this->engine->config_dir = $base . 'configs/';
         $this->engine->cache_dir = $base . 'cache/';
