@@ -145,33 +145,6 @@ echo "Saving config file [$saveTo] moving old to [{$saveTo}.old]\n";
 copy($saveTo, $saveTo . ".old");
 $doc->save($saveTo);
 
-
-/**
- * Generate an array over all modules used for project
- * and the stages they operate in under.
- * This is used to quickly check if a module needs to be
- * included at stage start, run or stop
- */
-echo "Building array over used modules\n";
-$config = new AetherConfig($saveTo);
-$modules = $config->listUsedModules();
-/**
- * Spit out warning about non found modules
- * Todo: Doesnt actually disable the modules as it should
- * 
- */
-if (count($modules['missing']) > 0) {
-    echo "\n===== WARNINGS =====\n";
-    echo "Missing modules [searchpath: \"" . 
-            join("\", \"", $modules['searchPath']) . "\"]\n";
-    foreach ($modules['missing'] as $missing) {
-        echo "\033[1;31mCould not locate source file for required module [$missing]\n";
-    }
-    echo "\033[0m===== END WARNINGS =====\n\n";
-    unset($modules['missing']);
-}
-
-
 echo "Module map written to cachename: $modmapCache\n";
 //$cache = new Cache(false, true, true);
 //$cache->saveObject($modmapCache, $modules);
