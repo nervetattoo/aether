@@ -421,9 +421,11 @@ echo $file . "\n";
                     break;
 
                 case 'template':
-                    $tpl = array();
-                    $tpl['name'] = $child->nodeValue;
-                    $this->template = $tpl;
+                    if (!isset($this->template)) {
+                        $tpl = array();
+                        $tpl['name'] = $child->nodeValue;
+                        $this->template = $tpl;
+                    }
                     break;
 
                 case 'module':
