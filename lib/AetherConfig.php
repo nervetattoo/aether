@@ -153,6 +153,11 @@ class AetherConfig {
             $this->readNodeConfiguration($optionList);
         $path = $url->get('path');
         $explodedPath = explode('/', substr($path,1));
+        
+        // Treat /foo/bar the same as /foo/bar/
+        if (end($explodedPath) !== "")
+            $explodedPath[] = "";
+
         /**
          * If AetherSlashMode is "keep", make sure $current is prefixed
          * with a slash as the slash is not maintained from earlier
