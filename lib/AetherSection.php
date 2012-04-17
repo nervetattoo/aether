@@ -286,7 +286,7 @@ abstract class AetherSection {
                 $output = $tpl->fetch($tplInfo['name']);
             }
 
-            if ($cacheable) {
+            if ($cacheable && $pageCacheTime > 0) {
                 $cache->set($cacheName, $output, $pageCacheTime);
             }
         }
