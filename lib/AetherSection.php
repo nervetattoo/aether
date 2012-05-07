@@ -129,7 +129,7 @@ abstract class AetherSection {
          */
         $options = $config->getOptions();
         // Support i18n
-        $locale = (isset($options['locale'])) ? $options['locale'] : "nb_NO.ISO-8859-1";
+        $locale = (isset($options['locale'])) ? $options['locale'] : "nb_NO.UTF-8";
         setlocale(LC_ALL, $locale);
         
         $lc_numeric = (isset($options['lc_numeric'])) ? $options['lc_numeric'] : 'C';
