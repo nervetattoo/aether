@@ -130,10 +130,6 @@ foreach ($nodelist as $node) {
     $opt = $doc->createElement("option", $prefix);
     $opt->setAttribute("name", "AetherRunningMode");
     $node->insertBefore($opt, $node->firstChild);
-    $modmapCache = 'module_map' . $unique;
-    $modmapOpt = $doc->createElement("option", $modmapCache);
-    $modmapOpt->setAttribute("name", "ModuleMap");
-    $node->insertBefore($modmapOpt, $node->firstChild);
 }
 
 
@@ -145,9 +141,6 @@ echo "Saving config file [$saveTo] moving old to [{$saveTo}.old]\n";
 copy($saveTo, $saveTo . ".old");
 $doc->save($saveTo);
 
-echo "Module map written to cachename: $modmapCache\n";
-//$cache = new Cache(false, true, true);
-//$cache->saveObject($modmapCache, $modules);
 echo "Done\n\n";
 
 /**

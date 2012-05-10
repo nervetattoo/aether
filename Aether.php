@@ -49,14 +49,6 @@ class Aether {
      */
     private $projectRoot;
     
-    /**
-     * Module manager
-     * The ModuleManager holds a mapping over all modules in the
-     * project and offers some functionality for working with them
-     * @var AetherModuleManager
-     */
-    private $moduleManager;
-
     public static $aetherPath;
     
     /**
@@ -127,11 +119,6 @@ class Aether {
             $msg = "No rule matched url in config file: " . $e->getMessage();
             throw new Exception($msg);
         }
-        /**
-         * Set up module manager and run the start() stage
-         */
-        $this->moduleManager = new AetherModuleManager($this->sl);
-        $this->moduleManager->start();
 
         $options = $config->getOptions(array(
             'AetherRunningMode' => 'prod',
@@ -248,10 +235,6 @@ class Aether {
 
             $response = $this->section->response();
             $response->draw($this->sl);
-            /**
-             * Run stop stage of modules
-             */
-            $this->moduleManager->stop();
         }
     }
 
